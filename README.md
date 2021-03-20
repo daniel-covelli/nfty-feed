@@ -17,24 +17,18 @@ This project is starting off using Ben Awad's YouTube tutorial on [JWT and React
 
 #### TODO: Backend
 
-- [ ] Mercury
-- [x] Venus
-- [x] Earth (Orbit/Moon)
-- [x] Mars
-- [ ] Jupiter
-- [ ] Saturn
-- [ ] Uranus
-- [ ] Neptune
-- [ ] Comet Haley
+- [ ] Setup a GraphQL Server using TypeGraphQL and TypeORM
+- [ ] Register a user/add them to DB
+- [ ] Login users and create access and refresh tokens
+- [ ] Make authenticated (protected) mutations and queries in GQL
+- [ ] Refresh token if it expires
+- [ ] Revoke tokens for a user if user logs out, deletes there account, or if their account gets hacked
 
 #### TODO: Frontend
 
-- [ ] Mercury
-- [x] Venus
-- [x] Earth (Orbit/Moon)
-- [x] Mars
-- [ ] Jupiter
-- [ ] Saturn
-- [ ] Uranus
-- [ ] Neptune
-- [ ] Comet Haley
+- [ ] Setup Apollo and GraphQL via Code Generator
+- [ ] Create some routes using react router
+- [ ] Register and Login form
+- [ ] Protecting routes/persisting session on refresh
+- [ ] Handling expired tokens
+- [ ] Fetching current user in headers, etc...
