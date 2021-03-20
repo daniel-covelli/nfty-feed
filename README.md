@@ -6,7 +6,7 @@ This project is starting off using Ben Awad's YouTube tutorial on [JWT and React
 
 #### Technologies
 
-- Typescript ()
+- Typescript
 - GraphQL (query/mutation layer)
 - TypeGraphQL (for integrating GQL and backend in TS)
 - PostgreSQL (for storing users)
@@ -17,4 +17,24 @@ This project is starting off using Ben Awad's YouTube tutorial on [JWT and React
 
 #### TODO: Backend
 
+- [ ] Mercury
+- [x] Venus
+- [x] Earth (Orbit/Moon)
+- [x] Mars
+- [ ] Jupiter
+- [ ] Saturn
+- [ ] Uranus
+- [ ] Neptune
+- [ ] Comet Haley
+
 #### TODO: Frontend
+
+- [ ] Mercury
+- [x] Venus
+- [x] Earth (Orbit/Moon)
+- [x] Mars
+- [ ] Jupiter
+- [ ] Saturn
+- [ ] Uranus
+- [ ] Neptune
+- [ ] Comet Haley
