@@ -15,7 +15,7 @@ This project is starting off using Ben Awad's YouTube tutorial on [JWT and React
 - Apollo (to make requests in React)
 - Express (server)
 
-#### TODO: Backend
+#### Backend
 
 - [ ] Setup a GraphQL Server using TypeGraphQL and TypeORM
 - [ ] Register a user/add them to DB
@@ -24,7 +24,7 @@ This project is starting off using Ben Awad's YouTube tutorial on [JWT and React
 - [ ] Refresh token if it expires
 - [ ] Revoke tokens for a user if user logs out, deletes there account, or if their account gets hacked
 
-#### TODO: Frontend
+#### Frontend
 
 - [ ] Setup Apollo and GraphQL via Code Generator
 - [ ] Create some routes using react router
