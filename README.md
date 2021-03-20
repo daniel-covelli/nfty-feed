@@ -6,11 +6,15 @@ This project is starting off using Ben Awad's YouTube tutorial on [JWT and React
 
 #### Technologies
 
-- Typescript
-- GraphQL
+- Typescript ()
+- GraphQL (query/mutation layer)
 - TypeGraphQL (for integrating GQL and backend in TS)
 - PostgreSQL (for storing users)
 - TypeORM (interface with PostgreSQL)
-- React
+- React (frontend)
 - Apollo (to make requests in React)
-- Express (the server)
+- Express (server)
+
+#### TODO: Backend
+
+#### TODO: Frontend
