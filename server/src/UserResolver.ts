@@ -13,6 +13,7 @@ import { hash, compare } from 'bcryptjs';
 import { MyContext } from './migration/MyContext';
 import { createAccessToken, createRefreshToken } from './auth';
 import { isAuth } from './isAuth';
+import { sendRefreshToken } from './sendRefreshToken';
 
 @ObjectType()
 class LoginResponse {
@@ -57,7 +58,7 @@ export class UserResolver {
       throw new Error('invalid password');
     }
 
-    res.cookie('jid', createRefreshToken(user), { httpOnly: true });
+    sendRefreshToken(res, createRefreshToken(user));
 
     return {
       accessToken: createAccessToken(user)

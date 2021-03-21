@@ -21,7 +21,7 @@ This project is starting off using [Ben Awad](https://github.com/benawad)'s YouT
 - [x] Register a user/add them to DB
 - [x] Login users and create access and refresh tokens
 - [x] Make authenticated (protected) mutations and queries in GQL
-- [ ] Refresh token if it expires
+- [x] Refresh token if it expires
 - [ ] Revoke tokens for a user if user logs out, deletes there account, or if their account gets hacked
 
 #### Frontend

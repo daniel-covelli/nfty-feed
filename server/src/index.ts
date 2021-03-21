@@ -8,6 +8,8 @@ import { createConnection } from 'typeorm';
 import cookieParser from 'cookie-parser';
 import { verify } from 'jsonwebtoken';
 import { User } from './entity/User';
+import { createAccessToken, createRefreshToken } from './auth';
+import { sendRefreshToken } from './sendRefreshToken';
 
 // server set up
 (async () => {
@@ -28,16 +30,18 @@ import { User } from './entity/User';
       payload = verify(token, process.env.REFRESH_TOKEN_SECRET!);
     } catch (err) {
       console.log(err);
-    }
-
-    const user = User.findOne({ id: payload.userId });
-
-    if (user!) {
       return res.send({ ok: false, accessToken: '' });
     }
 
+    const user = await User.findOne({ id: payload.userId });
+
+    if (!user) {
+      return res.send({ ok: false, accessToken: '' });
+    }
+
+    sendRefreshToken(res, createRefreshToken(user));
+
     return res.send({ ok: true, accessToken: createAccessToken(user) });
-    console.log(req.cookies);
   });
 
   await createConnection();
