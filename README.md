@@ -26,7 +26,7 @@ This project is starting off using [Ben Awad](https://github.com/benawad)'s YouT
 
 #### Frontend
 
-- [ ] Setup Apollo and GraphQL via Code Generator
+- [x] Setup Apollo and GraphQL via Code Generator
 - [ ] Create some routes using react router
 - [ ] Register and Login form
 - [ ] Protecting routes/persisting session on refresh
