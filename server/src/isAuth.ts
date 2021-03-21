@@ -2,8 +2,13 @@ import { MiddlewareFn } from 'type-graphql';
 import { MyContext } from './migration/MyContext';
 import { verify } from 'jsonwebtoken';
 
-// bearer 12e312neiuqnd1iun3
-
+/**
+ * Reads header, verifies if user has valid access token,
+ * and adds payload to request context
+ *
+ * @param context: request context
+ * @param next: calls next middleware function
+ */
 export const isAuth: MiddlewareFn<MyContext> = ({ context }, next) => {
   const authorization = context.req.headers['authorization'];
 
