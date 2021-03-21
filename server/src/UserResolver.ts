@@ -11,6 +11,7 @@ import { User } from './entity/User';
 import { sign } from 'jsonwebtoken';
 import { hash, compare } from 'bcryptjs';
 import { MyContext } from './migration/MyContext';
+import { createAccessToken, createRefreshToken } from './auth';
 
 @ObjectType()
 class LoginResponse {
@@ -48,19 +49,11 @@ export class UserResolver {
       throw new Error('invalid password');
     }
 
-    res.cookie(
-      'jid',
-      sign({ userId: user.id }, 'jaksndaksjndaksj', {
-        expiresIn: '30d'
-      }),
-      { httpOnly: true }
-    );
+    res.cookie('jid', createRefreshToken(user), { httpOnly: true });
 
     // payload, secret, options
     return {
-      accessToken: sign({ userId: user.id }, 'kasdakljsdnasjk', {
-        expiresIn: '15m'
-      })
+      accessToken: createAccessToken(user)
     };
   }
 
