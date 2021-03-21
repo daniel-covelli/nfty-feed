@@ -8,7 +8,6 @@ import {
   Ctx
 } from 'type-graphql';
 import { User } from './entity/User';
-import { sign } from 'jsonwebtoken';
 import { hash, compare } from 'bcryptjs';
 import { MyContext } from './migration/MyContext';
 import { createAccessToken, createRefreshToken } from './auth';
@@ -51,7 +50,6 @@ export class UserResolver {
 
     res.cookie('jid', createRefreshToken(user), { httpOnly: true });
 
-    // payload, secret, options
     return {
       accessToken: createAccessToken(user)
     };

@@ -19,7 +19,7 @@ This project is starting off using [Ben Awad](https://github.com/benawad)'s YouT
 
 - [x] Setup a GraphQL Server using TypeGraphQL and TypeORM
 - [x] Register a user/add them to DB
-- [ ] Login users and create access and refresh tokens
+- [x] Login users and create access and refresh tokens
 - [ ] Make authenticated (protected) mutations and queries in GQL
 - [ ] Refresh token if it expires
 - [ ] Revoke tokens for a user if user logs out, deletes there account, or if their account gets hacked
