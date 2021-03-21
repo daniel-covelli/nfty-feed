@@ -7,7 +7,7 @@ import App from './App';
 const client = new ApolloClient({ uri: 'http://localhost:4000/graphql' });
 
 ReactDOM.render(
-  <ApolloProvider>
+  <ApolloProvider client={client}>
     <App />
   </ApolloProvider>,
   document.getElementById('root')
