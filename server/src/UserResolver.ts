@@ -7,6 +7,7 @@ import {
   Field
 } from 'type-graphql';
 import { User } from './entity/User';
+import { sign } from 'jsonwebtoken';
 import { hash, compare } from 'bcryptjs';
 
 @ObjectType()
@@ -38,13 +39,18 @@ export class UserResolver {
       throw new Error('could not find user');
     }
 
-    const valid = compare(password, user.password);
+    const valid = await compare(password, user.password);
 
     if (!valid) {
-      throw new Error('nvalid password');
+      throw new Error('invalid password');
     }
 
-    return { accessToken: '' };
+    // payload, secret, options
+    return {
+      accessToken: sign({ userId: user.id }, 'kasdakljsdnasjk', {
+        expiresIn: '15m'
+      })
+    };
   }
 
   @Mutation(() => Boolean)
