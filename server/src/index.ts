@@ -13,7 +13,8 @@ import { createConnection } from 'typeorm';
   await createConnection();
 
   const apolloServer = new ApolloServer({
-    schema: await buildSchema({ resolvers: [UserResolver] })
+    schema: await buildSchema({ resolvers: [UserResolver] }),
+    context: ({ req, res }) => ({ req, res })
   });
 
   apolloServer.applyMiddleware({ app });
