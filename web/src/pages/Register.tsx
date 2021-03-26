@@ -6,7 +6,12 @@ export const Register: React.FC<RegisterProps> = ({}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   return (
-    <form>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        console.log('form submitted');
+        console.log(email, password);
+      }}>
       <div>
         <input
           value={email}
@@ -15,7 +20,10 @@ export const Register: React.FC<RegisterProps> = ({}) => {
             setEmail(e.target.value);
           }}
         />
+      </div>
+      <div>
         <input
+          type='password'
           value={password}
           placeholder='password'
           onChange={(e) => {
@@ -23,6 +31,7 @@ export const Register: React.FC<RegisterProps> = ({}) => {
           }}
         />
       </div>
+      <button type='submit'>register</button>
     </form>
   );
 };
