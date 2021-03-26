@@ -8,7 +8,7 @@ export const Home: React.FC<HomeProps> = ({}) => {
   const { data } = useUsersQuery({ fetchPolicy: 'network-only' });
 
   if (!data) {
-    return <div>loading</div>;
+    return <div>loading...</div>;
   }
   return (
     <div>
