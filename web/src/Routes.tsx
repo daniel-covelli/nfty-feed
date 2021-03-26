@@ -5,7 +5,7 @@ const Routes: React.FC = () => {
   return (
     <BrowserRouter>
       <Switch>
-        <Route path='/' render={() => <div>hi</div>} />
+        <Route exact path='/' render={() => <div>hi</div>} />
       </Switch>
     </BrowserRouter>
   );
