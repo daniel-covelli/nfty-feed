@@ -7,6 +7,7 @@ import { UserResolver } from './UserResolver';
 import { createConnection } from 'typeorm';
 import cookieParser from 'cookie-parser';
 import { verify } from 'jsonwebtoken';
+import cors from 'cors';
 import { User } from './entity/User';
 import { createAccessToken, createRefreshToken } from './auth';
 import { sendRefreshToken } from './sendRefreshToken';
@@ -14,6 +15,12 @@ import { sendRefreshToken } from './sendRefreshToken';
 // server set up
 (async () => {
   const app = express();
+  app.use(
+    cors({
+      origin: 'http://localhost:3000',
+      credentials: true
+    })
+  );
   app.use(cookieParser());
 
   app.get('/', (_req, res) => res.send('Hello World'));
