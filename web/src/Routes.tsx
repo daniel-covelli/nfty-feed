@@ -1,21 +1,14 @@
 import React from 'react';
-import { useQuery } from '@apollo/react-hooks';
-import { gql } from 'apollo-boost';
-import { useHelloQuery } from './generated/graphql';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
-const App: React.FC = () => {
-  const { data, loading } = useHelloQuery();
-
-  if (loading || !data) {
-    return <div>loading...</div>;
-  }
-
+const Routes: React.FC = () => {
   return (
-    <div>
-      Should say "hi!"
-      <p>{data.hello}</p>
-    </div>
+    <BrowserRouter>
+      <Switch>
+        <Route path='/' render={() => <div>hi</div>} />
+      </Switch>
+    </BrowserRouter>
   );
 };
 
-export default App;
+export default Routes;
