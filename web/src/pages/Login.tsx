@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useRegisterMutation } from '../generated/graphql';
+import { useLoginMutation } from '../generated/graphql';
 import { RouteComponentProps } from 'react-router-dom';
 
 interface LoginProps {}
@@ -7,7 +7,7 @@ interface LoginProps {}
 export const Login: React.FC<RouteComponentProps> = ({ history }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [register] = useRegisterMutation();
+  const [login] = useLoginMutation();
 
   return (
     <form
@@ -15,7 +15,7 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
         e.preventDefault();
         console.log('form submitted');
 
-        const response = await register({ variables: { email, password } });
+        const response = await login({ variables: { email, password } });
 
         console.log(response);
         history.push('/');
@@ -39,7 +39,7 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
           }}
         />
       </div>
-      <button type='submit'>register</button>
+      <button type='submit'>login</button>
     </form>
   );
 };
