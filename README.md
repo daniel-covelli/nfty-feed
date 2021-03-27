@@ -33,4 +33,4 @@ This project is starting off using [Ben Awad](https://github.com/benawad)'s YouT
 - [ ] Handling expired tokens
 - [ ] Fetching current user in headers, etc...
 
-Stoping Point: https://youtu.be/25GS0MLT8JU?t=6055
+Stoping Point: https://www.youtube.com/watch?v=25GS0MLT8JU&ab_channel=BenAwad
