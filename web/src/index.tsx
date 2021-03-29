@@ -46,8 +46,14 @@ const requestLink = new ApolloLink(
 const client = new ApolloClient({
   link: ApolloLink.from([
     new TokenRefreshLink({
-      isTokenValidOrUndefined: () =>
-        !isTokenExpired() || typeof getAccessToken() !== 'string',
+      isTokenValidOrUndefined: () => {
+        const accessToken = getAccessToken();
+        if (!accessToken) {
+          return true;
+        }
+        try {
+        } catch {}
+      },
       fetchAccessToken: () => {
         return fetch(getEndpoint('getAccessTokenPath'), {
           method: 'GET',
