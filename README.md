@@ -29,7 +29,7 @@ This project is starting off using [Ben Awad](https://github.com/benawad)'s YouT
 - [x] Setup Apollo and GraphQL via Code Generator
 - [x] Create some routes using react router
 - [x] Register and Login form
-- [ ] Protecting routes/persisting session on refresh
+- [x] Protecting routes/persisting session on refresh
 - [ ] Handling expired tokens
 - [ ] Fetching current user in headers, etc...
 
