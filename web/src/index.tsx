@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from '@apollo/react-hooks';
-import Routes from './Routes';
+import { App } from './App';
 import { getAccessToken } from './accessToken';
 
 const client = new ApolloClient({
@@ -23,7 +23,7 @@ const client = new ApolloClient({
 
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <Routes />
+    <App />
   </ApolloProvider>,
   document.getElementById('root')
 );
