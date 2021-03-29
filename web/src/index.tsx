@@ -52,7 +52,15 @@ const client = new ApolloClient({
           return true;
         }
         try {
-        } catch {}
+          const { exp } = jwtDecode(accessToken);
+          if (Date.now() >= exp * 1000) {
+            return false;
+          } else {
+            true;
+          }
+        } catch {
+          return false;
+        }
       },
       fetchAccessToken: () => {
         return fetch(getEndpoint('getAccessTokenPath'), {
