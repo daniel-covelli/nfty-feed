@@ -30,7 +30,7 @@ This project is starting off using [Ben Awad](https://github.com/benawad)'s YouT
 - [x] Create some routes using react router
 - [x] Register and Login form
 - [x] Protecting routes/persisting session on refresh
-- [ ] Handling expired tokens
+- [x] Handling expired tokens
 - [ ] Fetching current user in headers, etc...
 
 Stoping Point: https://www.youtube.com/watch?v=25GS0MLT8JU&ab_channel=BenAwad
