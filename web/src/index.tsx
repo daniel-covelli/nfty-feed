@@ -1,14 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { ApolloProvider } from '@apollo/react-hooks';
+import { getAccessToken, setAccessToken } from './accessToken';
 import { App } from './App';
-import { getAccessToken } from './accessToken';
 import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { HttpLink } from 'apollo-link-http';
 import { onError } from 'apollo-link-error';
 import { ApolloLink, Observable } from 'apollo-link';
 import { TokenRefreshLink } from 'apollo-link-token-refresh';
+import jwtDecode from 'jwt-decode';
 
 const cache = new InMemoryCache({});
 
@@ -19,7 +20,6 @@ const requestLink = new ApolloLink(
       Promise.resolve(operation)
         .then((operation) => {
           const accessToken = getAccessToken();
-          console.log('ACCESS TOKEN', accessToken);
           if (accessToken) {
             operation.setContext({
               headers: {
@@ -46,56 +46,42 @@ const requestLink = new ApolloLink(
 const client = new ApolloClient({
   link: ApolloLink.from([
     new TokenRefreshLink({
+      accessTokenField: 'accessToken',
       isTokenValidOrUndefined: () => {
-        const accessToken = getAccessToken();
-        if (!accessToken) {
+        const token = getAccessToken();
+
+        if (!token) {
           return true;
         }
+
         try {
-          const { exp } = jwtDecode(accessToken);
+          const { exp } = jwtDecode(token);
           if (Date.now() >= exp * 1000) {
             return false;
           } else {
-            true;
+            return true;
           }
         } catch {
           return false;
         }
       },
       fetchAccessToken: () => {
-        return fetch(getEndpoint('getAccessTokenPath'), {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${getAccessToken()}`,
-            'refresh-token': getRefreshToken()
-          }
+        return fetch('http://localhost:4000/refresh_token', {
+          method: 'POST',
+          credentials: 'include'
         });
       },
       handleFetch: (accessToken) => {
-        const accessTokenDecrypted = jwtDecode(accessToken);
         setAccessToken(accessToken);
-        setExpiresIn(parseExp(accessTokenDecrypted.exp).toString());
-      },
-      handleResponse: (operation, accessTokenField) => (response) => {
-        // here you can parse response, handle errors, prepare returned token to
-        // further operations
-        // returned object should be like this:
-        // {
-        //    access_token: 'token string here'
-        // }
       },
       handleError: (err) => {
-        // full control over handling token fetch Error
         console.warn('Your refresh token is invalid. Try to relogin');
         console.error(err);
-
-        // your custom action here
-        user.logout();
       }
-    }),
+    }) as any,
     onError(({ graphQLErrors, networkError }) => {
-      console.log('GQL ERROR', graphQLErrors);
-      console.log('NETWORK ERROR', networkError);
+      console.log(graphQLErrors);
+      console.log(networkError);
     }),
     requestLink,
     new HttpLink({
@@ -104,12 +90,6 @@ const client = new ApolloClient({
     })
   ]),
   cache
-});
-
-cache.writeData({
-  data: {
-    isConnected: true
-  }
 });
 
 ReactDOM.render(
