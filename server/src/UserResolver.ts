@@ -110,4 +110,10 @@ export class UserResolver {
       .increment({ id: userId }, 'tokenVersion', 1);
     return true;
   }
+
+  @Mutation(() => Boolean)
+  async logout(@Ctx() { res }: MyContext) {
+    sendRefreshToken(res, '');
+    return true;
+  }
 }
