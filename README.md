@@ -32,6 +32,6 @@ This project is starting off using [Ben Awad](https://github.com/benawad)'s YouT
 - [x] Protecting routes/persisting session on refresh
 - [x] Handling expired tokens
 - [x] Fetching current user in headers, etc...
-- [ ] Loggin a user out
+- [x] Logging out a user
 
 Stoping Point: https://www.youtube.com/watch?v=25GS0MLT8JU&ab_channel=BenAwad
