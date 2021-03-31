@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLoginMutation, MeDocument } from '../generated/graphql';
+import { useLoginMutation, MeDocument, MeQuery } from '../generated/graphql';
 import { RouteComponentProps } from 'react-router-dom';
 import { setAccessToken } from '../accessToken';
 
