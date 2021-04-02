@@ -4,6 +4,7 @@
     "build": "cd server/ && yarn build "
   },
   "dependencies": {
-    "tsc": "^1.20150623.0"
+    "tsc": "^1.20150623.0",
+    "typescript": "^4.2.3"
   }
 }
