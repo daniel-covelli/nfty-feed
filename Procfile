@@ -1,1 +1,1 @@
-web: PORT=$PORT node ./server/index.tsx
+web: PORT=$PORT node ./server/index.ts
