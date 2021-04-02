@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "yarn --cwd 'web' start && yarn --cwd 'server' start",
-    "build": "PORT=$PORT cd web/ && yarn install && yarn build "
+    "start": "PORT=$PORT yarn --cwd 'web' start && yarn --cwd 'server' start",
+    "build": "cd web/ && yarn install && yarn build "
   }
 }
