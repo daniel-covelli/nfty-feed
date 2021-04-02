@@ -2,5 +2,8 @@
   "scripts": {
     "start": "node ./server/dist/index.js",
     "build": "cd server/ && yarn build "
+  },
+  "dependencies": {
+    "tsc": "^1.20150623.0"
   }
 }
