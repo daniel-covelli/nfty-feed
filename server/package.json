@@ -17,6 +17,7 @@
   "dependencies": {
     "apollo-server-express": "^2.21.2",
     "bcryptjs": "^2.4.3",
+    "class-validator": "^0.13.1",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
@@ -29,6 +30,7 @@
     "typeorm": "0.2.31"
   },
   "scripts": {
-    "start": "nodemon --exec ts-node src/index.ts"
+    "start": "nodemon --exec ts-node src/index.ts",
+    "build": "tsc --project ./"
   }
 }
