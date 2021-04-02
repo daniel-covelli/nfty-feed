@@ -1,1 +1,1 @@
-web: set PORT=$PORT 
+web: PORT=$PORT yarn --cwd  "server" start
