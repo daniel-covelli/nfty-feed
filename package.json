@@ -1,5 +1,6 @@
 {
   "scripts": {
-    "start": "node ./server/dist/index.js"
+    "start": "node ./server/dist/index.js",
+    "build": "cd server/ && yarn build "
   }
 }
