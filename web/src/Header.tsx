@@ -5,7 +5,7 @@ import { setAccessToken } from './accessToken';
 
 interface HeaderProps {}
 
-export const Header: React.FC<HeaderProps> = ({}) => {
+export const Header: React.FC<HeaderProps> = () => {
   const { data, loading } = useMeQuery();
   const [logout, { client }] = useLogoutMutation();
 

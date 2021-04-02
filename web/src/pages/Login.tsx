@@ -3,8 +3,6 @@ import { useLoginMutation, MeDocument, MeQuery } from '../generated/graphql';
 import { RouteComponentProps } from 'react-router-dom';
 import { setAccessToken } from '../accessToken';
 
-interface LoginProps {}
-
 export const Login: React.FC<RouteComponentProps> = ({ history }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
