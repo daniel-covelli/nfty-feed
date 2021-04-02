@@ -14,17 +14,16 @@ import { sendRefreshToken } from './sendRefreshToken';
 
 // server set up
 (async () => {
+  var corsOptions = {
+    origin: function (origin: any) {
+      console.log(`ORIGIN ${origin}`);
+      return origin;
+    },
+    credentials: true
+  };
+
   const app = express();
-  app.use(
-    cors({
-      origin: `${
-        process.env.PORT
-          ? `https://nfty-apollo-server.herokuapp.com`
-          : 'http://localhost:3000/'
-      }`,
-      credentials: true
-    })
-  );
+  app.use(cors(corsOptions));
   app.use(cookieParser());
 
   app.get('/', (_req, res) => res.send('Hello World'));
@@ -70,6 +69,9 @@ import { sendRefreshToken } from './sendRefreshToken';
 
   app.listen(process.env.PORT || 4000, () => {
     console.log('express server started');
+    console.log(
+      `PROCESS ENV PORT VISIBLE? ${process.env.PORT ? 'true' : 'false'}`
+    );
   });
 })();
 
