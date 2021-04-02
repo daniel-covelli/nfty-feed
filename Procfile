@@ -1,1 +1,1 @@
-web: PORT=$PORT yarn --cwd 'web' start
+web: PORT=$PORT node ./server/src/index.js
