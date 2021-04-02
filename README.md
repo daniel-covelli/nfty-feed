@@ -14,6 +14,7 @@ This project is starting off using [Ben Awad](https://github.com/benawad)'s YouT
 - React (frontend)
 - Apollo (to make requests in React)
 - Express (server)
+- Docker
 
 #### Backend
 
@@ -23,6 +24,7 @@ This project is starting off using [Ben Awad](https://github.com/benawad)'s YouT
 - [x] Make authenticated (protected) mutations and queries in GQL
 - [x] Refresh token if it expires
 - [x] Revoke tokens for a user if user logs out, deletes there account, or if their account gets hacked
+- [ ] Put yarn workspace in a docker image
 
 #### Frontend
 
