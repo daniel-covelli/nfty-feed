@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "node ./server/src/index.ts",
+    "start": "node ./server/dist/index.js",
     "build": "cd web/ && yarn install && yarn build "
   }
 }
