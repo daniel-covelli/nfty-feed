@@ -15,9 +15,9 @@ import { sendRefreshToken } from './sendRefreshToken';
 // server set up
 (async () => {
   var corsOptions = {
-    origin: function (origin: any) {
+    origin: function (origin: any, callback: any) {
       console.log(`ORIGIN ${origin}`);
-      return origin;
+      callback(null, true);
     },
     credentials: true
   };
@@ -68,10 +68,7 @@ import { sendRefreshToken } from './sendRefreshToken';
   apolloServer.applyMiddleware({ app, cors: false });
 
   app.listen(process.env.PORT || 4000, () => {
-    console.log('express server started');
-    console.log(
-      `PROCESS ENV PORT VISIBLE? ${process.env.PORT ? 'true' : 'false'}`
-    );
+    console.log(`🚀 Server ready at ${process.env.PORT}`);
   });
 })();
 

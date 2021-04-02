@@ -34,4 +34,4 @@ This project is starting off using [Ben Awad](https://github.com/benawad)'s YouT
 - [x] Fetching current user in headers, etc...
 - [x] Logging out a user
 
-Stoping Point: https://www.youtube.com/watch?v=25GS0MLT8JU&ab_channel=BenAwad
+The site is now running at: https://nfty-apollo-server.herokuapp.com/
