@@ -1,1 +1,1 @@
-web: PORT=$PORT node ./server/src/index.ts
+web: set PORT=$PORT 
