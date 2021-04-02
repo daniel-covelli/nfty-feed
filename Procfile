@@ -1,1 +1,1 @@
-web: PORT=$PORT node ./server/index.ts
+web: PORT=$PORT yarn --cwd 'web' start
