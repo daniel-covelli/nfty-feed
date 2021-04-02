@@ -1,3 +1,0 @@
- "scripts": {
-     "start": "yarn --cwd 'web' start",
-     "build": "cd web/ && yarn install && yarn build" },
