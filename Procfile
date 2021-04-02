@@ -1,1 +1,0 @@
-web: PORT=$PORT yarn --cwd  "server" start
