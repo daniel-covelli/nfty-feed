@@ -71,8 +71,8 @@ import { sendRefreshToken } from './sendRefreshToken';
 
   apolloServer.applyMiddleware({ app, cors: false });
 
-  app.listen(process.env.PORT || 4000, () => {
-    console.log(`🚀 Server ready at ${process.env.PORT}`);
+  app.listen(4000, () => {
+    console.log(`🚀 Server ready at 4000`);
   });
 })();
 
