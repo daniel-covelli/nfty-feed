@@ -17,7 +17,7 @@ import { sendRefreshToken } from './sendRefreshToken';
   const app = express();
   app.use(
     cors({
-      origin: `http://localhost:${process.env.PORT || 3000}`,
+      origin: `https://nfty-apollo-server.herokuapp.com`,
       credentials: true
     })
   );
