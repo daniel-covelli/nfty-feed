@@ -4,7 +4,7 @@ import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import { buildSchema } from 'type-graphql';
 import { UserResolver } from './UserResolver';
-import { createConnection } from 'typeorm';
+import { createConnection, getConnectionOptions } from 'typeorm';
 import cookieParser from 'cookie-parser';
 import { verify } from 'jsonwebtoken';
 import cors from 'cors';
@@ -62,7 +62,19 @@ import { sendRefreshToken } from './sendRefreshToken';
     return res.send({ ok: true, accessToken: createAccessToken(user) });
   });
 
-  await createConnection();
+  const createTypeOrmConn = async () => {
+    const connectionOptions = await getConnectionOptions(process.env.NODE_ENV);
+    return process.env.NODE_ENV === 'production'
+      ? createConnection({
+          ...connectionOptions,
+          url: process.env.URL,
+          entities: [User],
+          name: 'default'
+        } as any)
+      : createConnection({ ...connectionOptions, name: 'default' });
+  };
+
+  createTypeOrmConn();
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({ resolvers: [UserResolver] }),
@@ -71,8 +83,10 @@ import { sendRefreshToken } from './sendRefreshToken';
 
   apolloServer.applyMiddleware({ app, cors: false });
 
-  app.listen(4000, () => {
-    console.log(`🚀 Server ready at 4000`);
+  app.listen(process.env.PORT || 4000, () => {
+    console.log(
+      `🚀 Server ready at ${process.env.PORT ? process.env.PORT : 4000}`
+    );
   });
 })();
 

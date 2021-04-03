@@ -63,14 +63,20 @@ const sendRefreshToken_1 = require("./sendRefreshToken");
         sendRefreshToken_1.sendRefreshToken(res, auth_1.createRefreshToken(user));
         return res.send({ ok: true, accessToken: auth_1.createAccessToken(user) });
     }));
-    yield typeorm_1.createConnection();
+    const createTypeOrmConn = () => __awaiter(void 0, void 0, void 0, function* () {
+        const connectionOptions = yield typeorm_1.getConnectionOptions(process.env.NODE_ENV || 'development');
+        return process.env.NODE_ENV === 'production'
+            ? typeorm_1.createConnection(Object.assign(Object.assign({}, connectionOptions), { url: process.env.URL, entities: [User_1.User], name: 'default' }))
+            : typeorm_1.createConnection(Object.assign(Object.assign({}, connectionOptions), { name: 'default' }));
+    });
+    createTypeOrmConn();
     const apolloServer = new apollo_server_express_1.ApolloServer({
         schema: yield type_graphql_1.buildSchema({ resolvers: [UserResolver_1.UserResolver] }),
         context: ({ req, res }) => ({ req, res })
     });
     apolloServer.applyMiddleware({ app, cors: false });
-    app.listen(4000, () => {
-        console.log(`🚀 Server ready at 4000`);
+    app.listen(process.env.PORT || 4000, () => {
+        console.log(`🚀 Server ready at ${process.env.PORT ? process.env.PORT : 4000}`);
     });
 }))();
 //# sourceMappingURL=index.js.map
