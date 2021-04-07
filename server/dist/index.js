@@ -12,8 +12,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-require("dotenv/config");
 require("reflect-metadata");
+require("dotenv/config");
 const express_1 = __importDefault(require("express"));
 const apollo_server_express_1 = require("apollo-server-express");
 const type_graphql_1 = require("type-graphql");
@@ -64,7 +64,13 @@ const sendRefreshToken_1 = require("./sendRefreshToken");
         return res.send({ ok: true, accessToken: auth_1.createAccessToken(user) });
     }));
     const createTypeOrmConn = () => __awaiter(void 0, void 0, void 0, function* () {
-        const connectionOptions = yield typeorm_1.getConnectionOptions(process.env.NODE_ENV || 'development');
+        let connectionOptions = null;
+        if (process.env.NODE_ENV) {
+            connectionOptions = yield typeorm_1.getConnectionOptions(process.env.NODE_ENV);
+        }
+        else {
+            connectionOptions = yield typeorm_1.getConnectionOptions('development');
+        }
         return process.env.NODE_ENV === 'production'
             ? typeorm_1.createConnection(Object.assign(Object.assign({}, connectionOptions), { url: process.env.URL, entities: [User_1.User], name: 'default' }))
             : typeorm_1.createConnection(Object.assign(Object.assign({}, connectionOptions), { name: 'default' }));

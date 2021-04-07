@@ -1,16 +1,21 @@
-import 'dotenv/config';
 import 'reflect-metadata';
+import 'dotenv/config';
 import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import { buildSchema } from 'type-graphql';
 import { UserResolver } from './UserResolver';
-import { createConnection, getConnectionOptions } from 'typeorm';
+
 import cookieParser from 'cookie-parser';
 import { verify } from 'jsonwebtoken';
 import cors from 'cors';
 import { User } from './entity/User';
 import { createAccessToken, createRefreshToken } from './auth';
 import { sendRefreshToken } from './sendRefreshToken';
+import {
+  getConnectionOptions,
+  createConnection,
+  ConnectionOptions
+} from 'typeorm';
 
 // server set up
 (async () => {
@@ -63,14 +68,24 @@ import { sendRefreshToken } from './sendRefreshToken';
   });
 
   const createTypeOrmConn = async () => {
-    const connectionOptions = await getConnectionOptions(process.env.NODE_ENV);
+    console.log('CONNECTION HERE');
+
+    const connectionOptions: ConnectionOptions = await getConnectionOptions(
+      process.env.NODE_ENV
+    );
+
+    console.log('NODE_ENV', process.env.NODE_ENV);
+
+    console.log('URL', process.env.URL);
+
+    console.log('CONNECTION', connectionOptions);
+
     return process.env.NODE_ENV === 'production'
       ? createConnection({
           ...connectionOptions,
-          url: process.env.URL,
           entities: [User],
           name: 'default'
-        } as any)
+        })
       : createConnection({ ...connectionOptions, name: 'default' });
   };
 

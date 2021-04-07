@@ -1,15 +1,17 @@
 FROM node
 
 WORKDIR /nfty-feed
-
+RUN ls
+COPY ./package.json .
 COPY ./server/package.json ./server/ 
 
 RUN npm install -g npm@7.8.0
+RUN npm install -g --force yarn
 RUN yarn install --production
 
-COPY ./server/dist ./server/dist
-COPY ./server/.env.prod ./server/.env
-COPY ./server/ormconfig.json ./server
+COPY ./server/dist ./server/dist/
+COPY ./server/.env.prod ./server/.env/
+COPY ./ormconfig.json .
 
 WORKDIR ./server
 

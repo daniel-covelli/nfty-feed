@@ -1,10 +1,10 @@
 {
   "private": true,
   "scripts": {
-    "build:server": "lerna run build --scope={@nfty-feed/server}"
+    "build:server": "lerna run build"
   },
   "workspaces": {
-    "server": [
+    "packages": [
       "server/*"
     ]
   },
