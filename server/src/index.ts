@@ -27,10 +27,6 @@ import {
     credentials: true
   };
 
-  if (process.env.NODE_ENV === 'production') {
-    console.log('here');
-  }
-
   const app = express();
   app.use(cors(corsOptions));
   app.use(cookieParser());
