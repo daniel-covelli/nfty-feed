@@ -1,7 +1,7 @@
 *
-
 !./server/package.json 
 !./server/dist 
 !./server/.env.prod 
 !./server/.env
-!./server/ormconfig.json 
+!./ormconfig.json 
+!./package.json 
