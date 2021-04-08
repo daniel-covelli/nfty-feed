@@ -59,15 +59,13 @@ import { getConnectionOptions, createConnection } from 'typeorm';
 
     return res.send({ ok: true, accessToken: createAccessToken(user) });
   });
-
+  let connectionOptions: any;
   const createTypeOrmConn = async () => {
     console.log('CONNECTION HERE');
 
     console.log('NODE_ENV', process.env.NODE_ENV);
 
-    const connectionOptions: any = await getConnectionOptions(
-      process.env.NODE_ENV
-    );
+    connectionOptions = await getConnectionOptions(process.env.NODE_ENV);
 
     console.log('CONNECTION OPTIONS', connectionOptions);
 
@@ -92,7 +90,10 @@ import { getConnectionOptions, createConnection } from 'typeorm';
 
   app.listen(process.env.PORT || 4000, () => {
     console.log(
-      `🚀 Server ready at ${process.env.PORT ? process.env.PORT : 4000}`
+      `🚀 Server ready at ${process.env.PORT ? process.env.PORT : 4000} 
+      connection options ${JSON.stringify(connectionOptions, null, '\t')}
+      url ${process.env.DATABASE_URL}
+      `
     );
   });
 })();
