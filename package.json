@@ -3,11 +3,9 @@
   "scripts": {
     "build:server": "lerna run build"
   },
-  "workspaces": {
-    "packages": [
-      "server/*"
-    ]
-  },
+  "workspaces": [
+    "server/*"
+  ],
   "devDependencies": {
     "lerna": "^4.0.0"
   },
