@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "build:server": "lerna run build"
+    "build:server": "lerna run build --scope server"
   },
   "workspaces": [
     "server/*"

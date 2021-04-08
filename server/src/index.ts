@@ -90,7 +90,7 @@ import { getConnectionOptions, createConnection } from 'typeorm';
 
   app.listen(process.env.PORT || 4000, () => {
     console.log(
-      `🚀 Server ready at ${process.env.PORT ? process.env.PORT : 4000} 
+      `🚀 Server balls ready at ${process.env.PORT ? process.env.PORT : 4000} 
       connection options ${JSON.stringify(connectionOptions, null, '\t')}
       url ${process.env.DATABASE_URL}
       `
