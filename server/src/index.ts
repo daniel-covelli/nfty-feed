@@ -81,7 +81,7 @@ import { getConnectionOptions, createConnection } from 'typeorm';
       : createConnection({ ...connectionOptions, name: 'default' });
   };
 
-  createTypeOrmConn();
+  await createTypeOrmConn();
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({ resolvers: [UserResolver] }),
