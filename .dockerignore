@@ -3,5 +3,5 @@
 !./server/dist 
 !./server/.env.prod 
 !./server/.env
-!./ormconfig.json 
+!./server/ormconfig.json 
 !./package.json 

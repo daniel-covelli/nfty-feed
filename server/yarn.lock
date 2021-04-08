@@ -2014,7 +2014,7 @@ path-to-regexp@0.1.7:
 
 pg-connection-string@^2.4.0:
   version "2.4.0"
-  resolved "https://registry.npmjs.org/pg-connection-string/-/pg-connection-string-2.4.0.tgz"
+  resolved "https://registry.yarnpkg.com/pg-connection-string/-/pg-connection-string-2.4.0.tgz#c979922eb47832999a204da5dbe1ebf2341b6a10"
   integrity sha512-3iBXuv7XKvxeMrIgym7njT+HlZkwZqqGX4Bu9cci8xHZNT+Um1gWKqCsAzcC0d95rcKMU5WBg6YRUcHyV0HZKQ==
 
 pg-int8@1.0.1:

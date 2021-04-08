@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import 'dotenv/config';
 import express from 'express';
+import * as PostgressConnectionStringParser from 'pg-connection-string';
 import { ApolloServer } from 'apollo-server-express';
 import { buildSchema } from 'type-graphql';
 import { UserResolver } from './UserResolver';
@@ -12,6 +13,7 @@ import { User } from './entity/User';
 import { createAccessToken, createRefreshToken } from './auth';
 import { sendRefreshToken } from './sendRefreshToken';
 import { getConnectionOptions, createConnection } from 'typeorm';
+import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 // server set up
 (async () => {
@@ -64,20 +66,52 @@ import { getConnectionOptions, createConnection } from 'typeorm';
 
     console.log('NODE_ENV', process.env.NODE_ENV);
 
-    const connectionOptions: any = await getConnectionOptions(
-      process.env.NODE_ENV
-    );
+    if (process.env.NODE_ENV === 'production' && process.env.DATABASE_URL) {
+      const databaseUrl: any = process.env.DATABASE_URL;
+      const connectionOptions: any = PostgressConnectionStringParser.parse(
+        databaseUrl
+      );
+      const typeOrmOptions: PostgresConnectionOptions = {
+        type: 'postgres',
+        name: connectionOptions.name,
+        host: connectionOptions.host,
+        port: connectionOptions.port,
+        username: connectionOptions.username,
+        password: connectionOptions.password,
+        database: connectionOptions.database,
+        synchronize: true,
+        logging: false,
+        entities: ['src/entity/**/*.js'],
+        migrations: ['src/migration/**/*.js'],
+        subscribers: ['src/subscriber/**/*.js'],
+        cli: {
+          entitiesDir: 'src/entity',
+          migrationsDir: 'src/migration',
+          subscribersDir: 'src/subscriber'
+        }
+      };
 
-    console.log('CONNECTION OPTIONS', connectionOptions);
-
-    return process.env.NODE_ENV === 'production'
-      ? createConnection({
-          ...connectionOptions,
-          entities: [User],
-          name: 'default'
-        })
-      : createConnection({ ...connectionOptions, name: 'default' });
+      return createConnection(typeOrmOptions);
+    } else {
+      const connectionOptions = await getConnectionOptions(
+        process.env.NODE_ENV
+      );
+      return createConnection({ ...connectionOptions, name: 'default' });
+    }
   };
+
+  //   console.log('CONNECTION OPTIONS', connectionOptions);
+
+  //   return process.env.NODE_ENV === 'production'
+  //     ? createConnection({
+  //         ...connectionOptions,
+  //         name: productionOptions.name,
+  //         url: process.env.URL,
+  //         entities: [User],
+  //         name: 'default'
+  //       })
+  //     : createConnection({ ...connectionOptions, name: 'default' });
+  // };
 
   createTypeOrmConn();
 

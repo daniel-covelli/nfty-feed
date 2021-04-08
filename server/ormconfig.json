@@ -3,6 +3,7 @@
     "name": "production",
     "type": "postgres",
     "host": "localhost",
+    "address": "5432",
     "port": 5432,
     "username": "postgres",
     "password": "Lobcity1",
