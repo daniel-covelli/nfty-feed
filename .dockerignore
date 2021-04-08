@@ -5,3 +5,4 @@
 !./server/.env
 !./server/ormconfig.json 
 !./package.json 
+!./server/yarn.lock
