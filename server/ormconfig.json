@@ -4,13 +4,13 @@
     "type": "postgres",
     "synchronize": true,
     "logging": true,
-    "entities": ["src/entity/**/*.js"],
-    "migrations": ["src/migration/**/*.js"],
-    "subscribers": ["src/subscriber/**/*.js"],
+    "entities": ["dist/entity/**/*.js"],
+    "migrations": ["dist/migration/**/*.js"],
+    "subscribers": ["dist/subscriber/**/*.js"],
     "cli": {
-      "entitiesDir": "src/entity",
-      "migrationsDir": "src/migration",
-      "subscribersDir": "src/subscriber"
+      "entitiesDir": "dist/entity",
+      "migrationsDir": "dist/migration",
+      "subscribersDir": "dist/subscriber"
     }
   },
   {

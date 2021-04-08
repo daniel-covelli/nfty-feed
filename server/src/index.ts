@@ -65,43 +65,10 @@ import { getConnectionOptions, createConnection } from 'typeorm';
 
     console.log('NODE_ENV', process.env.NODE_ENV);
 
-    //   if (process.env.NODE_ENV === 'production' && process.env.DATABASE_URL) {
-    //     const databaseUrl: any = process.env.DATABASE_URL;
-    //     const connectionOptions: any = PostgressConnectionStringParser.parse(
-    //       databaseUrl
-    //     );
-    //     const typeOrmOptions: PostgresConnectionOptions = {
-    //       type: 'postgres',
-    //       name: connectionOptions.name,
-    //       host: connectionOptions.host,
-    //       port: connectionOptions.port,
-    //       username: connectionOptions.username,
-    //       password: connectionOptions.password,
-    //       database: connectionOptions.database,
-    //       synchronize: true,
-    //       logging: false,
-    //       entities: ['src/entity/**/*.js'],
-    //       migrations: ['src/migration/**/*.js'],
-    //       subscribers: ['src/subscriber/**/*.js'],
-    //       cli: {
-    //         entitiesDir: 'src/entity',
-    //         migrationsDir: 'src/migration',
-    //         subscribersDir: 'src/subscriber'
-    //       }
-    //     };
-
-    //     return createConnection(typeOrmOptions);
-    //   } else {
-    //     const connectionOptions = await getConnectionOptions(
-    //       process.env.NODE_ENV
-    //     );
-    //     return createConnection({ ...connectionOptions, name: 'default' });
-    //   }
-    // };
-
     const connectionOptions: any = await getConnectionOptions(
       process.env.NODE_ENV
     );
+
     console.log('CONNECTION OPTIONS', connectionOptions);
 
     return process.env.NODE_ENV === 'production'
