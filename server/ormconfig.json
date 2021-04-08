@@ -9,15 +9,9 @@
     "database": "nfty-feed",
     "synchronize": true,
     "logging": false,
-    "entities": [
-      "src/entity/**/*.js"
-    ],
-    "migrations": [
-      "src/migration/**/*.js"
-    ],
-    "subscribers": [
-      "src/subscriber/**/*.js"
-    ],
+    "entities": ["src/entity/**/*.js"],
+    "migrations": ["src/migration/**/*.js"],
+    "subscribers": ["src/subscriber/**/*.js"],
     "cli": {
       "entitiesDir": "src/entity",
       "migrationsDir": "src/migration",
@@ -34,15 +28,9 @@
     "database": "nfty-feed",
     "synchronize": true,
     "logging": false,
-    "entities": [
-      "src/entity/**/*.ts"
-    ],
-    "migrations": [
-      "src/migration/**/*.ts"
-    ],
-    "subscribers": [
-      "src/subscriber/**/*.ts"
-    ],
+    "entities": ["src/entity/**/*.ts"],
+    "migrations": ["src/migration/**/*.ts"],
+    "subscribers": ["src/subscriber/**/*.ts"],
     "cli": {
       "entitiesDir": "src/entity",
       "migrationsDir": "src/migration",

@@ -11,11 +11,7 @@ import cors from 'cors';
 import { User } from './entity/User';
 import { createAccessToken, createRefreshToken } from './auth';
 import { sendRefreshToken } from './sendRefreshToken';
-import {
-  getConnectionOptions,
-  createConnection,
-  ConnectionOptions
-} from 'typeorm';
+import { getConnectionOptions, createConnection } from 'typeorm';
 
 // server set up
 (async () => {
@@ -66,15 +62,13 @@ import {
   const createTypeOrmConn = async () => {
     console.log('CONNECTION HERE');
 
-    const connectionOptions: ConnectionOptions = await getConnectionOptions(
+    console.log('NODE_ENV', process.env.NODE_ENV);
+
+    const connectionOptions: any = await getConnectionOptions(
       process.env.NODE_ENV
     );
 
-    console.log('NODE_ENV', process.env.NODE_ENV);
-
-    console.log('URL', process.env.URL);
-
-    console.log('CONNECTION', connectionOptions);
+    console.log('CONNECTION OPTIONS', connectionOptions);
 
     return process.env.NODE_ENV === 'production'
       ? createConnection({
