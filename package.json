@@ -3,11 +3,16 @@
   "scripts": {
     "build:server": "lerna run build --scope server"
   },
-  "workspaces": [
-    "server/*"
-  ],
+  "workspaces": {
+    "packages": [
+      "server/*"
+    ],
+    "nohoist": [
+      "**/rimraf",
+      "**/rimraf/**"
+    ]
+  },
   "devDependencies": {
     "lerna": "^4.0.0"
-  },
-  "name": "nfty-feed"
+  }
 }
