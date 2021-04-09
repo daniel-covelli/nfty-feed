@@ -83,7 +83,8 @@ import { getConnectionOptions, createConnection } from 'typeorm';
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({ resolvers: [UserResolver] }),
-    context: ({ req, res }) => ({ req, res })
+    context: ({ req, res }) => ({ req, res }),
+    playground: true
   });
 
   apolloServer.applyMiddleware({ app, cors: false });
