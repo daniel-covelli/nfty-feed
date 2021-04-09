@@ -3,7 +3,13 @@
     "name": "production",
     "type": "postgres",
     "synchronize": true,
-    "logging": true
+    "logging": true,
+    "ssl": true,
+    "extra": {
+      "ssl": {
+        "rejectUnauthorized": false
+      }
+    }
   },
   {
     "name": "development",
