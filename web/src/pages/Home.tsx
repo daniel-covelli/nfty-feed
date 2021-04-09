@@ -1,5 +1,6 @@
 import React from 'react';
 import { useUsersQuery } from '../generated/graphql';
+import { Box } from '@chakra-ui/react';
 
 interface HomeProps {}
 
@@ -11,7 +12,7 @@ export const Home: React.FC<HomeProps> = () => {
   }
   return (
     <div>
-      home page
+      <Box textStyle='h1'>home page</Box>
       <div>users:</div>
       <ul>
         {data.users.map((x) => (

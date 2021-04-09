@@ -9,6 +9,7 @@ import { TokenRefreshLink } from 'apollo-link-token-refresh';
 import jwtDecode from 'jwt-decode';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
+// import {} from '@chakra-ui/theme';
 
 const cache = new InMemoryCache({});
 
@@ -102,29 +103,23 @@ const client = new ApolloClient({
   cache
 });
 
-const colors = {
-  brand: {
-    900: '#1a365d',
-    800: '#153e75',
-    700: '#2a69ac'
-  },
-  textStyles: {
-    body: {
-      fontFamily: 'Times New Roman, sans-serif'
-    },
-    heading: {
-      fontFamily: 'Times New Roman, sans-serif'
-    },
-    mono: {
-      fontFamily: 'Times New Roman, sans-serif'
-    }
-  }
-};
-const theme = extendTheme({ colors });
+// const colors = {
+//   brand: {
+//     900: '#1a365d',
+//     800: '#153e75',
+//     700: '#2a69ac'
+//   },
+//   fonts: {
+//     body: 'system-ui, sans-serif',
+//     heading: 'Georgia, serif',
+//     mono: 'Menlo, monospace'
+//   }
+// };
+// const theme = extendTheme({ colors });
 
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <ChakraProvider theme={theme}>
+    <ChakraProvider>
       <App />
     </ChakraProvider>
   </ApolloProvider>,
