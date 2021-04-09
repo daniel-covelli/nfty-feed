@@ -8,10 +8,17 @@ export const App: React.FC<AppProps> = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:4000/refresh_token', {
-      method: 'POST',
-      credentials: 'include'
-    }).then(async (x) => {
+    fetch(
+      `${
+        process.env.NODE_ENV === 'production'
+          ? `https://blooming-scrubland-30700.herokuapp.com`
+          : `http://localhost:4000`
+      }/refresh_token`,
+      {
+        method: 'POST',
+        credentials: 'include'
+      }
+    ).then(async (x) => {
       const { accessToken } = await x.json();
       setAccessToken(accessToken);
       setLoading(false);

@@ -17,10 +17,7 @@ import { getConnectionOptions, createConnection } from 'typeorm';
 // server set up
 (async () => {
   var corsOptions = {
-    origin: function (origin: any, callback: any) {
-      console.log(`ORIGIN ${origin}`);
-      callback(null, true);
-    },
+    origin: process.env.FRONTEND_HOST,
     credentials: true
   };
 
@@ -91,10 +88,7 @@ import { getConnectionOptions, createConnection } from 'typeorm';
 
   app.listen(process.env.PORT || 4000, () => {
     console.log(
-      `🚀 Server balls ready at ${process.env.PORT ? process.env.PORT : 4000} 
-      connection options ${JSON.stringify(connectionOptions, null, '\t')}
-      url ${process.env.DATABASE_URL}
-      `
+      `🚀 Server balls ready at ${process.env.PORT ? process.env.PORT : 4000} `
     );
   });
 })();

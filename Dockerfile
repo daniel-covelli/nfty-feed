@@ -3,12 +3,11 @@ FROM node
 WORKDIR /nfty-feed
 
 COPY ./package.json .
+COPY ./server/yarn.lock ./server/
+COPY ./server/package.json ./server/
 
 RUN npm install yarn
 RUN yarn install --production
-
-COPY ./server/package.json ./server/
-COPY ./server/yarn.lock ./server 
 
 COPY ./server/dist ./server/dist
 COPY ./server/.env.prod ./server/.env

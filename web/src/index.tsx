@@ -1,15 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { ApolloProvider } from '@apollo/react-hooks';
+// import { ApolloProvider } from '@apollo/react-hooks';
 import { getAccessToken, setAccessToken } from './accessToken';
 import { App } from './App';
-import { ApolloClient } from 'apollo-client';
-import { InMemoryCache } from 'apollo-cache-inmemory';
 import { HttpLink } from 'apollo-link-http';
 import { onError } from 'apollo-link-error';
 import { ApolloLink, Observable } from 'apollo-link';
 import { TokenRefreshLink } from 'apollo-link-token-refresh';
 import jwtDecode from 'jwt-decode';
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
 const cache = new InMemoryCache({});
 
@@ -66,10 +65,17 @@ const client = new ApolloClient({
         }
       },
       fetchAccessToken: () => {
-        return fetch('http://localhost:4000/refresh_token', {
-          method: 'POST',
-          credentials: 'include'
-        });
+        return fetch(
+          `${
+            process.env.NODE_ENV === 'production'
+              ? 'https://blooming-scrubland-30700.herokuapp.com/graphql'
+              : 'http://localhost:4000/graphql'
+          }/refresh_token`,
+          {
+            method: 'POST',
+            credentials: 'include'
+          }
+        );
       },
       handleFetch: (accessToken) => {
         setAccessToken(accessToken);
@@ -85,13 +91,17 @@ const client = new ApolloClient({
     }),
     requestLink,
     new HttpLink({
-      uri: 'http://localhost:4000/graphql',
+      uri: `${
+        process.env.NODE_ENV === 'production'
+          ? 'https://blooming-scrubland-30700.herokuapp.com/graphql'
+          : 'http://localhost:4000/graphql'
+      }`,
       credentials: 'include'
     })
   ]),
   cache
 });
-
+console.log('NODE_ENV', process.env.NODE_ENV);
 ReactDOM.render(
   <ApolloProvider client={client}>
     <App />

@@ -1,7 +1,8 @@
 {
   "private": true,
   "scripts": {
-    "build:server": "yarn --cwd ./server/ build "
+    "build:server": "yarn --cwd ./server build ",
+    "build:web": "yarn --cwd ./web build "
   },
   "workspaces": {
     "packages": [
