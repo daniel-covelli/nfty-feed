@@ -5,11 +5,12 @@ import { Register } from './pages/Register';
 import { Login } from './pages/Login';
 import { Bye } from './pages/Bye';
 import { Header } from './Header';
+import { Container } from 'semantic-ui-react';
 
 const Routes: React.FC = () => {
   return (
     <BrowserRouter>
-      <div>
+      <Container>
         <Header />
         <Switch>
           <Route exact path='/' component={Home} />
@@ -17,7 +18,7 @@ const Routes: React.FC = () => {
           <Route exact path='/bye' component={Bye} />
           <Route exact path='/login' component={Login} />
         </Switch>
-      </div>
+      </Container>
     </BrowserRouter>
   );
 };

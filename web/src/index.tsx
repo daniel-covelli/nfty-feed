@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-// import { ApolloProvider } from '@apollo/react-hooks';
 import { getAccessToken, setAccessToken } from './accessToken';
 import { App } from './App';
 import { HttpLink } from 'apollo-link-http';
@@ -9,6 +8,7 @@ import { ApolloLink, Observable } from 'apollo-link';
 import { TokenRefreshLink } from 'apollo-link-token-refresh';
 import jwtDecode from 'jwt-decode';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import 'semantic-ui-css/semantic.min.css';
 
 const cache = new InMemoryCache({});
 
