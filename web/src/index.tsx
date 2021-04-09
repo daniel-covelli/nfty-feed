@@ -8,7 +8,7 @@ import { ApolloLink, Observable } from 'apollo-link';
 import { TokenRefreshLink } from 'apollo-link-token-refresh';
 import jwtDecode from 'jwt-decode';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
-import 'semantic-ui-css/semantic.min.css';
+import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 
 const cache = new InMemoryCache({});
 
@@ -102,9 +102,31 @@ const client = new ApolloClient({
   cache
 });
 
+const colors = {
+  brand: {
+    900: '#1a365d',
+    800: '#153e75',
+    700: '#2a69ac'
+  },
+  textStyles: {
+    body: {
+      fontFamily: 'Times New Roman, sans-serif'
+    },
+    heading: {
+      fontFamily: 'Times New Roman, sans-serif'
+    },
+    mono: {
+      fontFamily: 'Times New Roman, sans-serif'
+    }
+  }
+};
+const theme = extendTheme({ colors });
+
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <App />
+    <ChakraProvider theme={theme}>
+      <App />
+    </ChakraProvider>
   </ApolloProvider>,
   document.getElementById('root')
 );
