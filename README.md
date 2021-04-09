@@ -36,4 +36,4 @@ This project is starting off using [Ben Awad](https://github.com/benawad)'s YouT
 - [x] Fetching current user in headers, etc...
 - [x] Logging out a user
 
-Website: https://confident-brown-375ccb.netlify.app/
+Website: https://nftyfeed.com/

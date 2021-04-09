@@ -101,7 +101,7 @@ const client = new ApolloClient({
   ]),
   cache
 });
-console.log('NODE_ENV', process.env.NODE_ENV);
+
 ReactDOM.render(
   <ApolloProvider client={client}>
     <App />
