@@ -35,5 +35,6 @@ This project is starting off using [Ben Awad](https://github.com/benawad)'s YouT
 - [x] Handling expired tokens
 - [x] Fetching current user in headers, etc...
 - [x] Logging out a user
+- [ ] Add nav bar
 
 Website: https://nftyfeed.com/
