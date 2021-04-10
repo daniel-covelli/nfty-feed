@@ -8,8 +8,7 @@ import { ApolloLink, Observable } from 'apollo-link';
 import { TokenRefreshLink } from 'apollo-link-token-refresh';
 import jwtDecode from 'jwt-decode';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
-import { ChakraProvider, extendTheme } from '@chakra-ui/react';
-// import {} from '@chakra-ui/theme';
+import { ChakraProvider } from '@chakra-ui/react';
 
 const cache = new InMemoryCache({});
 

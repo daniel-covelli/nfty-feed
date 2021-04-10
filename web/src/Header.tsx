@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useMeQuery, useLogoutMutation } from './generated/graphql';
 import { setAccessToken } from './accessToken';
+import { Text } from '@chakra-ui/react';
 
 interface HeaderProps {}
 
@@ -12,11 +13,11 @@ export const Header: React.FC<HeaderProps> = () => {
   let body: any = null;
 
   if (loading) {
-    body = <div>loading...</div>;
+    body = 'loading...';
   } else if (data && data.me) {
-    body = <div>You are loggin as: {data.me.email}</div>;
+    body = `You are loggin as: ${data.me.email}`;
   } else {
-    body = <div>not logged in</div>;
+    body = 'not logged in';
   }
   return (
     <header>
@@ -44,7 +45,9 @@ export const Header: React.FC<HeaderProps> = () => {
           </button>
         ) : null}
       </div>
-      {body}
+      <Text color='gray.500' isTruncated>
+        {body}
+      </Text>
     </header>
   );
 };
