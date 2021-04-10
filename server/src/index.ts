@@ -17,8 +17,8 @@ import { getConnectionOptions, createConnection } from 'typeorm';
 // server set up
 (async () => {
   var corsOptions = {
-    origin: process.env.FRONTEND_HOST,
-    credentials: true
+    credentials: true,
+    origin: process.env.FRONTEND_HOST
   };
 
   const app = express();
