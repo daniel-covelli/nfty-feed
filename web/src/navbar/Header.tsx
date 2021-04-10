@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link, Button } from '@chakra-ui/react';
 import { Link as ReactLink } from 'react-router-dom';
-import { useMeQuery, useLogoutMutation } from './generated/graphql';
-import { setAccessToken } from './accessToken';
+import { useMeQuery, useLogoutMutation } from '../generated/graphql';
+import { setAccessToken } from '../accessToken';
 import { Text } from '@chakra-ui/react';
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 

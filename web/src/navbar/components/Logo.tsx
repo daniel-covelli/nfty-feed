@@ -1,0 +1,17 @@
+import React from 'react';
+import { Box, Text } from '@chakra-ui/react';
+
+interface LogoProps {
+  w: string;
+  color: string[];
+}
+
+export const Logo: React.FC<LogoProps> = (props) => {
+  return (
+    <Box {...props}>
+      <Text fontSize='lg' fontWeight='bold'>
+        NftyFeed
+      </Text>
+    </Box>
+  );
+};
