@@ -1,8 +1,10 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Button } from '@chakra-ui/react';
+import { Link as ReactLink } from 'react-router-dom';
 import { useMeQuery, useLogoutMutation } from './generated/graphql';
 import { setAccessToken } from './accessToken';
 import { Text } from '@chakra-ui/react';
+import { ArrowForwardIcon } from '@chakra-ui/icons';
 
 interface HeaderProps {}
 
@@ -22,27 +24,39 @@ export const Header: React.FC<HeaderProps> = () => {
   return (
     <header>
       <div>
-        <Link to='/'>home</Link>
+        <Link as={ReactLink} color='teal.500' to='/'>
+          home
+        </Link>
       </div>
       <div>
-        <Link to='/register'>register</Link>
+        <Link as={ReactLink} color='teal.500' to='/register'>
+          register
+        </Link>
       </div>
       <div>
-        <Link to='/login'>login</Link>
+        <Link as={ReactLink} color='teal.500' to='/login'>
+          login
+        </Link>
       </div>
       <div>
-        <Link to='/bye'>bye</Link>
+        <Link as={ReactLink} color='teal.500' to='/bye'>
+          bye
+        </Link>
       </div>
       <div>
         {!loading && data && data.me ? (
-          <button
+          <Button
+            rightIcon={<ArrowForwardIcon />}
+            size='sm'
+            colorScheme='red'
+            variant='outline'
             onClick={async () => {
               await logout();
               setAccessToken('');
               await client!.resetStore();
             }}>
             logout
-          </button>
+          </Button>
         ) : null}
       </div>
       <Text color='gray.500' isTruncated>

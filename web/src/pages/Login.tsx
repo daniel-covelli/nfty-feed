@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useLoginMutation, MeDocument, MeQuery } from '../generated/graphql';
 import { RouteComponentProps } from 'react-router-dom';
 import { setAccessToken } from '../accessToken';
+import { Input, Button } from '@chakra-ui/react';
 
 export const Login: React.FC<RouteComponentProps> = ({ history }) => {
   const [email, setEmail] = useState('');
@@ -12,8 +13,6 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
     <form
       onSubmit={async (e) => {
         e.preventDefault();
-        console.log('form submitted');
-
         const response = await login({
           variables: { email, password },
           update: (store, { data }) => {
@@ -31,14 +30,13 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
         });
 
         if (response && response.data) {
-          console.log('LOGIN ACCESS TOKEN', response.data.login.accessToken);
           setAccessToken(response.data.login.accessToken);
         }
 
         history.push('/');
       }}>
       <div>
-        <input
+        <Input
           value={email}
           placeholder='email'
           onChange={(e) => {
@@ -47,7 +45,7 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
         />
       </div>
       <div>
-        <input
+        <Input
           type='password'
           value={password}
           placeholder='password'
@@ -56,7 +54,9 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
           }}
         />
       </div>
-      <button type='submit'>login</button>
+      <Button type='submit' colorScheme='teal' variant='solid' size='sm'>
+        login
+      </Button>
     </form>
   );
 };

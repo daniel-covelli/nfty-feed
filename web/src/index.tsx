@@ -99,6 +99,9 @@ const client = new ApolloClient({
       credentials: 'include'
     })
   ]),
+  defaultOptions: {
+    mutate: { errorPolicy: 'ignore' }
+  },
   cache
 });
 
