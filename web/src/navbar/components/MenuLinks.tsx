@@ -38,13 +38,28 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
         justify={['center', 'space-between', 'flex-end', 'flex-end']}
         direction={['column', 'row', 'row', 'row']}
         pt={[4, 4, 0, 0]}>
-        <Link as={ReactLink} to='/register'>
+        <Link
+          as={ReactLink}
+          to='/register'
+          _focus={{
+            boxShadow: 'none'
+          }}>
           <Text display='block'>Register</Text>
         </Link>
-        <Link as={ReactLink} to='/login'>
+        <Link
+          as={ReactLink}
+          to='/login'
+          _focus={{
+            boxShadow: 'none'
+          }}>
           <Text display='block'>Login</Text>
         </Link>
-        <Link as={ReactLink} to='/bye'>
+        <Link
+          as={ReactLink}
+          to='/bye'
+          _focus={{
+            boxShadow: 'none'
+          }}>
           <Text display='block'>Bye</Text>
         </Link>
         {!loading && data && data.me ? (

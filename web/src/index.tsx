@@ -9,6 +9,7 @@ import { TokenRefreshLink } from 'apollo-link-token-refresh';
 import jwtDecode from 'jwt-decode';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import { ChakraProvider } from '@chakra-ui/react';
+import theme from './theme/theme';
 
 const cache = new InMemoryCache({});
 
@@ -121,7 +122,7 @@ const client = new ApolloClient({
 
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <ChakraProvider>
+    <ChakraProvider theme={theme}>
       <App />
     </ChakraProvider>
   </ApolloProvider>,
