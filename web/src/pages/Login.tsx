@@ -2,17 +2,26 @@ import React, { useState } from 'react';
 import { useLoginMutation, MeDocument, MeQuery } from '../generated/graphql';
 import { RouteComponentProps } from 'react-router-dom';
 import { setAccessToken } from '../accessToken';
-import { Input, Button, FormControl } from '@chakra-ui/react';
+import {
+  Input,
+  Button,
+  FormControl,
+  useToast,
+  Center,
+  Box
+} from '@chakra-ui/react';
+import { Formik, Form, Field } from 'formik';
 
 export const Login: React.FC<RouteComponentProps> = ({ history }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const toast = useToast();
   const [login] = useLoginMutation();
 
   return (
-    <form
-      onSubmit={async (e) => {
-        e.preventDefault();
+    <Formik
+      initialValues={{ email: '', password: '' }}
+      onSubmit={async (values) => {
+        const email = values.email;
+        const password = values.password;
         const response = await login({
           variables: { email, password },
           update: (store, { data }) => {
@@ -28,33 +37,59 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
             });
           }
         });
-
+        if (!response.data) {
+          toast({
+            title: `Invalid Password! Please try again...`,
+            status: 'error',
+            position: 'top',
+            variant: 'subtle',
+            isClosable: true
+          });
+        }
+        console.log('RESPONSE', response);
         if (response && response.data) {
           setAccessToken(response.data.login.accessToken);
+          history.push('/');
+          toast({
+            title: `Welcome 👋‏‏‎ ‎‏‏‎‎‎‎‏‏‎ ‎ your logged in!!`,
+            status: 'success',
+            position: 'top',
+            variant: 'subtle',
+            isClosable: true
+          });
         }
-
-        history.push('/');
       }}>
-      <Input
-        value={email}
-        placeholder='email'
-        onChange={(e) => {
-          setEmail(e.target.value);
-        }}
-      />
+      <Center>
+        <Form>
+          <Box pb='10px'>
+            <Field id='email' name='email'>
+              {({ field, form }) => (
+                <FormControl>
+                  <Input {...field} id='email' placeholder='email' />
+                </FormControl>
+              )}
+            </Field>
+          </Box>
+          <Box pb='10px'>
+            <Field id='password' name='password'>
+              {({ field, form }) => (
+                <FormControl>
+                  <Input
+                    {...field}
+                    id='password'
+                    type='password'
+                    placeholder='password'
+                  />
+                </FormControl>
+              )}
+            </Field>
+          </Box>
 
-      <Input
-        type='password'
-        value={password}
-        placeholder='password'
-        onChange={(e) => {
-          setPassword(e.target.value);
-        }}
-      />
-
-      <Button type='submit' colorScheme='teal' variant='solid' size='sm'>
-        login
-      </Button>
-    </form>
+          <Button type='submit' colorScheme='teal' variant='solid' size='sm'>
+            login
+          </Button>
+        </Form>
+      </Center>
+    </Formik>
   );
 };

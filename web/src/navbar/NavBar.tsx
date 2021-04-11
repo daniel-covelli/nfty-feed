@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Flex, Container, Box } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import { MenuLinks } from './components/MenuLinks';
 import { MenuToggle } from './components/MenuToggle';
 import { Logo } from './components/Logo';
