@@ -6,7 +6,7 @@ import { Logo } from './components/Logo';
 
 interface NavBarProps {}
 
-export const NavBar: React.FC<NavBarProps> = (props) => {
+export const NavBar: React.FC<NavBarProps> = () => {
   const [isOpen, setIsOpen] = useState(false);
   const ref = React.useRef();
 
@@ -16,7 +16,6 @@ export const NavBar: React.FC<NavBarProps> = (props) => {
     ref: ref,
     handler: () => setIsOpen(false)
   });
-
   return (
     <Flex
       ref={ref}
