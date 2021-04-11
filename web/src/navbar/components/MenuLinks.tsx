@@ -54,7 +54,6 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
         </Link>
         {!loading && data && data.me ? (
           <Button
-            rightIcon={<ArrowForwardIcon />}
             size='sm'
             colorScheme='red'
             variant='outline'
