@@ -1,6 +1,5 @@
 import React from 'react';
 import { Stack, Box, Button, Text, Link } from '@chakra-ui/react';
-import { MenuItem } from './MenuItem';
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { setAccessToken } from '../../accessToken';
 import { Link as ReactLink } from 'react-router-dom';
@@ -39,9 +38,6 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
         justify={['center', 'space-between', 'flex-end', 'flex-end']}
         direction={['column', 'row', 'row', 'row']}
         pt={[4, 4, 0, 0]}>
-        <Link as={ReactLink} to='/'>
-          <Text display='block'>Home</Text>
-        </Link>
         <Link as={ReactLink} to='/register'>
           <Text display='block'>Register</Text>
         </Link>
