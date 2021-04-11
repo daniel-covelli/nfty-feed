@@ -77,7 +77,8 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
               <Button
                 display='block'
                 size='sm'
-                variant='outline'
+                colorScheme='pink'
+                variant='ghost'
                 _focus={{
                   boxShadow: 'none'
                 }}>
@@ -93,7 +94,6 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
               }}>
               <Button
                 size='sm'
-                color='white'
                 colorScheme='pink'
                 display='block'
                 variant='solid'
