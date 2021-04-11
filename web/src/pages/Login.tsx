@@ -51,7 +51,7 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
           setAccessToken(response.data.login.accessToken);
           history.push('/');
           toast({
-            title: `Welcome 👋‏‏‎ ‎‏‏‎‎‎‎‏‏‎ ‎ your logged in!!`,
+            title: `Welcome 👋‏‏‎‎‏‏‎‎‎‎‏‏‎ ‎ your logged in!!`,
             status: 'success',
             position: 'top',
             variant: 'subtle',
@@ -63,7 +63,7 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
         <Form>
           <Box pb='10px'>
             <Field id='email' name='email'>
-              {({ field, form }) => (
+              {({ field }) => (
                 <FormControl>
                   <Input {...field} id='email' placeholder='email' />
                 </FormControl>
@@ -72,7 +72,7 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
           </Box>
           <Box pb='10px'>
             <Field id='password' name='password'>
-              {({ field, form }) => (
+              {({ field }) => (
                 <FormControl>
                   <Input
                     {...field}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Flex } from '@chakra-ui/react';
+import { Flex, useOutsideClick } from '@chakra-ui/react';
 import { MenuLinks } from './components/MenuLinks';
 import { MenuToggle } from './components/MenuToggle';
 import { Logo } from './components/Logo';
@@ -8,11 +8,18 @@ interface NavBarProps {}
 
 export const NavBar: React.FC<NavBarProps> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
+  const ref = React.useRef();
 
   const toggle = () => setIsOpen(!isOpen);
 
+  useOutsideClick({
+    ref: ref,
+    handler: () => setIsOpen(false)
+  });
+
   return (
     <Flex
+      ref={ref}
       as='nav'
       align='center'
       justify='space-between'
@@ -21,6 +28,7 @@ export const NavBar: React.FC<NavBarProps> = (props) => {
       mb={8}
       p={4}
       pos='fixed'
+      zIndex={100}
       borderBottom='1px'
       borderColor='gray.200'
       bg={['white', 'white', 'white', 'white']}
