@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useLoginMutation, MeDocument, MeQuery } from '../generated/graphql';
 import { RouteComponentProps } from 'react-router-dom';
 import { setAccessToken } from '../accessToken';
-import { Input, Button } from '@chakra-ui/react';
+import { Input, Button, FormControl } from '@chakra-ui/react';
 
 export const Login: React.FC<RouteComponentProps> = ({ history }) => {
   const [email, setEmail] = useState('');
@@ -35,25 +35,23 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
 
         history.push('/');
       }}>
-      <div>
-        <Input
-          value={email}
-          placeholder='email'
-          onChange={(e) => {
-            setEmail(e.target.value);
-          }}
-        />
-      </div>
-      <div>
-        <Input
-          type='password'
-          value={password}
-          placeholder='password'
-          onChange={(e) => {
-            setPassword(e.target.value);
-          }}
-        />
-      </div>
+      <Input
+        value={email}
+        placeholder='email'
+        onChange={(e) => {
+          setEmail(e.target.value);
+        }}
+      />
+
+      <Input
+        type='password'
+        value={password}
+        placeholder='password'
+        onChange={(e) => {
+          setPassword(e.target.value);
+        }}
+      />
+
       <Button type='submit' colorScheme='teal' variant='solid' size='sm'>
         login
       </Button>

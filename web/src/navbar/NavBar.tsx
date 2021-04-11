@@ -30,7 +30,11 @@ export const NavBar: React.FC<NavBarProps> = (props) => {
         color={['primary.500', 'primary.500', 'primary.500', 'primary.500']}
       />
       <MenuToggle toggle={toggle} isOpen={isOpen} />
-      <MenuLinks isOpen={isOpen} paddingRight='calc((100vw - 1024px) / 2)' />
+      <MenuLinks
+        isOpen={isOpen}
+        toggle={toggle}
+        paddingRight='calc((100vw - 1024px) / 2)'
+      />
     </Flex>
   );
 };

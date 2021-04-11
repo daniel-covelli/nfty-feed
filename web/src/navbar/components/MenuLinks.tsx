@@ -6,12 +6,14 @@ import { Link as ReactLink } from 'react-router-dom';
 import { useMeQuery, useLogoutMutation } from '../../generated/graphql';
 
 interface MenuLinksProps {
-  isOpen: Boolean;
+  isOpen: boolean;
   paddingRight: string;
+  toggle: () => any;
 }
 
 export const MenuLinks: React.FC<MenuLinksProps> = ({
   isOpen,
+  toggle,
   paddingRight
 }) => {
   const { data, loading } = useMeQuery();
@@ -30,6 +32,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
   return (
     <Box
       paddingRight={paddingRight}
+      zIndex={1000}
       display={{ base: isOpen ? 'block' : 'none', md: 'block' }}
       flexBasis={{ base: '100%', md: 'auto' }}>
       <Stack
@@ -41,6 +44,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
         <Link
           as={ReactLink}
           to='/register'
+          onClick={toggle}
           _focus={{
             boxShadow: 'none'
           }}>
@@ -49,6 +53,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
         <Link
           as={ReactLink}
           to='/login'
+          onClick={toggle}
           _focus={{
             boxShadow: 'none'
           }}>
@@ -57,6 +62,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
         <Link
           as={ReactLink}
           to='/bye'
+          onClick={toggle}
           _focus={{
             boxShadow: 'none'
           }}>
