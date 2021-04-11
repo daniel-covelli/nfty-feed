@@ -85,7 +85,7 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
             </Field>
           </Box>
 
-          <Button type='submit' colorScheme='teal' variant='solid' size='sm'>
+          <Button type='submit' colorScheme='pink' variant='solid' size='sm'>
             login
           </Button>
         </Form>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Stack, Box, Button, Text, Link } from '@chakra-ui/react';
+import { Stack, Box, Button, Text, Link, Spinner } from '@chakra-ui/react';
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { setAccessToken } from '../../accessToken';
 import { Link as ReactLink } from 'react-router-dom';
@@ -22,11 +22,9 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
   let body: any = null;
 
   if (loading) {
-    body = 'loading...';
+    body = <Spinner size='sm' />;
   } else if (data && data.me) {
-    body = `You are loggin as: ${data.me.email}`;
-  } else {
-    body = 'not logged in';
+    body = `Hello, ${data.me.email}!`;
   }
 
   return (
@@ -36,29 +34,15 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
       display={{ base: isOpen ? 'block' : 'none', md: 'block' }}
       flexBasis={{ base: '100%', md: 'auto' }}>
       <Stack
-        spacing={8}
+        spacing={6}
         align='center'
         justify={['center', 'space-between', 'flex-end', 'flex-end']}
         direction={['column', 'row', 'row', 'row']}
         pt={[4, 4, 0, 0]}>
-        <Link
-          as={ReactLink}
-          to='/register'
-          onClick={toggle}
-          _focus={{
-            boxShadow: 'none'
-          }}>
-          <Text display='block'>Register</Text>
-        </Link>
-        <Link
-          as={ReactLink}
-          to='/login'
-          onClick={toggle}
-          _focus={{
-            boxShadow: 'none'
-          }}>
-          <Text display='block'>Login</Text>
-        </Link>
+        <Text color='gray.500' isTruncated>
+          {body}
+        </Text>
+
         <Link
           as={ReactLink}
           to='/bye'
@@ -81,10 +65,46 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
             }}>
             logout
           </Button>
-        ) : null}
-        {/* <Text color='gray.500' isTruncated>
-          {body}
-        </Text> */}
+        ) : (
+          <>
+            <Link
+              as={ReactLink}
+              to='/register'
+              onClick={toggle}
+              _focus={{
+                boxShadow: 'none'
+              }}>
+              <Button
+                display='block'
+                size='sm'
+                variant='outline'
+                _focus={{
+                  boxShadow: 'none'
+                }}>
+                Register
+              </Button>
+            </Link>
+            <Link
+              as={ReactLink}
+              to='/login'
+              onClick={toggle}
+              _focus={{
+                boxShadow: 'none'
+              }}>
+              <Button
+                size='sm'
+                color='white'
+                colorScheme='pink'
+                display='block'
+                variant='solid'
+                _focus={{
+                  boxShadow: 'none'
+                }}>
+                Login
+              </Button>
+            </Link>
+          </>
+        )}
       </Stack>
     </Box>
   );
