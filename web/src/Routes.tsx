@@ -11,7 +11,7 @@ const Routes: React.FC = () => {
   return (
     <BrowserRouter>
       <NavBar />
-      <Container maxW='container.lg' pt='85px'>
+      <Container maxW='container.lg' p='85px 20px 0 20px'>
         <Switch>
           <Route exact path='/' component={Home} />
           <Route exact path='/register' component={Register} />

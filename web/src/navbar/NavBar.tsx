@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Flex, Container } from '@chakra-ui/react';
+import { Flex, Container, Box } from '@chakra-ui/react';
 import { MenuLinks } from './components/MenuLinks';
 import { MenuToggle } from './components/MenuToggle';
 import { Logo } from './components/Logo';
@@ -26,12 +26,11 @@ export const NavBar: React.FC<NavBarProps> = (props) => {
       bg={['white', 'white', 'white', 'white']}
       color={['primary.500', 'primary.500', 'primary.700', 'primary.700']}>
       <Logo
-        w='100px'
+        paddingLeft='calc((100vw - 1024px) / 2)'
         color={['primary.500', 'primary.500', 'primary.500', 'primary.500']}
       />
-
       <MenuToggle toggle={toggle} isOpen={isOpen} />
-      <MenuLinks isOpen={isOpen} />
+      <MenuLinks isOpen={isOpen} paddingRight='calc((100vw - 1024px) / 2)' />
     </Flex>
   );
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useUsersQuery } from '../generated/graphql';
-import { Box } from '@chakra-ui/react';
+import { Box, UnorderedList, ListItem, Text } from '@chakra-ui/react';
 
 interface HomeProps {}
 
@@ -13,14 +13,14 @@ export const Home: React.FC<HomeProps> = () => {
   return (
     <div>
       <Box textStyle='h1'>home page</Box>
-      <div>users:</div>
-      <ul>
+      <Text>users:</Text>
+      <UnorderedList>
         {data.users.map((x) => (
-          <li key={x.id}>
+          <ListItem key={x.id}>
             id: {x.id}, email: {x.email}
-          </li>
+          </ListItem>
         ))}
-      </ul>
+      </UnorderedList>
     </div>
   );
 };

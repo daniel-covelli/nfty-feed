@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Routes from './Routes';
 import { setAccessToken } from './accessToken';
+import { Text, Center } from '@chakra-ui/react';
 import '@fontsource/didact-gothic';
 
 interface AppProps {}
@@ -27,7 +28,17 @@ export const App: React.FC<AppProps> = () => {
   }, []);
 
   if (loading) {
-    return <div>loading...</div>;
+    return (
+      <Center h='100vh'>
+        <Text
+          bgGradient='linear(to-l, #7928CA,#FF0080)'
+          bgClip='text'
+          fontSize='3xl'
+          fontWeight='extrabold'>
+          NftyFeed
+        </Text>
+      </Center>
+    );
   }
 
   return <Routes />;

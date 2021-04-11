@@ -8,9 +8,13 @@ import { useMeQuery, useLogoutMutation } from '../../generated/graphql';
 
 interface MenuLinksProps {
   isOpen: Boolean;
+  paddingRight: string;
 }
 
-export const MenuLinks: React.FC<MenuLinksProps> = ({ isOpen }) => {
+export const MenuLinks: React.FC<MenuLinksProps> = ({
+  isOpen,
+  paddingRight
+}) => {
   const { data, loading } = useMeQuery();
   const [logout, { client }] = useLogoutMutation();
 
@@ -26,6 +30,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({ isOpen }) => {
 
   return (
     <Box
+      paddingRight={paddingRight}
       display={{ base: isOpen ? 'block' : 'none', md: 'block' }}
       flexBasis={{ base: '100%', md: 'auto' }}>
       <Stack
@@ -60,9 +65,9 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({ isOpen }) => {
             logout
           </Button>
         ) : null}
-        <Text color='gray.500' isTruncated>
+        {/* <Text color='gray.500' isTruncated>
           {body}
-        </Text>
+        </Text> */}
       </Stack>
     </Box>
   );

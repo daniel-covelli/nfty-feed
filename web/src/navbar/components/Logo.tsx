@@ -3,7 +3,7 @@ import { Box, Text, Link } from '@chakra-ui/react';
 import { Link as ReactLink } from 'react-router-dom';
 
 interface LogoProps {
-  w: string;
+  paddingLeft: string;
   color: string[];
 }
 
