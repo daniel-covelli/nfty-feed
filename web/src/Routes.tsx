@@ -5,20 +5,20 @@ import { Register } from './pages/Register';
 import { Login } from './pages/Login';
 import { Bye } from './pages/Bye';
 import { NavBar } from './navbar/NavBar';
+import { Container } from '@chakra-ui/react';
 
 const Routes: React.FC = () => {
   return (
     <BrowserRouter>
-      <div>
-        <NavBar />
-
+      <NavBar />
+      <Container maxW='container.lg' pt='85px'>
         <Switch>
           <Route exact path='/' component={Home} />
           <Route exact path='/register' component={Register} />
           <Route exact path='/bye' component={Bye} />
           <Route exact path='/login' component={Login} />
         </Switch>
-      </div>
+      </Container>
     </BrowserRouter>
   );
 };
