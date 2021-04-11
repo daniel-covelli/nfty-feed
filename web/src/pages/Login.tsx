@@ -53,7 +53,7 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
           toast({
             title: `Welcome 👋‏‏‎‎‏‏‎‎‎‎‏‏‎ ‎ your logged in!!`,
             status: 'success',
-            position: 'top',
+            position: 'bottom',
             variant: 'subtle',
             isClosable: true
           });
