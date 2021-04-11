@@ -21,9 +21,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
 
   let body: any = null;
 
-  if (loading) {
-    body = <Spinner size='sm' />;
-  } else if (data && data.me) {
+  if (data && data.me) {
     body = `Hello, ${data.me.email}!`;
   }
 
@@ -43,29 +41,42 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
           {body}
         </Text>
 
-        <Link
-          as={ReactLink}
-          to='/bye'
-          onClick={toggle}
-          _focus={{
-            boxShadow: 'none'
-          }}>
-          <Text display='block'>Bye</Text>
-        </Link>
         {!loading && data && data.me ? (
-          <Button
-            size='sm'
-            colorScheme='red'
-            variant='outline'
-            onClick={async () => {
-              await logout();
-              setAccessToken('');
-              await client!.resetStore();
-            }}>
-            logout
-          </Button>
+          <>
+            <Link
+              as={ReactLink}
+              to='/bye'
+              onClick={toggle}
+              _focus={{
+                boxShadow: 'none'
+              }}>
+              <Text display='block'>Bye</Text>
+            </Link>
+            <Button
+              size='sm'
+              colorScheme='red'
+              variant='outline'
+              onClick={async () => {
+                await logout();
+                setAccessToken('');
+                await client!.resetStore();
+              }}>
+              logout
+            </Button>
+          </>
+        ) : loading ? (
+          <Spinner size='sm' />
         ) : (
           <>
+            <Link
+              as={ReactLink}
+              to='/bye'
+              onClick={toggle}
+              _focus={{
+                boxShadow: 'none'
+              }}>
+              <Text display='block'>Bye</Text>
+            </Link>
             <Link
               as={ReactLink}
               to='/register'
