@@ -53,7 +53,7 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
           setAccessToken(response.data.login.accessToken);
           history.push('/');
           toast({
-            title: `Welcome back 👋‏‏‎‎‏‏‎‎‎‎‏‏‎‏‏‎‏‏‎ ‎‏‏‎ ‎ ‎you're logged in!!`,
+            title: `Welcome back, ‎you're logged in!!`,
             status: 'success',
             position: 'bottom',
             variant: 'subtle',
