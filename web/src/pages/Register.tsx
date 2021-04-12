@@ -3,7 +3,8 @@ import {
   useRegisterMutation,
   useLoginMutation,
   MeQuery,
-  MeDocument
+  MeDocument,
+  useMeQuery
 } from '../generated/graphql';
 import { RouteComponentProps } from 'react-router-dom';
 import { Link as ReactLink } from 'react-router-dom';
@@ -21,6 +22,12 @@ import {
 } from '@chakra-ui/react';
 
 export const Register: React.FC<RouteComponentProps> = ({ history }) => {
+  const { data } = useMeQuery();
+
+  if (data && data.me) {
+    history.push('/');
+  }
+
   const [register] = useRegisterMutation();
   const [login] = useLoginMutation();
   const toast = useToast();

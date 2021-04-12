@@ -50,10 +50,9 @@ export const App: React.FC<AppProps> = () => {
           <Box>
             {showText ? (
               <>
-                <br />
-                <Text fontSize='xs'>
-                  Looks like the server is rebooting. This might take a minute
-                  or two 🥴
+                <Text fontSize='sm'>
+                  Looks like the server is rebooting. <br />
+                  This might take a minute or two 🥴
                 </Text>
               </>
             ) : null}

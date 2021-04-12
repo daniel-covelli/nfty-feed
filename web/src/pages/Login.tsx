@@ -1,5 +1,10 @@
 import React from 'react';
-import { useLoginMutation, MeDocument, MeQuery } from '../generated/graphql';
+import {
+  useLoginMutation,
+  MeDocument,
+  MeQuery,
+  useMeQuery
+} from '../generated/graphql';
 import { RouteComponentProps } from 'react-router-dom';
 import { setAccessToken } from '../accessToken';
 import { Link as ReactLink } from 'react-router-dom';
@@ -16,8 +21,13 @@ import {
 import { Formik, Form, Field } from 'formik';
 
 export const Login: React.FC<RouteComponentProps> = ({ history }) => {
+  const { data } = useMeQuery();
   const toast = useToast();
   const [login] = useLoginMutation();
+
+  if (data && data.me) {
+    history.push('/');
+  }
 
   return (
     <Formik
