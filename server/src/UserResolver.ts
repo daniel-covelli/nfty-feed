@@ -19,6 +19,14 @@ import { getConnection } from 'typeorm';
 import { verify } from 'jsonwebtoken';
 
 @ObjectType()
+class RegisterResponse {
+  @Field()
+  res: Boolean;
+  @Field()
+  message: String;
+}
+
+@ObjectType()
 class LoginResponse {
   @Field()
   accessToken: string;
@@ -88,19 +96,47 @@ export class UserResolver {
     };
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => RegisterResponse)
   async register(
     @Arg('email') email: string,
     @Arg('password') password: string
   ) {
+    const valid = email.match(/^\S+@\S+\.\S+$/g);
+
+    if (!valid) {
+      return {
+        res: false,
+        message: 'Please enter a valid email address...'
+      };
+    }
+
+    if (!password) {
+      return {
+        res: false,
+        message: 'Please enter a valid password...'
+      };
+    }
+
+    const existing = await User.findOne({ where: { email } });
+
+    if (existing) {
+      return {
+        res: false,
+        message: 'Looks like this email already taken. Please try again...'
+      };
+    }
+
     const hashedPassword = await hash(password, 12);
     try {
       await User.insert({ email, password: hashedPassword });
     } catch (err) {
       console.log(err);
-      return false;
+      return {
+        res: false,
+        message: 'Internal server error. Try again later...'
+      };
     }
-    return true;
+    return { res: true, message: `Congrats, you're registered!` };
   }
 
   @Mutation(() => Boolean)

@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useLoginMutation, MeDocument, MeQuery } from '../generated/graphql';
 import { RouteComponentProps } from 'react-router-dom';
 import { setAccessToken } from '../accessToken';
+import { Link as ReactLink } from 'react-router-dom';
 import {
   Input,
   Button,
   FormControl,
   useToast,
   Center,
-  Box
+  Box,
+  Text,
+  Link
 } from '@chakra-ui/react';
 import { Formik, Form, Field } from 'formik';
 
@@ -39,19 +42,18 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
         });
         if (!response.data) {
           toast({
-            title: `Invalid Password! Please try again...`,
+            title: `Invalid credentials! Please try again...`,
             status: 'error',
             position: 'top',
             variant: 'subtle',
             isClosable: true
           });
         }
-        console.log('RESPONSE', response);
         if (response && response.data) {
           setAccessToken(response.data.login.accessToken);
           history.push('/');
           toast({
-            title: `Welcome 👋‏‏‎‎‏‏‎‎‎‎‏‏‎ ‎ your logged in!!`,
+            title: `Welcome back 👋‏‏‎‎‏‏‎‎‎‎‏‏‎‏‏‎‏‏‎ ‎‏‏‎ ‎ ‎you're logged in!!`,
             status: 'success',
             position: 'bottom',
             variant: 'subtle',
@@ -75,6 +77,7 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
               {({ field }) => (
                 <FormControl>
                   <Input
+                    w='250px'
                     {...field}
                     id='password'
                     type='password'
@@ -84,10 +87,28 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
               )}
             </Field>
           </Box>
+          <Box pb='10px'>
+            <Button
+              type='submit'
+              colorScheme='pink'
+              variant='outline'
+              size='sm'>
+              login
+            </Button>
+          </Box>
 
-          <Button type='submit' colorScheme='pink' variant='outline' size='sm'>
-            login
-          </Button>
+          <Text fontSize='sm'>
+            Don't have an account?{' '}
+            <Link
+              as={ReactLink}
+              to='/register'
+              color='teal.500'
+              _focus={{
+                boxShadow: 'none'
+              }}>
+              register
+            </Link>
+          </Text>
         </Form>
       </Center>
     </Formik>

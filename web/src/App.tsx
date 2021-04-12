@@ -8,6 +8,7 @@ interface AppProps {}
 
 export const App: React.FC<AppProps> = () => {
   const [loading, setLoading] = useState(true);
+  const [showText, setShowtext] = useState(false);
 
   useEffect(() => {
     fetch(
@@ -27,6 +28,12 @@ export const App: React.FC<AppProps> = () => {
     });
   }, []);
 
+  useEffect(() => {
+    setTimeout(() => {
+      setShowtext(true);
+    }, 3000);
+  }, []);
+
   if (loading) {
     return (
       <Center h='100vh'>
@@ -37,6 +44,15 @@ export const App: React.FC<AppProps> = () => {
           fontWeight='extrabold'>
           NftyFeed
         </Text>
+        {showText ? (
+          <>
+            <br />
+            <Text fontSize='xs'>
+              Looks like the server is rebooting. This might take a minute or
+              two 🥴
+            </Text>
+          </>
+        ) : null}
       </Center>
     );
   }

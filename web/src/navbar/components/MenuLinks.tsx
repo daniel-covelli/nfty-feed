@@ -1,6 +1,5 @@
 import React from 'react';
 import { Stack, Box, Button, Text, Link, Spinner } from '@chakra-ui/react';
-import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { setAccessToken } from '../../accessToken';
 import { Link as ReactLink } from 'react-router-dom';
 import { useMeQuery, useLogoutMutation } from '../../generated/graphql';
@@ -52,6 +51,15 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
               }}>
               <Text display='block'>Bye</Text>
             </Link>
+            <Link
+              as={ReactLink}
+              to='/profile'
+              onClick={toggle}
+              _focus={{
+                boxShadow: 'none'
+              }}>
+              <Text display='block'>Profile</Text>
+            </Link>
             <Button
               size='sm'
               colorScheme='red'
@@ -75,7 +83,9 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
               _focus={{
                 boxShadow: 'none'
               }}>
-              <Text display='block'>Bye</Text>
+              <Text display='block' fontSize='sm'>
+                Bye
+              </Text>
             </Link>
             <Link
               as={ReactLink}
