@@ -37,27 +37,24 @@ export const App: React.FC<AppProps> = () => {
   if (loading) {
     return (
       <Center h='100vh'>
-        <VStack spacing={4}>
-          <Box>
-            <Text
-              bgGradient='linear(to-l, #7928CA,#FF0080)'
-              bgClip='text'
-              fontSize='3xl'
-              fontWeight='extrabold'>
-              NftyFeed
-            </Text>
-          </Box>
-          <Box>
-            {showText ? (
-              <>
-                <Text fontSize='sm'>
-                  Looks like the server is rebooting. <br />
-                  This might take a minute or two 🥴
-                </Text>
-              </>
-            ) : null}
-          </Box>
-        </VStack>
+        <Box>
+          <Text
+            bgGradient='linear(to-l, #7928CA,#FF0080)'
+            bgClip='text'
+            fontSize='3xl'
+            fontWeight='extrabold'>
+            NftyFeed
+          </Text>
+        </Box>
+        <Box>
+          {showText ? (
+            <>
+              <Text fontSize='sm'>Looks like the server is rebooting.</Text>
+              <br />
+              <Text fontSize='sm'>This might take a minute or two 🥴</Text>
+            </>
+          ) : null}
+        </Box>
       </Center>
     );
   }
