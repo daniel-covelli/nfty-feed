@@ -1,7 +1,13 @@
 import React from 'react';
-import { Text, Box, SkeletonCircle, SkeletonText } from '@chakra-ui/react';
+import {
+  Text,
+  Box,
+  SkeletonCircle,
+  SkeletonText,
+  Link
+} from '@chakra-ui/react';
 import { useGetUserQuery } from '../generated/graphql';
-import { withRouter } from 'react-router-dom';
+import { Link as ReactLink } from 'react-router-dom';
 
 interface ProfileProps {}
 
@@ -20,7 +26,14 @@ export const Profile: React.FC<ProfileProps> = ({}) => {
   }
 
   if (error) {
-    return <Text fontSize='2xl'>Nah 🥴</Text>;
+    return (
+      <Text fontSize='2xl'>
+        To access this page please,{' '}
+        <Link as={ReactLink} to={`/register`} color='teal.500'>
+          register
+        </Link>
+      </Text>
+    );
   }
   return (
     <>
