@@ -28,10 +28,11 @@ export const Profile: React.FC<ProfileProps> = ({}) => {
   if (error) {
     return (
       <Text fontSize='2xl'>
-        To access this page please,{' '}
+        To access this page please
         <Link as={ReactLink} to={`/register`} color='teal.500'>
           register
         </Link>
+        .
       </Text>
     );
   }
