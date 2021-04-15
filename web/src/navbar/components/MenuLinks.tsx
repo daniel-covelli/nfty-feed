@@ -53,7 +53,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
             </Link>
             <Link
               as={ReactLink}
-              to='/profile'
+              to={`/at/${data.me.id}`}
               onClick={toggle}
               _focus={{
                 boxShadow: 'none'

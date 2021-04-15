@@ -1,6 +1,7 @@
 import React from 'react';
 import { useUsersQuery } from '../generated/graphql';
-import { Box, UnorderedList, ListItem, Text } from '@chakra-ui/react';
+import { Box, UnorderedList, ListItem, Text, Link } from '@chakra-ui/react';
+import { Link as ReactLink } from 'react-router-dom';
 
 interface HomeProps {}
 
@@ -17,7 +18,10 @@ export const Home: React.FC<HomeProps> = () => {
       <UnorderedList>
         {data.users.map((x) => (
           <ListItem key={x.id}>
-            id: {x.id}, email: {x.email}
+            id: {x.id}, email: {x.email},{' '}
+            <Link as={ReactLink} to={`at/${x.id}`} color='teal.500'>
+              link
+            </Link>
           </ListItem>
         ))}
       </UnorderedList>

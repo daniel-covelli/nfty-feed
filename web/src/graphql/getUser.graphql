@@ -1,0 +1,9 @@
+query GetUser($path: String!) {
+  getUser(path: $path) {
+    me
+    user {
+      id
+      email
+    }
+  }
+}

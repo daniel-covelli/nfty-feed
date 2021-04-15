@@ -27,6 +27,14 @@ class RegisterResponse {
 }
 
 @ObjectType()
+class UserResponse {
+  @Field()
+  me: Boolean;
+  @Field({ nullable: true })
+  user: User;
+}
+
+@ObjectType()
 class LoginResponse {
   @Field()
   accessToken: string;
@@ -68,6 +76,21 @@ export class UserResolver {
       console.log(err);
       return null;
     }
+  }
+
+  @Query(() => UserResponse, { nullable: true })
+  @UseMiddleware(isAuth)
+  async getUser(@Ctx() { payload }: MyContext, @Arg('path') path: string) {
+    const userId = path.split('/')[path.split('/').length - 1];
+
+    const isMe = payload!.userId == userId;
+
+    const user = await User.findOne({ where: { id: userId } });
+
+    if (!user) {
+      throw new Error('could not find user');
+    }
+    return { me: isMe, user };
   }
 
   @Mutation(() => LoginResponse)

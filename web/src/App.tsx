@@ -55,7 +55,7 @@ export const App: React.FC<AppProps> = () => {
                 <>
                   <Text fontSize='sm'>
                     Looks like the server is rebooting. This might take a minute
-                    or two 🥴
+                    or two...
                   </Text>
                 </>
               ) : null}
