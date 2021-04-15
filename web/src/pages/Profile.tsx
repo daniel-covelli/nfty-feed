@@ -31,6 +31,10 @@ export const Profile: React.FC<ProfileProps> = ({}) => {
         To access this page please{' '}
         <Link as={ReactLink} to={`/register`} color='teal.500'>
           register
+        </Link>{' '}
+        or{' '}
+        <Link as={ReactLink} to={`/login`} color='teal.500'>
+          login
         </Link>
         .
       </Text>
