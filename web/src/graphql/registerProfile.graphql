@@ -1,0 +1,18 @@
+mutation RegisterProfile(
+  $username: String!
+  $phone: String!
+  $first: String!
+  $last: String!
+  $bio: String!
+) {
+  registerProfile(
+    username: $username
+    phone: $phone
+    first: $first
+    last: $last
+    bio: $bio
+  ) {
+    response
+    message
+  }
+}

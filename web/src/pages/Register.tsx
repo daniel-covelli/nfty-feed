@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import {
   useRegisterMutation,
   useLoginMutation,
-  useMeQuery
+  useMeQuery,
+  useRegisterProfileMutation
 } from '../generated/graphql';
 import { RouteComponentProps } from 'react-router-dom';
 import { Link as ReactLink } from 'react-router-dom';
-import Dropzone from 'react-dropzone';
-import AvatarEditor from 'react-avatar-editor';
 
 import { Formik, Form, Field } from 'formik';
 import {
@@ -24,10 +23,13 @@ import {
   useDisclosure,
   Textarea
 } from '@chakra-ui/react';
+import { ArrowForwardIcon } from '@chakra-ui/icons';
 
 export const Register: React.FC<RouteComponentProps> = ({ history }) => {
   const { isOpen, onToggle } = useDisclosure();
   const { data } = useMeQuery();
+  const [loginData, setLoginData] = useState({});
+  const [registerProfile] = useRegisterProfileMutation();
 
   if (data && data.me) {
     history.push('/');
@@ -49,11 +51,20 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
             </Box>
             <Box>
               <Formik
-                initialValues={{ username: '', first: '', last: '', bio: '' }}
-                onSubmit={async (values) => {
-                  const email = values.first;
-                  const password = values.last;
+                initialValues={{
+                  username: '',
+                  phone: '',
+                  first: '',
+                  last: '',
+                  bio: ''
+                }}
+                onSubmit={async ({ username, phone, first, last, bio }) => {
+                  console.log('USERNAME', username);
+                  console.log('LOGIN DATA', loginData);
 
+                  const { data } = await registerProfile({
+                    variables: { username, phone, first, last, bio }
+                  });
                   // const { data } = await register({
                   //   variables: { email, password }
                   // });
@@ -114,7 +125,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                     </Field>
                   </Box>
                   <Box pb='10px'>
-                    <Field id='number' name='number'>
+                    <Field id='phone' name='phone'>
                       {({ field }) => (
                         <FormControl>
                           <Text fontSize='xs'>Number</Text>
@@ -122,9 +133,9 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                             {...field}
                             isRequired={true}
                             errorBorderColor='red.300'
-                            id='number'
+                            id='phone'
                             w='250px'
-                            placeholder='number'
+                            placeholder='phone'
                             type='phone'
                           />
                         </FormControl>
@@ -167,7 +178,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                       colorScheme='pink'
                       variant='outline'
                       size='sm'>
-                      continue
+                      register
                     </Button>
                   </Box>
                 </Form>
@@ -184,10 +195,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
             <Box>
               <Formik
                 initialValues={{ email: '', password: '' }}
-                onSubmit={async (values) => {
-                  const email = values.email;
-                  const password = values.password;
-
+                onSubmit={async ({ email, password }) => {
                   // const { data } = await register({
                   //   variables: { email, password }
                   // });
@@ -215,6 +223,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                   //       });
                   //     }
                   //   });
+                  setLoginData({ email, password });
                   onToggle();
                   toast({
                     title: `Congradulations 🎉‏‏‎‏‏‎ ‎‏‏‎ ‎ ‎you are registered!!`,
@@ -251,11 +260,12 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                   </Box>
                   <Box pb='10px'>
                     <Button
+                      rightIcon={<ArrowForwardIcon />}
                       type='submit'
                       colorScheme='pink'
                       variant='outline'
                       size='sm'>
-                      register
+                      continue
                     </Button>
                   </Box>
                   <Text fontSize='sm'>

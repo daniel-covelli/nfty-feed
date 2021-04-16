@@ -4,7 +4,8 @@ import express from 'express';
 
 import { ApolloServer } from 'apollo-server-express';
 import { buildSchema } from 'type-graphql';
-import { UserResolver } from './UserResolver';
+import { UserResolver } from './resolvers/UserResolver';
+import { ProfileResolver } from './resolvers/ProfileResolver';
 
 import cookieParser from 'cookie-parser';
 import { verify } from 'jsonwebtoken';
@@ -13,6 +14,7 @@ import { User } from './entity/User';
 import { createAccessToken, createRefreshToken } from './auth';
 import { sendRefreshToken } from './sendRefreshToken';
 import { getConnectionOptions, createConnection } from 'typeorm';
+import { Profile } from './entity/Profile';
 
 // server set up
 (async () => {
@@ -56,21 +58,17 @@ import { getConnectionOptions, createConnection } from 'typeorm';
 
     return res.send({ ok: true, accessToken: createAccessToken(user) });
   });
-  let connectionOptions: any;
+
   const createTypeOrmConn = async () => {
-    console.log('CONNECTION HERE');
-
-    console.log('NODE_ENV', process.env.NODE_ENV);
-
-    connectionOptions = await getConnectionOptions(process.env.NODE_ENV);
-
-    console.log('CONNECTION OPTIONS', connectionOptions);
+    const connectionOptions: any = await getConnectionOptions(
+      process.env.NODE_ENV
+    );
 
     return process.env.NODE_ENV === 'production'
       ? createConnection({
           ...connectionOptions,
           url: process.env.DATABASE_URL,
-          entities: [User],
+          entities: [User, Profile],
           name: 'default'
         })
       : createConnection({ ...connectionOptions, name: 'default' });
@@ -79,7 +77,7 @@ import { getConnectionOptions, createConnection } from 'typeorm';
   await createTypeOrmConn();
 
   const apolloServer = new ApolloServer({
-    schema: await buildSchema({ resolvers: [UserResolver] }),
+    schema: await buildSchema({ resolvers: [UserResolver, ProfileResolver] }),
     context: ({ req, res }) => ({ req, res }),
     playground: true
   });
@@ -88,7 +86,7 @@ import { getConnectionOptions, createConnection } from 'typeorm';
 
   app.listen(process.env.PORT || 4000, () => {
     console.log(
-      `🚀 Server balls ready at ${process.env.PORT ? process.env.PORT : 4000} `
+      `🚀 Server ready at ${process.env.PORT ? process.env.PORT : 4000} `
     );
   });
 })();
