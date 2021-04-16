@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   useRegisterMutation,
   useLoginMutation,
-  MeQuery,
-  MeDocument,
   useMeQuery
 } from '../generated/graphql';
 import { RouteComponentProps } from 'react-router-dom';
 import { Link as ReactLink } from 'react-router-dom';
+import Dropzone from 'react-dropzone';
+import AvatarEditor from 'react-avatar-editor';
 
 import { Formik, Form, Field } from 'formik';
 import {
@@ -91,34 +91,11 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                   // });
                 }}>
                 <Form>
-                  <Box pb='10px'>
-                    <Field id='image' name='image'>
-                      {({ field }) => (
-                        <FormControl>
-                          <Text fontSize='xs'>Image</Text>
-                          <input
-                            accept='image/*'
-                            multiple='false'
-                            id='image'
-                            placeholder='image'
-                          />
-                        </FormControl>
-                      )}
-                    </Field>
-                    <div
-                      style={{
-                        height: '60px',
-                        width: '60px',
-                        border: '2px dashed black'
-                      }}>
-                      <img
-                        style={{
-                          width: '100%',
-                          height: '100%'
-                        }}
-                      />
-                    </div>
-                  </Box>
+                  {/* <Box pb='10px'>
+                    <FormControl>
+                      <Text fontSize='xs'>Image</Text>
+                    </FormControl>
+                  </Box> */}
                   <Box pb='10px'>
                     <Field id='username' name='username'>
                       {({ field }) => (
@@ -126,8 +103,29 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                           <Text fontSize='xs'>Username</Text>
                           <Input
                             {...field}
+                            isRequired={true}
+                            errorBorderColor='red.300'
                             id='username'
+                            w='250px'
                             placeholder='username'
+                          />
+                        </FormControl>
+                      )}
+                    </Field>
+                  </Box>
+                  <Box pb='10px'>
+                    <Field id='number' name='number'>
+                      {({ field }) => (
+                        <FormControl>
+                          <Text fontSize='xs'>Number</Text>
+                          <Input
+                            {...field}
+                            isRequired={true}
+                            errorBorderColor='red.300'
+                            id='number'
+                            w='250px'
+                            placeholder='number'
+                            type='phone'
                           />
                         </FormControl>
                       )}
@@ -148,12 +146,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                       {({ field }) => (
                         <FormControl>
                           <Text fontSize='xs'>Last</Text>
-                          <Input
-                            w='250px'
-                            {...field}
-                            id='last'
-                            placeholder='last'
-                          />
+                          <Input {...field} id='last' placeholder='last' />
                         </FormControl>
                       )}
                     </Field>

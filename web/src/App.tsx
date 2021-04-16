@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Routes from './Routes';
 import { setAccessToken } from './accessToken';
-import { Text, Center, VStack, Box, Grid, GridItem } from '@chakra-ui/react';
+import { Text, Center, Grid, GridItem } from '@chakra-ui/react';
 import '@fontsource/didact-gothic';
 
 interface AppProps {}

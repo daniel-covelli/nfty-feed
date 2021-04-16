@@ -11,7 +11,7 @@ import { Link as ReactLink } from 'react-router-dom';
 
 interface ProfileProps {}
 
-export const Profile: React.FC<ProfileProps> = ({}) => {
+export const Profile: React.FC<ProfileProps> = () => {
   console.log('PATHNAME', window.location.href);
   const { data, loading, error } = useGetUserQuery({
     variables: { path: window.location.href }
