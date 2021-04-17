@@ -25,7 +25,7 @@ class RegisterResponse {
   res: Boolean;
   @Field()
   message: String;
-  @Field(() => User)
+  @Field(() => User, { nullable: true })
   user: User;
 }
 
@@ -189,7 +189,7 @@ export class UserResolver {
     if (!first) {
       return {
         res: false,
-        message: 'Please enter a valid first name...',
+        message: 'Please enter your first name...',
         user: null
       };
     }
@@ -197,7 +197,7 @@ export class UserResolver {
     if (!last) {
       return {
         res: false,
-        message: 'Please enter a valid last name...',
+        message: 'Please enter your last name...',
         user: null
       };
     }
@@ -217,7 +217,8 @@ export class UserResolver {
     if (existing) {
       return {
         res: false,
-        message: 'Looks like someone already has that username... '
+        message: 'Looks like someone already has that username... ',
+        user: null
       };
     }
 

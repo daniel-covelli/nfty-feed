@@ -41,9 +41,7 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
         <Box>
           <Formik
             initialValues={{ email: '', password: '' }}
-            onSubmit={async (values) => {
-              const email = values.email;
-              const password = values.password;
+            onSubmit={async ({ email, password }) => {
               const response = await login({
                 variables: { email, password },
                 update: (store, { data }) => {

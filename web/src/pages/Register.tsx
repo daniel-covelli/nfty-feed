@@ -77,12 +77,12 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                       bio
                     },
                     update: (store, { data }) => {
-                      if (!data) {
-                        return null;
-                      }
                       const old = store.readQuery<UsersQuery>({
                         query: UsersDocument
                       });
+                      if (!data || !old) {
+                        return null;
+                      }
                       store.writeQuery<UsersQuery>({
                         query: UsersDocument,
                         data: {
