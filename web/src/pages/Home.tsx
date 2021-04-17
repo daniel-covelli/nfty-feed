@@ -2,20 +2,15 @@ import React from 'react';
 import { useUsersQuery } from '../generated/graphql';
 import {
   Box,
-  UnorderedList,
-  ListItem,
   Text,
   Link,
   Avatar,
-  Stack,
   Table,
   Thead,
   Th,
   Tbody,
   Tr,
   Td,
-  Container,
-  useBreakpointValue,
   useMediaQuery
 } from '@chakra-ui/react';
 import { Link as ReactLink } from 'react-router-dom';
@@ -27,8 +22,6 @@ export const Home: React.FC<HomeProps> = () => {
   const { data } = useUsersQuery();
   const [isSmall] = useMediaQuery('(max-width: 670px)');
 
-  console.log('ISMOBIL', isSmall);
-
   if (!data) {
     return <div>loading...</div>;
   }
@@ -36,16 +29,16 @@ export const Home: React.FC<HomeProps> = () => {
     <>
       <Box textStyle='h1'>home page</Box>
       <Text>users:</Text>
-
       {!isSmall ? (
         <Table variant='simple' size='sm'>
           <Thead>
-            <Th>Avatar</Th>
-            <Th>Id</Th>
-            <Th>Username</Th>
-            <Th>Email</Th>
-
-            <Th>Link</Th>
+            <Tr>
+              <Th>Avatar</Th>
+              <Th>Id</Th>
+              <Th>Username</Th>
+              <Th>Email</Th>
+              <Th>Link</Th>
+            </Tr>
           </Thead>
           <Tbody>
             {data.users.map((x) => (
@@ -57,7 +50,7 @@ export const Home: React.FC<HomeProps> = () => {
                       size='sm'
                     />
                   ) : (
-                    <Avatar src='https://bit.ly/broken-link' size='sm' />
+                    <Avatar size='sm' />
                   )}
                 </Td>
                 <Td>{x.id}</Td>
@@ -81,9 +74,11 @@ export const Home: React.FC<HomeProps> = () => {
       ) : (
         <Table variant='simple' size='sm'>
           <Thead>
-            <Th>Avatar</Th>
-            <Th>Username</Th>
-            <Th>Link</Th>
+            <Tr>
+              <Th>Avatar</Th>
+              <Th>Username</Th>
+              <Th>Link</Th>
+            </Tr>
           </Thead>
           <Tbody>
             {data.users.map((x) => (
@@ -95,7 +90,7 @@ export const Home: React.FC<HomeProps> = () => {
                       size='sm'
                     />
                   ) : (
-                    <Avatar src='https://bit.ly/broken-link' size='sm' />
+                    <Avatar size='sm' />
                   )}
                 </Td>
                 <Td>
