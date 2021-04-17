@@ -95,15 +95,7 @@ export class UserResolver {
   @UseMiddleware(isAuth)
   async getUser(@Ctx() { payload }: MyContext, @Arg('path') path: string) {
     const userIdOrUsername = path.split('/')[path.split('/').length - 1];
-    console.log('PATH', path);
-    console.log('USER PATH', userIdOrUsername);
 
-    console.log('IS STRING', userIdOrUsername.match(/^[0-9]*$/));
-    // const isMe = payload!.userId == userIdOrUsername;
-
-    // const loggedInUser = await User.findOne({
-    //   where: { id: payload!.userId }
-    // });
     let user;
     let profile;
     if (userIdOrUsername.match(/^[0-9]*$/)) {
@@ -219,6 +211,37 @@ export class UserResolver {
       return {
         res: false,
         message: 'Please enter your last name...',
+        user: null
+      };
+    }
+
+    const noSpaces = username.match(/^\S+$/);
+
+    if (!noSpaces) {
+      return {
+        res: false,
+        message: 'Please enter a username with no spaces...',
+        user: null
+      };
+    }
+
+    const validCharacters = username.match(/^[\.a-zA-Z0-9]*$/);
+
+    if (!validCharacters) {
+      return {
+        res: false,
+        message:
+          'Please enter valid username. Only letters, numbers, and periods allowed...',
+        user: null
+      };
+    }
+
+    const notJustAllNumbers = username.match(/^[0-9]*$/);
+
+    if (!notJustAllNumbers) {
+      return {
+        res: false,
+        message: 'Please enter valid username that includes letters...',
         user: null
       };
     }
