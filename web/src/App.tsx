@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Routes from './Routes';
 import { setAccessToken } from './accessToken';
-import { Text, Center, Grid, GridItem } from '@chakra-ui/react';
+import { Text, Center, Grid, GridItem, Box } from '@chakra-ui/react';
 import '@fontsource/didact-gothic';
 
 interface AppProps {}
@@ -50,14 +50,14 @@ export const App: React.FC<AppProps> = () => {
             </Center>
           </GridItem>
           <GridItem>
-            <Center w='225px'>
+            <Center w='245px'>
               {showText ? (
-                <>
+                <Box pl='10px'>
                   <Text fontSize='sm'>
                     Looks like the server is rebooting. This might take a minute
                     or two...
                   </Text>
-                </>
+                </Box>
               ) : null}
             </Center>
           </GridItem>

@@ -38,13 +38,13 @@ export const Home: React.FC<HomeProps> = () => {
               )}
               <Box pt='3px'>
                 id: {x.id},{' '}
-                <b>{x.profile ? x.profile.username : 'no username'}</b>, email:{' '}
-                {x.email}
+                <b>@{x.profile ? x.profile.username : 'no username'}</b>, email:{' '}
+                {x.email ? x.email : 'no email'}
                 <Link
                   as={ReactLink}
                   to={`at/${x.profile ? x.profile.username : x.id}`}
                   color='teal.500'>
-                  <ExternalLinkIcon ml='3px' mb='3px' />
+                  <ExternalLinkIcon ml='6px' mb='3px' />
                 </Link>
               </Box>
             </Stack>

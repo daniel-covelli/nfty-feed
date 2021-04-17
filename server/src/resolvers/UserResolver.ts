@@ -95,17 +95,27 @@ export class UserResolver {
   @UseMiddleware(isAuth)
   async getUser(@Ctx() { payload }: MyContext, @Arg('path') path: string) {
     const userIdOrUsername = path.split('/')[path.split('/').length - 1];
+    console.log('PATH', path);
+    console.log('USER PATH', userIdOrUsername);
 
-    const isMe = payload!.userId == userIdOrUsername;
+    console.log('IS STRING', userIdOrUsername.match(/^[0-9]*$/));
+    // const isMe = payload!.userId == userIdOrUsername;
 
+    // const loggedInUser = await User.findOne({
+    //   where: { id: payload!.userId }
+    // });
     let user;
-    user = await User.findOne({
-      where: { id: userIdOrUsername },
-      relations: ['profile']
-    });
-
-    if (!user) {
-      const profile = await Profile.findOne({
+    let profile;
+    if (userIdOrUsername.match(/^[0-9]*$/)) {
+      user = await User.findOne({
+        where: { id: userIdOrUsername },
+        relations: ['profile']
+      });
+      if (!user) {
+        throw new Error('could not find user');
+      }
+    } else {
+      profile = await Profile.findOne({
         where: { username: userIdOrUsername },
         relations: ['user']
       });
@@ -114,6 +124,8 @@ export class UserResolver {
       }
       user = profile.user;
     }
+
+    const isMe = payload!.userId === `${user!.id}`;
 
     return { me: isMe, user };
   }

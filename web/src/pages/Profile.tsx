@@ -49,10 +49,7 @@ export const Profile: React.FC<ProfileProps> = () => {
       <Text>Email: {data.getUser.user['email']}</Text>
       {data.getUser.user.profile ? (
         <>
-          <Text>
-            Username:
-            {data.getUser.user.profile.username}
-          </Text>
+          <Text>Username: {data.getUser.user.profile.username}</Text>
           <Text>Number: {data.getUser.user.profile.phone}</Text>
           <Text>First: {data.getUser.user.profile.first}</Text>
           <Text>Last: {data.getUser.user.profile.last}</Text>
