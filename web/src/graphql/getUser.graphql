@@ -4,7 +4,14 @@ query GetUser($path: String!) {
     user {
       id
       email
-      profile
+      profile {
+        id
+        username
+        phone
+        first
+        last
+        bio
+      }
     }
   }
 }

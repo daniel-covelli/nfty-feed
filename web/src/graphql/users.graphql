@@ -2,5 +2,8 @@ query Users {
   users {
     id
     email
+    profile {
+      username
+    }
   }
 }

@@ -10,23 +10,28 @@ import { ObjectType, Field, Int } from 'type-graphql';
 import { Profile } from './Profile';
 
 @ObjectType()
-@Entity('users')
+@Entity()
 export class User extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field()
-  @Column()
-  email: string;
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  email?: string;
 
-  @Column()
+  @Column({ nullable: true })
   password: string;
 
   @Column('int', { default: 0 })
   tokenVersion: number;
 
-  @OneToOne(() => Profile)
+  @Field({ nullable: true })
+  @OneToOne(() => Profile, {
+    eager: true,
+    nullable: true,
+    cascade: true
+  })
   @JoinColumn()
-  profile: Profile;
+  profile?: Profile;
 }

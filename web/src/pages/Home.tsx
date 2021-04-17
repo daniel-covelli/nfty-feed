@@ -6,7 +6,7 @@ import { Link as ReactLink } from 'react-router-dom';
 interface HomeProps {}
 
 export const Home: React.FC<HomeProps> = () => {
-  const { data } = useUsersQuery({ fetchPolicy: 'network-only' });
+  const { data } = useUsersQuery();
 
   if (!data) {
     return <div>loading...</div>;
@@ -18,7 +18,8 @@ export const Home: React.FC<HomeProps> = () => {
       <UnorderedList>
         {data.users.map((x) => (
           <ListItem key={x.id}>
-            id: {x.id}, email: {x.email},{' '}
+            id: {x.id}, username:{' '}
+            {x.profile ? x.profile.username : 'no username'}, email: {x.email},{' '}
             <Link as={ReactLink} to={`at/${x.id}`} color='teal.500'>
               link
             </Link>

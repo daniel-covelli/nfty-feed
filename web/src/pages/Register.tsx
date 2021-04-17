@@ -5,7 +5,9 @@ import {
   useMeQuery,
   MeQuery,
   MeDocument,
-  useCheckEmailMutation
+  useCheckEmailMutation,
+  UsersQuery,
+  UsersDocument
 } from '../generated/graphql';
 import { RouteComponentProps } from 'react-router-dom';
 import { Link as ReactLink } from 'react-router-dom';
@@ -26,6 +28,7 @@ import {
   Textarea
 } from '@chakra-ui/react';
 import { ArrowForwardIcon } from '@chakra-ui/icons';
+import { setAccessToken } from '../accessToken';
 
 export const Register: React.FC<RouteComponentProps> = ({ history }) => {
   const { isOpen, onToggle } = useDisclosure();
@@ -72,6 +75,21 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                       first,
                       last,
                       bio
+                    },
+                    update: (store, { data }) => {
+                      if (!data) {
+                        return null;
+                      }
+                      const old = store.readQuery<UsersQuery>({
+                        query: UsersDocument
+                      });
+                      store.writeQuery<UsersQuery>({
+                        query: UsersDocument,
+                        data: {
+                          __typename: 'Query',
+                          users: [...old.users, data.register.user]
+                        }
+                      });
                     }
                   });
 
@@ -85,7 +103,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                       isClosable: true
                     });
                   } else {
-                    await login({
+                    const response = await login({
                       variables: { email: loginEmail, password: loginPassword },
                       update: (store, { data }) => {
                         if (!data) {
@@ -100,14 +118,26 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                         });
                       }
                     });
-                    history.push('/');
-                    toast({
-                      title: `Congradulations 🎉‏‏‎‏‏‎ ‎‏‏‎ ‎ ‎you are registered!!`,
-                      status: 'success',
-                      position: 'bottom',
-                      variant: 'subtle',
-                      isClosable: true
-                    });
+                    if (!response.data) {
+                      toast({
+                        title: `Something went wrong! Please try again...`,
+                        status: 'error',
+                        position: 'top',
+                        variant: 'subtle',
+                        isClosable: true
+                      });
+                    }
+                    if (response && response.data) {
+                      setAccessToken(response.data.login.accessToken);
+                      history.push('/');
+                      toast({
+                        title: `Congradulations, ‎you are registered!!`,
+                        status: 'success',
+                        position: 'bottom',
+                        variant: 'subtle',
+                        isClosable: true
+                      });
+                    }
                   }
                 }}>
                 <Form>

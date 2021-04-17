@@ -18,5 +18,12 @@ mutation Register(
   ) {
     res
     message
+    user {
+      id
+      email
+      profile {
+        username
+      }
+    }
   }
 }

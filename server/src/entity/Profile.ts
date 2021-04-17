@@ -19,18 +19,24 @@ export class Profile extends BaseEntity {
   @Column()
   username: string;
 
+  @Field()
   @Column()
   phone: string;
 
+  @Field()
   @Column()
   first: string;
 
+  @Field()
   @Column()
   last: string;
 
+  @Field({ nullable: true })
   @Column()
-  bio: string;
+  bio?: string;
 
-  @OneToOne(() => User, (user) => user.profile)
-  user: User;
+  @OneToOne(() => User, {
+    nullable: false
+  })
+  user?: User;
 }

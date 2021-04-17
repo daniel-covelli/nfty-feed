@@ -25,13 +25,23 @@ class RegisterResponse {
   res: Boolean;
   @Field()
   message: String;
+  @Field(() => User)
+  user: User;
+}
+
+@ObjectType()
+class GenericResponse {
+  @Field()
+  res: Boolean;
+  @Field()
+  message: String;
 }
 
 @ObjectType()
 class UserResponse {
   @Field()
   me: Boolean;
-  @Field({ nullable: true })
+  @Field()
   user: User;
 }
 
@@ -57,8 +67,10 @@ export class UserResolver {
   }
 
   @Query(() => [User])
-  users() {
-    return User.find();
+  async users() {
+    const users = await User.find();
+
+    return users;
   }
 
   @Query(() => User, { nullable: true })
@@ -87,12 +99,14 @@ export class UserResolver {
     const isMe = payload!.userId == userId;
 
     const user = await User.findOne({
-      where: { id: userId }
+      where: { id: userId },
+      relations: ['profile']
     });
 
     if (!user) {
       throw new Error('could not find user');
     }
+
     return { me: isMe, user };
   }
 
@@ -102,7 +116,9 @@ export class UserResolver {
     @Arg('password') password: string,
     @Ctx() { res }: MyContext
   ): Promise<LoginResponse> {
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({
+      where: { email }
+    });
 
     if (!user) {
       throw new Error('could not find user');
@@ -122,7 +138,7 @@ export class UserResolver {
     };
   }
 
-  @Mutation(() => RegisterResponse)
+  @Mutation(() => GenericResponse)
   async checkEmail(@Arg('email') email: string) {
     try {
       const existing = await User.findOne({ where: { email } });
@@ -157,28 +173,32 @@ export class UserResolver {
     if (!username) {
       return {
         res: false,
-        message: 'Please enter a valid username...'
+        message: 'Please enter a valid username...',
+        user: null
       };
     }
 
     if (!phone) {
       return {
         res: false,
-        message: 'Please enter a valid phone number...'
+        message: 'Please enter a valid phone number...',
+        user: null
       };
     }
 
     if (!first) {
       return {
         res: false,
-        message: 'Please enter a valid first name...'
+        message: 'Please enter a valid first name...',
+        user: null
       };
     }
 
     if (!last) {
       return {
         res: false,
-        message: 'Please enter a valid last name...'
+        message: 'Please enter a valid last name...',
+        user: null
       };
     }
 
@@ -187,7 +207,8 @@ export class UserResolver {
     if (!valid) {
       return {
         res: false,
-        message: 'Please enter valid phone number, ex. 1234567890'
+        message: 'Please enter valid phone number, ex. 1234567890',
+        user: null
       };
     }
 
@@ -201,22 +222,32 @@ export class UserResolver {
     }
 
     const hashedPassword = await hash(password, 12);
-    let profile;
-    try {
-      profile = Profile.create({ username, phone, first, last, bio });
-      await profile.save();
 
-      const user = User.create({ email, password: hashedPassword, profile });
-      await user.save();
+    let user;
+    try {
+      const profile = new Profile();
+      profile.username = username;
+      profile.phone = phone;
+      profile.first = first;
+      profile.last = last;
+      profile.bio = bio;
+      await Profile.save(profile);
+
+      user = new User();
+      user.email = email;
+      user.password = hashedPassword;
+      user.profile = profile;
+      await User.save(user);
     } catch (err) {
       console.log(err);
       return {
         res: false,
-        message: 'Internal server error. Try again later...'
+        message: 'Internal server error. Try again later...',
+        user: null
       };
     }
 
-    return { res: true, message: `Congrats, you're registered!` };
+    return { res: true, message: `Congrats, you're registered!`, user };
   }
 
   @Mutation(() => Boolean)
