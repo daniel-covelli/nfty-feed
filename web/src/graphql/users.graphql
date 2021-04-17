@@ -3,6 +3,8 @@ query Users {
     id
     email
     profile {
+      first
+      last
       username
     }
   }

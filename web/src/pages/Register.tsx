@@ -131,7 +131,8 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                       setAccessToken(response.data.login.accessToken);
                       history.push('/');
                       toast({
-                        title: `Congradulations, ‎you are registered!!`,
+                        title: `Congradulations ${response.data.login.user.profile.first} 🎉 `,
+                        description: `‎You're account ${response.data.login.user.profile.username} is registered.`,
                         status: 'success',
                         position: 'bottom',
                         variant: 'subtle',

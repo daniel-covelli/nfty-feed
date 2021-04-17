@@ -70,7 +70,7 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
                 setAccessToken(response.data.login.accessToken);
                 history.push('/');
                 toast({
-                  title: `Welcome back ${response.data.login.user.profile.username} 👋`,
+                  title: `Welcome back ${response.data.login.user.profile.first} 👋`,
                   description: `You're logged in!!`,
                   status: 'success',
                   position: 'bottom',
