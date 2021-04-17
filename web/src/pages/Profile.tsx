@@ -40,6 +40,8 @@ export const Profile: React.FC<ProfileProps> = () => {
       </Text>
     );
   }
+
+  console.log('USER', data.getUser);
   return (
     <>
       <Text>Me?: {data.getUser.me ? 'True' : 'False'}</Text>

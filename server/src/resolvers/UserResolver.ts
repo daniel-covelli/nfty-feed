@@ -10,13 +10,14 @@ import {
   Int
 } from 'type-graphql';
 import { User } from '../entity/User';
-import { hash, compare } from 'bcryptjs';
+import { compare, hash } from 'bcryptjs';
 import { MyContext } from '../migration/MyContext';
 import { createAccessToken, createRefreshToken } from '../auth';
 import { isAuth } from '../isAuth';
 import { sendRefreshToken } from '../sendRefreshToken';
 import { getConnection } from 'typeorm';
 import { verify } from 'jsonwebtoken';
+import { Profile } from '../entity/Profile';
 
 @ObjectType()
 class RegisterResponse {
@@ -85,7 +86,9 @@ export class UserResolver {
 
     const isMe = payload!.userId == userId;
 
-    const user = await User.findOne({ where: { id: userId } });
+    const user = await User.findOne({
+      where: { id: userId }
+    });
 
     if (!user) {
       throw new Error('could not find user');
@@ -120,38 +123,18 @@ export class UserResolver {
   }
 
   @Mutation(() => RegisterResponse)
-  async register(
-    @Arg('email') email: string,
-    @Arg('password') password: string
-  ) {
-    const valid = email.match(/^\S+@\S+\.\S+$/g);
-
-    if (!valid) {
-      return {
-        res: false,
-        message: 'Please enter a valid email address...'
-      };
-    }
-
-    if (!password) {
-      return {
-        res: false,
-        message: 'Please enter a valid password...'
-      };
-    }
-
-    const existing = await User.findOne({ where: { email } });
-
-    if (existing) {
-      return {
-        res: false,
-        message: 'Looks like this email already taken. Please try again...'
-      };
-    }
-
-    const hashedPassword = await hash(password, 12);
+  async checkEmail(@Arg('email') email: string) {
     try {
-      await User.insert({ email, password: hashedPassword });
+      const existing = await User.findOne({ where: { email } });
+
+      if (existing) {
+        return {
+          res: false,
+          message: 'Looks like this email already taken...'
+        };
+      }
+
+      return { res: true, message: `Congrats, you're registered!` };
     } catch (err) {
       console.log(err);
       return {
@@ -159,6 +142,80 @@ export class UserResolver {
         message: 'Internal server error. Try again later...'
       };
     }
+  }
+
+  @Mutation(() => RegisterResponse)
+  async register(
+    @Arg('email') email: string,
+    @Arg('password') password: string,
+    @Arg('username') username: string,
+    @Arg('phone') phone: string,
+    @Arg('first') first: string,
+    @Arg('last') last: string,
+    @Arg('bio') bio: string
+  ) {
+    if (!username) {
+      return {
+        res: false,
+        message: 'Please enter a valid username...'
+      };
+    }
+
+    if (!phone) {
+      return {
+        res: false,
+        message: 'Please enter a valid phone number...'
+      };
+    }
+
+    if (!first) {
+      return {
+        res: false,
+        message: 'Please enter a valid first name...'
+      };
+    }
+
+    if (!last) {
+      return {
+        res: false,
+        message: 'Please enter a valid last name...'
+      };
+    }
+
+    const valid = phone.match(/^[0-9]{10}$/);
+
+    if (!valid) {
+      return {
+        res: false,
+        message: 'Please enter valid phone number, ex. 1234567890'
+      };
+    }
+
+    const existing = await Profile.findOne({ where: { username } });
+
+    if (existing) {
+      return {
+        res: false,
+        message: 'Looks like someone already has that username... '
+      };
+    }
+
+    const hashedPassword = await hash(password, 12);
+    let profile;
+    try {
+      profile = Profile.create({ username, phone, first, last, bio });
+      await profile.save();
+
+      const user = User.create({ email, password: hashedPassword, profile });
+      await user.save();
+    } catch (err) {
+      console.log(err);
+      return {
+        res: false,
+        message: 'Internal server error. Try again later...'
+      };
+    }
+
     return { res: true, message: `Congrats, you're registered!` };
   }
 

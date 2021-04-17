@@ -1,0 +1,6 @@
+mutation CheckEmail($email: String!) {
+  checkEmail(email: $email) {
+    res
+    message
+  }
+}

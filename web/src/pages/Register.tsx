@@ -3,7 +3,9 @@ import {
   useRegisterMutation,
   useLoginMutation,
   useMeQuery,
-  useRegisterProfileMutation
+  MeQuery,
+  MeDocument,
+  useCheckEmailMutation
 } from '../generated/graphql';
 import { RouteComponentProps } from 'react-router-dom';
 import { Link as ReactLink } from 'react-router-dom';
@@ -27,11 +29,13 @@ import { ArrowForwardIcon } from '@chakra-ui/icons';
 
 export const Register: React.FC<RouteComponentProps> = ({ history }) => {
   const { isOpen, onToggle } = useDisclosure();
-  const { data } = useMeQuery();
-  const [loginData, setLoginData] = useState({});
-  const [registerProfile] = useRegisterProfileMutation();
+  const { data: me } = useMeQuery();
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
 
-  if (data && data.me) {
+  const [checkEmail] = useCheckEmailMutation();
+
+  if (me && me.me) {
     history.push('/');
   }
 
@@ -59,47 +63,52 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                   bio: ''
                 }}
                 onSubmit={async ({ username, phone, first, last, bio }) => {
-                  console.log('USERNAME', username);
-                  console.log('LOGIN DATA', loginData);
-
-                  const { data } = await registerProfile({
-                    variables: { username, phone, first, last, bio }
+                  const { data } = await register({
+                    variables: {
+                      email: loginEmail,
+                      password: loginPassword,
+                      username,
+                      phone,
+                      first,
+                      last,
+                      bio
+                    }
                   });
-                  // const { data } = await register({
-                  //   variables: { email, password }
-                  // });
-                  // if (!data.register.res) {
-                  //   toast({
-                  //     title: data.register.message,
-                  //     status: 'error',
-                  //     position: 'top',
-                  //     variant: 'subtle',
-                  //     isClosable: true
-                  //   });
-                  // } else {
-                  //   await login({
-                  //     variables: { email, password },
-                  //     update: (store, { data }) => {
-                  //       if (!data) {
-                  //         return null;
-                  //       }
-                  //       store.writeQuery<MeQuery>({
-                  //         query: MeDocument,
-                  //         data: {
-                  //           __typename: 'Query',
-                  //           me: data.login.user
-                  //         }
-                  //       });
-                  //     }
-                  //   });
-                  // onToggle();
-                  // toast({
-                  //   title: `Congradulations 🎉‏‏‎‏‏‎ ‎‏‏‎ ‎ ‎you are registered!!`,
-                  //   status: 'success',
-                  //   position: 'bottom',
-                  //   variant: 'subtle',
-                  //   isClosable: true
-                  // });
+
+                  if (!data.register.res) {
+                    toast({
+                      title: data.register.message,
+                      duration: 3000,
+                      status: 'error',
+                      position: 'top',
+                      variant: 'subtle',
+                      isClosable: true
+                    });
+                  } else {
+                    await login({
+                      variables: { email: loginEmail, password: loginPassword },
+                      update: (store, { data }) => {
+                        if (!data) {
+                          return null;
+                        }
+                        store.writeQuery<MeQuery>({
+                          query: MeDocument,
+                          data: {
+                            __typename: 'Query',
+                            me: data.login.user
+                          }
+                        });
+                      }
+                    });
+                    history.push('/');
+                    toast({
+                      title: `Congradulations 🎉‏‏‎‏‏‎ ‎‏‏‎ ‎ ‎you are registered!!`,
+                      status: 'success',
+                      position: 'bottom',
+                      variant: 'subtle',
+                      isClosable: true
+                    });
+                  }
                 }}>
                 <Form>
                   {/* <Box pb='10px'>
@@ -114,8 +123,6 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                           <Text fontSize='xs'>Username</Text>
                           <Input
                             {...field}
-                            isRequired={true}
-                            errorBorderColor='red.300'
                             id='username'
                             w='250px'
                             placeholder='username'
@@ -131,8 +138,6 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                           <Text fontSize='xs'>Number</Text>
                           <Input
                             {...field}
-                            isRequired={true}
-                            errorBorderColor='red.300'
                             id='phone'
                             w='250px'
                             placeholder='phone'
@@ -196,6 +201,51 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
               <Formik
                 initialValues={{ email: '', password: '' }}
                 onSubmit={async ({ email, password }) => {
+                  const valid = email.match(/^\S+@\S+\.\S+$/g);
+                  if (!valid) {
+                    toast({
+                      title: 'Please enter a valid email address...',
+                      duration: 3000,
+                      status: 'error',
+                      position: 'top',
+                      variant: 'subtle',
+                      isClosable: true
+                    });
+                    return;
+                  }
+
+                  if (!password) {
+                    toast({
+                      title: 'Please enter a valid password...',
+                      duration: 3000,
+                      status: 'error',
+                      position: 'top',
+                      variant: 'subtle',
+                      isClosable: true
+                    });
+                    return;
+                  }
+
+                  const { data } = await checkEmail({
+                    variables: { email }
+                  });
+
+                  if (!data.checkEmail.res) {
+                    toast({
+                      title: data.checkEmail.message,
+                      duration: 3000,
+                      status: 'error',
+                      position: 'top',
+                      variant: 'subtle',
+                      isClosable: true
+                    });
+                    return;
+                  }
+
+                  setLoginEmail(email);
+                  setLoginPassword(password);
+                  onToggle();
+
                   // const { data } = await register({
                   //   variables: { email, password }
                   // });
@@ -223,15 +273,15 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                   //       });
                   //     }
                   //   });
-                  setLoginData({ email, password });
-                  onToggle();
-                  toast({
-                    title: `Congradulations 🎉‏‏‎‏‏‎ ‎‏‏‎ ‎ ‎you are registered!!`,
-                    status: 'success',
-                    position: 'bottom',
-                    variant: 'subtle',
-                    isClosable: true
-                  });
+                  // setLoginData({ email, password });
+                  // onToggle();
+                  // toast({
+                  //   title: `Congradulations 🎉‏‏‎‏‏‎ ‎‏‏‎ ‎ ‎you are registered!!`,
+                  //   status: 'success',
+                  //   position: 'bottom',
+                  //   variant: 'subtle',
+                  //   isClosable: true
+                  // });
                 }}>
                 <Form>
                   <Box pb='10px'>

@@ -1,34 +1,24 @@
-import { Resolver, Mutation, ObjectType, Field, Ctx, Arg } from 'type-graphql';
-import { MyContext } from 'src/migration/MyContext';
-
-@ObjectType()
-class RegisterProfileResponse {
-  @Field()
-  response: Boolean;
-  @Field()
-  message: String;
-}
+import { Resolver } from 'type-graphql';
 
 @Resolver()
 export class ProfileResolver {
-  @Mutation(() => RegisterProfileResponse)
-  registerProfile(
-    @Arg('username') username: string,
-    @Arg('phone') phone: string,
-    @Arg('first') first: string,
-    @Arg('last') last: string,
-    @Arg('bio') bio: string,
-    @Ctx() { payload }: MyContext
-  ) {
-    console.log('PAYLOAD', payload);
-    console.log('USERNAME', username);
-    console.log('PHONE', phone);
-    console.log('FIRST', first);
-    console.log('LAST', last);
-    console.log('BIO', bio);
-    return { response: false, message: 'nah bruh' };
-  }
-
+  // @Mutation(() => RegisterProfileResponse)
+  // registerProfile(
+  //   @Arg('username') username: string,
+  //   @Arg('phone') phone: string,
+  //   @Arg('first') first: string,
+  //   @Arg('last') last: string,
+  //   @Arg('bio') bio: string,
+  //   @Ctx() { payload }: MyContext
+  // ) {
+  //   console.log('PAYLOAD', payload);
+  //   console.log('USERNAME', username);
+  //   console.log('PHONE', phone);
+  //   console.log('FIRST', first);
+  //   console.log('LAST', last);
+  //   console.log('BIO', bio);
+  //   return { response: false, message: 'nah bruh' };
+  // }
   //   @Query(() => String)
   //   hello() {
   //     return 'hi!';
