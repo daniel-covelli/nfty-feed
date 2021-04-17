@@ -21,7 +21,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
   let body: any = null;
 
   if (data && data.me) {
-    body = `Hello, ${data.me.email}!`;
+    body = `Hello, ${data.me.profile.username}!`;
   }
 
   return (

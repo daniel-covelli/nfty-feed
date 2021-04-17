@@ -94,17 +94,25 @@ export class UserResolver {
   @Query(() => UserResponse, { nullable: true })
   @UseMiddleware(isAuth)
   async getUser(@Ctx() { payload }: MyContext, @Arg('path') path: string) {
-    const userId = path.split('/')[path.split('/').length - 1];
+    const userIdOrUsername = path.split('/')[path.split('/').length - 1];
 
-    const isMe = payload!.userId == userId;
+    const isMe = payload!.userId == userIdOrUsername;
 
-    const user = await User.findOne({
-      where: { id: userId },
+    let user;
+    user = await User.findOne({
+      where: { id: userIdOrUsername },
       relations: ['profile']
     });
 
     if (!user) {
-      throw new Error('could not find user');
+      const profile = await Profile.findOne({
+        where: { username: userIdOrUsername },
+        relations: ['user']
+      });
+      if (!profile) {
+        throw new Error('could not find user');
+      }
+      user = profile.user;
     }
 
     return { me: isMe, user };
@@ -117,7 +125,8 @@ export class UserResolver {
     @Ctx() { res }: MyContext
   ): Promise<LoginResponse> {
     const user = await User.findOne({
-      where: { email }
+      where: { email },
+      relations: ['profile']
     });
 
     if (!user) {

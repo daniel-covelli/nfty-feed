@@ -20,7 +20,10 @@ export const Home: React.FC<HomeProps> = () => {
           <ListItem key={x.id}>
             id: {x.id}, username:{' '}
             {x.profile ? x.profile.username : 'no username'}, email: {x.email},{' '}
-            <Link as={ReactLink} to={`at/${x.id}`} color='teal.500'>
+            <Link
+              as={ReactLink}
+              to={`at/${x.profile ? x.profile.username : x.id}`}
+              color='teal.500'>
               link
             </Link>
           </ListItem>

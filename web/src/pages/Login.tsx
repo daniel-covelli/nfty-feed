@@ -24,7 +24,7 @@ import { Formik, Form, Field } from 'formik';
 export const Login: React.FC<RouteComponentProps> = ({ history }) => {
   const { data } = useMeQuery();
   const toast = useToast();
-  const [login] = useLoginMutation();
+  const [login, { loading }] = useLoginMutation();
 
   if (data && data.me) {
     history.push('/');
@@ -59,7 +59,7 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
               });
               if (!response.data) {
                 toast({
-                  title: `Invalid credentials! Please try again...`,
+                  title: `Invalid credentials, please try again...`,
                   status: 'error',
                   position: 'top',
                   variant: 'subtle',
@@ -70,7 +70,8 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
                 setAccessToken(response.data.login.accessToken);
                 history.push('/');
                 toast({
-                  title: `Welcome back, ‎you're logged in!!`,
+                  title: `Welcome back ${response.data.login.user.profile.username} 👋`,
+                  description: `You're logged in!!`,
                   status: 'success',
                   position: 'bottom',
                   variant: 'subtle',
@@ -105,6 +106,7 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
               </Box>
               <Box pb='10px'>
                 <Button
+                  isLoading={loading}
                   type='submit'
                   colorScheme='pink'
                   variant='outline'
