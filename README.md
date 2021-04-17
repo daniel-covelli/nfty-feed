@@ -16,7 +16,7 @@ This project is starting off using [Ben Awad](https://github.com/benawad)'s YouT
 - Express (server)
 - Docker
 
-#### Backend
+#### Backend Setup
 
 - [x] Setup a GraphQL Server using TypeGraphQL and TypeORM
 - [x] Register a user/add them to DB
@@ -26,7 +26,7 @@ This project is starting off using [Ben Awad](https://github.com/benawad)'s YouT
 - [x] Revoke tokens for a user if user logs out, deletes there account, or if their account gets hacked
 - [x] Put yarn workspace in a docker image
 
-#### Frontend
+#### Frontend SetUp
 
 - [x] Setup Apollo and GraphQL via Code Generator
 - [x] Create some routes using react router
@@ -35,6 +35,11 @@ This project is starting off using [Ben Awad](https://github.com/benawad)'s YouT
 - [x] Handling expired tokens
 - [x] Fetching current user in headers, etc...
 - [x] Logging out a user
-- [ ] Add nav bar
+- [x] Add nav bar
+
+#### Active Scrum
+
+- [ ] fix message for routes that don't exist
+- [ ] profile menu image instead of text
 
 Website: https://nftyfeed.com/
