@@ -67,7 +67,7 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
                 });
               }
               if (response && response.data) {
-                setAccessToken(response.data.login.accessToken);
+                await setAccessToken(response.data.login.accessToken);
                 history.push('/');
                 toast({
                   title: `Welcome back ${response.data.login.user.profile.first} 👋`,
