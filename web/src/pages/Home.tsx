@@ -118,20 +118,7 @@ export const Home: React.FC<HomeProps> = () => {
           </Table>
         )
       ) : (
-        <Stack pt='20px'>
-          <Skeleton height='40px' />
-          <Skeleton height='40px' />
-          <Skeleton height='40px' />
-          <Skeleton height='40px' />
-          <Skeleton height='40px' />
-          <Skeleton height='40px' />
-          <Skeleton height='40px' />
-          <Skeleton height='40px' />
-          <Skeleton height='40px' />
-          <Skeleton height='40px' />
-          <Skeleton height='40px' />
-          <Skeleton height='40px' />
-        </Stack>
+        <Spinner size='sm' />
       )}
     </>
   );
