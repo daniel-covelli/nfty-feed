@@ -41,7 +41,8 @@ This project is starting off using [Ben Awad](https://github.com/benawad)'s YouT
 
 - [x] fix message for routes that don't exist
 - [x] profile menu image instead of text
-- [ ] design profile page
+- [x] design profile page
 - [ ] implement profile editing
+- [ ] profile image uploading
 
 Website: https://nftyfeed.com/
