@@ -42,8 +42,8 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
     history.push('/');
   }
 
-  const [register] = useRegisterMutation();
-  const [login, { loading }] = useLoginMutation();
+  const [register, { loading: registerLoading }] = useRegisterMutation();
+  const [login, { loading: loginLoading }] = useLoginMutation();
   const toast = useToast();
 
   return (
@@ -210,7 +210,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                   </Box>
                   <Box pb='10px'>
                     <Button
-                      isLoading={loading}
+                      isLoading={registerLoading || loginLoading}
                       type='submit'
                       colorScheme='pink'
                       variant='outline'
