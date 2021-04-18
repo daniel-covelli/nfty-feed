@@ -4,7 +4,8 @@ import {
   Box,
   SkeletonCircle,
   SkeletonText,
-  Link
+  Link,
+  HStack
 } from '@chakra-ui/react';
 import { useGetUserQuery } from '../generated/graphql';
 import { Link as ReactLink } from 'react-router-dom';
@@ -26,18 +27,27 @@ export const Profile: React.FC<ProfileProps> = () => {
   }
 
   if (error) {
+    if (error.message === 'not authenticated') {
+      return (
+        <Text>
+          To access this page please{' '}
+          <Link as={ReactLink} to={`/register`} color='teal.500'>
+            register
+          </Link>{' '}
+          or{' '}
+          <Link as={ReactLink} to={`/login`} color='teal.500'>
+            login
+          </Link>
+          .
+        </Text>
+      );
+    }
+
     return (
-      <Text>
-        To access this page please{' '}
-        <Link as={ReactLink} to={`/register`} color='teal.500'>
-          register
-        </Link>{' '}
-        or{' '}
-        <Link as={ReactLink} to={`/login`} color='teal.500'>
-          login
-        </Link>
-        .
-      </Text>
+      <HStack>
+        <Text>🥴</Text>
+        <Text>Looks like this user doesnt exist...</Text>
+      </HStack>
     );
   }
 
