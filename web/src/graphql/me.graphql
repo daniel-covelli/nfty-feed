@@ -3,6 +3,8 @@ query Me {
     id
     email
     profile {
+      first
+      last
       username
     }
   }

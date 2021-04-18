@@ -22,6 +22,8 @@ mutation Register(
       id
       email
       profile {
+        first
+        last
         username
       }
     }

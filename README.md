@@ -39,7 +39,7 @@ This project is starting off using [Ben Awad](https://github.com/benawad)'s YouT
 
 #### Active Scrum
 
-- [ ] fix message for routes that don't exist
+- [x] fix message for routes that don't exist
 - [x] profile menu image instead of text
 - [ ] design profile page
 - [ ] implement profile editing

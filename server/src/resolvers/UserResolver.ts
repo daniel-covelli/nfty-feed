@@ -117,7 +117,7 @@ export class UserResolver {
       user = profile.user;
     }
 
-    const isMe = payload!.userId === `${user!.id}`;
+    const isMe = payload!.userId == `${user!.id}`;
 
     return { me: isMe, user };
   }
@@ -215,6 +215,16 @@ export class UserResolver {
       };
     }
 
+    const usernameLength = username.length;
+
+    if (usernameLength > 40) {
+      return {
+        res: false,
+        message: 'Username over 40 characters...',
+        user: null
+      };
+    }
+
     const noSpaces = username.match(/^\S+$/);
 
     if (!noSpaces) {
@@ -238,7 +248,7 @@ export class UserResolver {
 
     const notJustAllNumbers = username.match(/^[0-9]*$/);
 
-    if (!notJustAllNumbers) {
+    if (notJustAllNumbers) {
       return {
         res: false,
         message: 'Please enter valid username that includes letters...',
@@ -262,6 +272,16 @@ export class UserResolver {
       return {
         res: false,
         message: 'Looks like someone already has that username... ',
+        user: null
+      };
+    }
+
+    const bioLength = bio.length;
+
+    if (bioLength > 145) {
+      return {
+        res: false,
+        message: 'Bio over 145 characters...',
         user: null
       };
     }

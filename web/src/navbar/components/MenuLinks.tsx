@@ -42,7 +42,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
 
         {!loading && data && data.me ? (
           <>
-            <Link
+            {/* <Link
               as={ReactLink}
               to='/bye'
               onClick={toggle}
@@ -50,7 +50,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
                 boxShadow: 'none'
               }}>
               <Text display='block'>Bye</Text>
-            </Link>
+            </Link> */}
             <Link
               as={ReactLink}
               to={`/at/${data.me.profile.username}`}
@@ -76,7 +76,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
           <Spinner size='sm' />
         ) : (
           <>
-            <Link
+            {/* <Link
               as={ReactLink}
               to='/bye'
               onClick={toggle}
@@ -86,7 +86,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
               <Text display='block' fontSize='sm'>
                 Bye
               </Text>
-            </Link>
+            </Link> */}
             <Link
               as={ReactLink}
               to='/register'
