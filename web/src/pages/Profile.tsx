@@ -57,6 +57,7 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
   }
 
   if (error) {
+    console.log('ERROR MESSAGE', error.message);
     if (error.message === 'not authenticated') {
       return (
         <Text>
@@ -92,7 +93,7 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
             pb='10px'>
             <GridItem colSpan={3}>
               <Box pb='10px' pr='10px'>
-                <AspectRatio maxW='175px' w='100%' ratio={1 / 1}>
+                <AspectRatio maxW='150px' w='100%' ratio={1 / 1}>
                   <Avatar
                     size='full'
                     fontSize='60px'

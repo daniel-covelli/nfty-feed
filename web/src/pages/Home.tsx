@@ -13,7 +13,8 @@ import {
   Td,
   useMediaQuery,
   Stack,
-  Skeleton
+  Skeleton,
+  Spinner
 } from '@chakra-ui/react';
 import { Link as ReactLink } from 'react-router-dom';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
