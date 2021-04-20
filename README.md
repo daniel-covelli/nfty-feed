@@ -46,5 +46,6 @@ This project is starting off using [Ben Awad](https://github.com/benawad)'s YouT
 - [ ] implement profile editing
 - [ ] profile image uploading
 - [ ] add url to profile
+- [x] following/unfollowing
 
 Website: https://nftyfeed.com/
