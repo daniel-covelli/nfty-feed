@@ -15,6 +15,8 @@ import { createAccessToken, createRefreshToken } from './auth';
 import { sendRefreshToken } from './sendRefreshToken';
 import { getConnectionOptions, createConnection } from 'typeorm';
 import { Profile } from './entity/Profile';
+import { Subscription as Sub } from './entity/Subscription';
+import { SubscriptionResolver } from './resolvers/SubscriptionResolver';
 
 // server set up
 (async () => {
@@ -68,7 +70,7 @@ import { Profile } from './entity/Profile';
       ? createConnection({
           ...connectionOptions,
           url: process.env.DATABASE_URL,
-          entities: [User, Profile],
+          entities: [User, Profile, Sub],
           name: 'default'
         })
       : createConnection({ ...connectionOptions, name: 'default' });
@@ -77,7 +79,9 @@ import { Profile } from './entity/Profile';
   await createTypeOrmConn();
 
   const apolloServer = new ApolloServer({
-    schema: await buildSchema({ resolvers: [UserResolver, ProfileResolver] }),
+    schema: await buildSchema({
+      resolvers: [UserResolver, ProfileResolver, SubscriptionResolver]
+    }),
     context: ({ req, res }) => ({ req, res }),
     playground: true
   });

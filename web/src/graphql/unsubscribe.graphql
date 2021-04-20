@@ -1,0 +1,14 @@
+mutation UnSubscribe(
+  $userIdWhoIsUnfollowing: Int!
+  $userIdWhoIsBeingUnfollowed: Int!
+) {
+  unSubscribe(
+    userIdWhoIsUnfollowing: $userIdWhoIsUnfollowing
+    userIdWhoIsBeingUnfollowed: $userIdWhoIsBeingUnfollowed
+  ) {
+    id
+    userId
+    followingId
+    active
+  }
+}
