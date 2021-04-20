@@ -425,7 +425,7 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                     src=''
                   />
                 </Box>
-                <Text pb='15px' fontSize='sm'>
+                <Text pb='15px' fontSize='sm' isTruncated>
                   Unfollow @{data.getUser.user.profile.username}?
                 </Text>
 
