@@ -1,0 +1,8 @@
+query GetActiveFollowing($userId: Float!) {
+  getActiveFollowing(userId: $userId) {
+    id
+    userId
+    followingId
+    active
+  }
+}

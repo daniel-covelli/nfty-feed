@@ -1,8 +1,0 @@
-query GetActiveFollowings($userId: Float!) {
-  getActiveFollowings(userId: $userId) {
-    id
-    userId
-    followingId
-    active
-  }
-}

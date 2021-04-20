@@ -7,7 +7,8 @@ import {
   MeDocument,
   useCheckEmailMutation,
   UsersQuery,
-  UsersDocument
+  UsersDocument,
+  useUnSubscribeMutation
 } from '../generated/graphql';
 import { RouteComponentProps } from 'react-router-dom';
 import { Link as ReactLink } from 'react-router-dom';
@@ -273,47 +274,9 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                     });
                     return;
                   }
-
                   setLoginEmail(email);
                   setLoginPassword(password);
                   onToggle();
-
-                  // const { data } = await register({
-                  //   variables: { email, password }
-                  // });
-                  // if (!data.register.res) {
-                  //   toast({
-                  //     title: data.register.message,
-                  //     status: 'error',
-                  //     position: 'top',
-                  //     variant: 'subtle',
-                  //     isClosable: true
-                  //   });
-                  // } else {
-                  //   await login({
-                  //     variables: { email, password },
-                  //     update: (store, { data }) => {
-                  //       if (!data) {
-                  //         return null;
-                  //       }
-                  //       store.writeQuery<MeQuery>({
-                  //         query: MeDocument,
-                  //         data: {
-                  //           __typename: 'Query',
-                  //           me: data.login.user
-                  //         }
-                  //       });
-                  //     }
-                  //   });
-                  // setLoginData({ email, password });
-                  // onToggle();
-                  // toast({
-                  //   title: `Congradulations 🎉‏‏‎‏‏‎ ‎‏‏‎ ‎ ‎you are registered!!`,
-                  //   status: 'success',
-                  //   position: 'bottom',
-                  //   variant: 'subtle',
-                  //   isClosable: true
-                  // });
                 }}>
                 <Form>
                   <Box pb='10px'>

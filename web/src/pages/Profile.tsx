@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Text,
   Box,
@@ -27,9 +27,23 @@ import {
   ModalHeader,
   ModalBody,
   ModalCloseButton,
-  ModalContent
+  ModalContent,
+  Spinner
 } from '@chakra-ui/react';
-import { useGetUserQuery, useLogoutMutation } from '../generated/graphql';
+import {
+  useGetUserQuery,
+  useLogoutMutation,
+  useGetActiveFollowersLazyQuery,
+  useGetActiveFollowingLazyQuery,
+  useSubscribeMutation,
+  GetActiveFollowersDocument,
+  GetActiveFollowersQuery,
+  useMeQuery,
+  useExistingSubscriptionLazyQuery,
+  ExistingSubscriptionDocument,
+  ExistingSubscriptionQuery,
+  useUnSubscribeMutation
+} from '../generated/graphql';
 import { Link as ReactLink } from 'react-router-dom';
 import { SettingsIcon } from '@chakra-ui/icons';
 import { setAccessToken } from '../accessToken';
@@ -40,13 +54,35 @@ interface ProfileProps {}
 
 export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
   const [settingsModal, openSettingsModal] = useState(false);
+  const [subscriptionModal, openSubscriptionModal] = useState(false);
   const [logoutLoading, setLogoutLoading] = useState(false);
-
   const [isMobile] = useMediaQuery('(max-width: 520px)');
+
+  const [
+    unsubscribe,
+    { loading: unsubscribeLoading }
+  ] = useUnSubscribeMutation();
+  const [subscribe, { loading: subscribeLoading }] = useSubscribeMutation();
   const [logout, { client }] = useLogoutMutation();
   const { data, loading, error } = useGetUserQuery({
     variables: { path: window.location.href }
   });
+
+  const [getFollowers, { data: followers }] = useGetActiveFollowersLazyQuery();
+  const [getFollowing, { data: following }] = useGetActiveFollowingLazyQuery();
+  const [
+    getExistingSubscription,
+    { data: existingSubscription, loading: existingSubscriptionLoading }
+  ] = useExistingSubscriptionLazyQuery();
+
+  useEffect(() => {
+    if (data) {
+      getFollowers({ variables: { userId: data.getUser.user.id } });
+      getFollowing({ variables: { userId: data.getUser.user.id } });
+      getExistingSubscription({ variables: { userId: data.getUser.user.id } });
+    }
+  }, [data]);
+
   if (loading) {
     return (
       <Box padding='6'>
@@ -79,6 +115,75 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
         <Text>🥴</Text>
         <Text>Looks like this user doesnt exist...</Text>
       </HStack>
+    );
+  }
+
+  let subscriptionDisplay = <Spinner size='sm' />;
+  if (existingSubscription && existingSubscription.existingSubscription) {
+    subscriptionDisplay = (
+      <Button
+        size='xs'
+        w='100%'
+        variant='outline'
+        onClick={() => openSubscriptionModal(true)}>
+        Following
+      </Button>
+    );
+  } else if (
+    existingSubscription &&
+    !existingSubscription.existingSubscription
+  ) {
+    subscriptionDisplay = (
+      <Button
+        isLoading={subscribeLoading}
+        size='xs'
+        w='100%'
+        variant='solid'
+        colorScheme='pink'
+        onClick={async () => {
+          const response = await subscribe({
+            variables: {
+              userIdWhoIsBeingFollowed: data.getUser.user.id
+            },
+            update: (store, { data }) => {
+              const old = store.readQuery<GetActiveFollowersQuery>({
+                query: GetActiveFollowersDocument,
+                variables: {
+                  userId: data.subscribe.followingId
+                }
+              });
+              if (!data || !old) {
+                return null;
+              }
+              store.writeQuery<GetActiveFollowersQuery>({
+                query: GetActiveFollowersDocument,
+                data: {
+                  __typename: 'Query',
+                  getActiveFollowers: [
+                    ...old.getActiveFollowers,
+                    data.subscribe
+                  ]
+                },
+                variables: {
+                  userId: data.subscribe.followingId
+                }
+              });
+              store.writeQuery<ExistingSubscriptionQuery>({
+                query: ExistingSubscriptionDocument,
+                data: {
+                  __typename: 'Query',
+                  existingSubscription: true
+                },
+                variables: {
+                  userId: data.subscribe.followingId
+                }
+              });
+            }
+          });
+          console.log('RESPONSE', response);
+        }}>
+        Follow
+      </Button>
     );
   }
 
@@ -137,14 +242,7 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                           />
                         </ButtonGroup>
                       ) : (
-                        <Button
-                          size='xs'
-                          w='100%'
-                          variant='solid'
-                          colorScheme='pink'
-                          isDisabled>
-                          Follow
-                        </Button>
+                        subscriptionDisplay
                       )}
                     </Center>
                   </WrapItem>
@@ -164,13 +262,27 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                         <Spacer />
                         <Box>
                           <Text size='md'>
-                            <b>0</b> followers
+                            <Link>
+                              <b>
+                                {followers
+                                  ? followers.getActiveFollowers.length
+                                  : 0}
+                              </b>{' '}
+                              followers
+                            </Link>
                           </Text>
                         </Box>
                         <Spacer />
                         <Box>
                           <Text size='md'>
-                            <b>0</b> following
+                            <Link>
+                              <b>
+                                {following
+                                  ? following.getActiveFollowing.length
+                                  : 0}
+                              </b>{' '}
+                              following
+                            </Link>
                           </Text>
                         </Box>
                       </Flex>
@@ -224,13 +336,27 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                     <Spacer />
                     <Box>
                       <Text size='sm'>
-                        <b>0</b> followers
+                        <Link>
+                          <b>
+                            {followers
+                              ? followers.getActiveFollowers.length
+                              : 0}
+                          </b>{' '}
+                          followers
+                        </Link>
                       </Text>
                     </Box>
                     <Spacer />
                     <Box>
                       <Text size='sm'>
-                        <b>0</b> following
+                        <Link>
+                          <b>
+                            {following
+                              ? following.getActiveFollowing.length
+                              : 0}
+                          </b>{' '}
+                          following
+                        </Link>
                       </Text>
                     </Box>
                   </Flex>
@@ -270,6 +396,90 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                     setLogoutLoading(false);
                   }}>
                   Log Out
+                </Button>
+              </VStack>
+            </Center>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+      <Modal
+        isOpen={subscriptionModal}
+        onClose={() => openSubscriptionModal(false)}
+        size='xs'>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Unfollow</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Center>
+              <VStack w='100%' maxW='200px'>
+                <Box mb='15px'>
+                  <Avatar
+                    size='2xl'
+                    fontSize='60px'
+                    name={
+                      data.getUser.user.profile
+                        ? `${data.getUser.user.profile.first} ${data.getUser.user.profile.last}`
+                        : null
+                    }
+                    src=''
+                  />
+                </Box>
+                <Text pb='15px' fontSize='sm'>
+                  Unfollow @{data.getUser.user.profile.username}?
+                </Text>
+
+                <Button
+                  isLoading={unsubscribeLoading}
+                  w='100%'
+                  variant='outline'
+                  colorScheme='red'
+                  onClick={async () => {
+                    await unsubscribe({
+                      variables: { userId: data.getUser.user.id },
+                      update: (store, { data }) => {
+                        const old = store.readQuery<GetActiveFollowersQuery>({
+                          query: GetActiveFollowersDocument,
+                          variables: {
+                            userId: data.unSubscribe.followingId
+                          }
+                        });
+                        if (!data || !old) {
+                          return null;
+                        }
+                        store.writeQuery<GetActiveFollowersQuery>({
+                          query: GetActiveFollowersDocument,
+                          data: {
+                            __typename: 'Query',
+                            getActiveFollowers: old.getActiveFollowers.filter(
+                              (user) => user.id != data.unSubscribe.id
+                            )
+                          },
+                          variables: {
+                            userId: data.unSubscribe.followingId
+                          }
+                        });
+                        store.writeQuery<ExistingSubscriptionQuery>({
+                          query: ExistingSubscriptionDocument,
+                          data: {
+                            __typename: 'Query',
+                            existingSubscription: false
+                          },
+                          variables: {
+                            userId: data.unSubscribe.followingId
+                          }
+                        });
+                      }
+                    });
+                    openSubscriptionModal(false);
+                  }}>
+                  Unsubscribe
+                </Button>
+                <Button
+                  w='100%'
+                  variant='outline'
+                  onClick={() => openSubscriptionModal(false)}>
+                  Cancel
                 </Button>
               </VStack>
             </Center>

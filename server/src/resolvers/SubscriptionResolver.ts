@@ -37,32 +37,47 @@ export class SubscriptionResolver {
   // who a user follows
   @Query(() => [Subscription])
   @UseMiddleware(isAuth)
-  async getActiveFollowings(@Arg('userId') userId: number) {
+  async getActiveFollowing(@Arg('userId') userId: number) {
     const subscriptions = await Subscription.find({
-      where: { userId, active: SubStatus.ACTIVE }
+      where: { userId: userId, active: SubStatus.ACTIVE }
     });
 
     return subscriptions;
   }
 
+  @Query(() => Boolean)
+  @UseMiddleware(isAuth)
+  async existingSubscription(
+    @Ctx() { payload }: MyContext,
+    @Arg('userId') userId: number
+  ) {
+    const existingActive = await Subscription.findOne({
+      where: {
+        userId: Number(payload?.userId),
+        followingId: userId,
+        active: SubStatus.ACTIVE
+      }
+    });
+
+    if (existingActive) {
+      return true;
+    }
+    return false;
+  }
+
   @Mutation(() => Subscription)
   @UseMiddleware(isAuth)
-  async createSubscription(
+  async subscribe(
     @Ctx() { payload }: MyContext,
-    @Arg('userIdWhoIsFolloing') userIdWhoIsFolloing: number,
     @Arg('userIdWhoIsBeingFollowed') userIdWhoIsBeingFollowed: number
   ) {
-    if (Number(payload?.userId) != userIdWhoIsFolloing) {
-      throw new Error('Invalid subscription');
-    }
-
-    if (userIdWhoIsBeingFollowed == userIdWhoIsFolloing) {
+    if (userIdWhoIsBeingFollowed == Number(payload?.userId)) {
       throw new Error(`Users can't follow themselves`);
     }
 
     const existing = await Subscription.findOne({
       where: {
-        userId: userIdWhoIsFolloing,
+        userId: Number(payload?.userId),
         followingId: userIdWhoIsBeingFollowed,
         active: SubStatus.ACTIVE
       }
@@ -74,7 +89,7 @@ export class SubscriptionResolver {
 
     const existingInactive = await Subscription.findOne({
       where: {
-        userId: userIdWhoIsFolloing,
+        userId: Number(payload?.userId),
         followingId: userIdWhoIsBeingFollowed,
         active: SubStatus.INACTIVE
       }
@@ -91,7 +106,7 @@ export class SubscriptionResolver {
       .insert()
       .into(Subscription)
       .values({
-        userId: userIdWhoIsFolloing,
+        userId: Number(payload?.userId),
         followingId: userIdWhoIsBeingFollowed,
         active: SubStatus.ACTIVE
       })
@@ -101,7 +116,7 @@ export class SubscriptionResolver {
 
     const subscription = await Subscription.findOne({
       where: {
-        userId: userIdWhoIsFolloing,
+        userId: Number(payload?.userId),
         followingId: userIdWhoIsBeingFollowed,
         active: SubStatus.ACTIVE
       }
@@ -114,21 +129,16 @@ export class SubscriptionResolver {
   @UseMiddleware(isAuth)
   async unSubscribe(
     @Ctx() { payload }: MyContext,
-    @Arg('userIdWhoIsUnfollowing') userIdWhoIsUnfollowing: number,
-    @Arg('userIdWhoIsBeingUnfollowed') userIdWhoIsBeingUnfollowed: number
+    @Arg('userId') userId: number
   ) {
-    if (Number(payload?.userId) != userIdWhoIsUnfollowing) {
-      throw new Error('Invalid subscription');
-    }
-
-    if (userIdWhoIsUnfollowing == userIdWhoIsBeingUnfollowed) {
+    if (Number(payload?.userId) == userId) {
       throw new Error(`Users can't unfollow themselves`);
     }
 
     const existingInactive = await Subscription.findOne({
       where: {
-        userId: userIdWhoIsUnfollowing,
-        followingId: userIdWhoIsBeingUnfollowed,
+        userId: Number(payload?.userId),
+        followingId: userId,
         active: SubStatus.INACTIVE
       }
     });
@@ -141,8 +151,8 @@ export class SubscriptionResolver {
 
     const existingActive = await Subscription.findOne({
       where: {
-        userId: userIdWhoIsUnfollowing,
-        followingId: userIdWhoIsBeingUnfollowed,
+        userId: Number(payload?.userId),
+        followingId: userId,
         active: SubStatus.ACTIVE
       }
     });

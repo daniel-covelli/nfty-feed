@@ -36,7 +36,7 @@ export type Mutation = {
   register: RegisterResponse;
   revokeRefreshTokensForUser: Scalars['Boolean'];
   logout: Scalars['Boolean'];
-  createSubscription: Subscription;
+  subscribe: Subscription;
   unSubscribe: Subscription;
 };
 
@@ -68,15 +68,13 @@ export type MutationRevokeRefreshTokensForUserArgs = {
 };
 
 
-export type MutationCreateSubscriptionArgs = {
+export type MutationSubscribeArgs = {
   userIdWhoIsBeingFollowed: Scalars['Float'];
-  userIdWhoIsFolloing: Scalars['Float'];
 };
 
 
 export type MutationUnSubscribeArgs = {
-  userIdWhoIsBeingUnfollowed: Scalars['Float'];
-  userIdWhoIsUnfollowing: Scalars['Float'];
+  userId: Scalars['Float'];
 };
 
 export type Profile = {
@@ -98,7 +96,8 @@ export type Query = {
   getUser?: Maybe<UserResponse>;
   subscriptions: Array<Subscription>;
   getActiveFollowers: Array<Subscription>;
-  getActiveFollowings: Array<Subscription>;
+  getActiveFollowing: Array<Subscription>;
+  existingSubscription: Scalars['Boolean'];
 };
 
 
@@ -112,7 +111,12 @@ export type QueryGetActiveFollowersArgs = {
 };
 
 
-export type QueryGetActiveFollowingsArgs = {
+export type QueryGetActiveFollowingArgs = {
+  userId: Scalars['Float'];
+};
+
+
+export type QueryExistingSubscriptionArgs = {
   userId: Scalars['Float'];
 };
 
@@ -166,6 +170,16 @@ export type CheckEmailMutation = (
   ) }
 );
 
+export type ExistingSubscriptionQueryVariables = Exact<{
+  userId: Scalars['Float'];
+}>;
+
+
+export type ExistingSubscriptionQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'existingSubscription'>
+);
+
 export type GetActiveFollowersQueryVariables = Exact<{
   userId: Scalars['Float'];
 }>;
@@ -179,14 +193,14 @@ export type GetActiveFollowersQuery = (
   )> }
 );
 
-export type GetActiveFollowingsQueryVariables = Exact<{
+export type GetActiveFollowingQueryVariables = Exact<{
   userId: Scalars['Float'];
 }>;
 
 
-export type GetActiveFollowingsQuery = (
+export type GetActiveFollowingQuery = (
   { __typename?: 'Query' }
-  & { getActiveFollowings: Array<(
+  & { getActiveFollowing: Array<(
     { __typename?: 'Subscription' }
     & Pick<Subscription, 'id' | 'userId' | 'followingId' | 'active'>
   )> }
@@ -293,23 +307,21 @@ export type RegisterMutation = (
   ) }
 );
 
-export type CreateSubscriptionMutationVariables = Exact<{
-  userIdWhoIsFolloing: Scalars['Float'];
+export type SubscribeMutationVariables = Exact<{
   userIdWhoIsBeingFollowed: Scalars['Float'];
 }>;
 
 
-export type CreateSubscriptionMutation = (
+export type SubscribeMutation = (
   { __typename?: 'Mutation' }
-  & { createSubscription: (
+  & { subscribe: (
     { __typename?: 'Subscription' }
     & Pick<Subscription, 'id' | 'userId' | 'followingId' | 'active'>
   ) }
 );
 
 export type UnSubscribeMutationVariables = Exact<{
-  userIdWhoIsUnfollowing: Scalars['Float'];
-  userIdWhoIsBeingUnfollowed: Scalars['Float'];
+  userId: Scalars['Float'];
 }>;
 
 
@@ -403,6 +415,39 @@ export function useCheckEmailMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CheckEmailMutationHookResult = ReturnType<typeof useCheckEmailMutation>;
 export type CheckEmailMutationResult = Apollo.MutationResult<CheckEmailMutation>;
 export type CheckEmailMutationOptions = Apollo.BaseMutationOptions<CheckEmailMutation, CheckEmailMutationVariables>;
+export const ExistingSubscriptionDocument = gql`
+    query ExistingSubscription($userId: Float!) {
+  existingSubscription(userId: $userId)
+}
+    `;
+
+/**
+ * __useExistingSubscriptionQuery__
+ *
+ * To run a query within a React component, call `useExistingSubscriptionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useExistingSubscriptionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useExistingSubscriptionQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useExistingSubscriptionQuery(baseOptions: Apollo.QueryHookOptions<ExistingSubscriptionQuery, ExistingSubscriptionQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ExistingSubscriptionQuery, ExistingSubscriptionQueryVariables>(ExistingSubscriptionDocument, options);
+      }
+export function useExistingSubscriptionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ExistingSubscriptionQuery, ExistingSubscriptionQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ExistingSubscriptionQuery, ExistingSubscriptionQueryVariables>(ExistingSubscriptionDocument, options);
+        }
+export type ExistingSubscriptionQueryHookResult = ReturnType<typeof useExistingSubscriptionQuery>;
+export type ExistingSubscriptionLazyQueryHookResult = ReturnType<typeof useExistingSubscriptionLazyQuery>;
+export type ExistingSubscriptionQueryResult = Apollo.QueryResult<ExistingSubscriptionQuery, ExistingSubscriptionQueryVariables>;
 export const GetActiveFollowersDocument = gql`
     query GetActiveFollowers($userId: Float!) {
   getActiveFollowers(userId: $userId) {
@@ -441,9 +486,9 @@ export function useGetActiveFollowersLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type GetActiveFollowersQueryHookResult = ReturnType<typeof useGetActiveFollowersQuery>;
 export type GetActiveFollowersLazyQueryHookResult = ReturnType<typeof useGetActiveFollowersLazyQuery>;
 export type GetActiveFollowersQueryResult = Apollo.QueryResult<GetActiveFollowersQuery, GetActiveFollowersQueryVariables>;
-export const GetActiveFollowingsDocument = gql`
-    query GetActiveFollowings($userId: Float!) {
-  getActiveFollowings(userId: $userId) {
+export const GetActiveFollowingDocument = gql`
+    query GetActiveFollowing($userId: Float!) {
+  getActiveFollowing(userId: $userId) {
     id
     userId
     followingId
@@ -453,32 +498,32 @@ export const GetActiveFollowingsDocument = gql`
     `;
 
 /**
- * __useGetActiveFollowingsQuery__
+ * __useGetActiveFollowingQuery__
  *
- * To run a query within a React component, call `useGetActiveFollowingsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetActiveFollowingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetActiveFollowingQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetActiveFollowingQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetActiveFollowingsQuery({
+ * const { data, loading, error } = useGetActiveFollowingQuery({
  *   variables: {
  *      userId: // value for 'userId'
  *   },
  * });
  */
-export function useGetActiveFollowingsQuery(baseOptions: Apollo.QueryHookOptions<GetActiveFollowingsQuery, GetActiveFollowingsQueryVariables>) {
+export function useGetActiveFollowingQuery(baseOptions: Apollo.QueryHookOptions<GetActiveFollowingQuery, GetActiveFollowingQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetActiveFollowingsQuery, GetActiveFollowingsQueryVariables>(GetActiveFollowingsDocument, options);
+        return Apollo.useQuery<GetActiveFollowingQuery, GetActiveFollowingQueryVariables>(GetActiveFollowingDocument, options);
       }
-export function useGetActiveFollowingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetActiveFollowingsQuery, GetActiveFollowingsQueryVariables>) {
+export function useGetActiveFollowingLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetActiveFollowingQuery, GetActiveFollowingQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetActiveFollowingsQuery, GetActiveFollowingsQueryVariables>(GetActiveFollowingsDocument, options);
+          return Apollo.useLazyQuery<GetActiveFollowingQuery, GetActiveFollowingQueryVariables>(GetActiveFollowingDocument, options);
         }
-export type GetActiveFollowingsQueryHookResult = ReturnType<typeof useGetActiveFollowingsQuery>;
-export type GetActiveFollowingsLazyQueryHookResult = ReturnType<typeof useGetActiveFollowingsLazyQuery>;
-export type GetActiveFollowingsQueryResult = Apollo.QueryResult<GetActiveFollowingsQuery, GetActiveFollowingsQueryVariables>;
+export type GetActiveFollowingQueryHookResult = ReturnType<typeof useGetActiveFollowingQuery>;
+export type GetActiveFollowingLazyQueryHookResult = ReturnType<typeof useGetActiveFollowingLazyQuery>;
+export type GetActiveFollowingQueryResult = Apollo.QueryResult<GetActiveFollowingQuery, GetActiveFollowingQueryVariables>;
 export const GetUserDocument = gql`
     query GetUser($path: String!) {
   getUser(path: $path) {
@@ -728,12 +773,9 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
-export const CreateSubscriptionDocument = gql`
-    mutation CreateSubscription($userIdWhoIsFolloing: Float!, $userIdWhoIsBeingFollowed: Float!) {
-  createSubscription(
-    userIdWhoIsFolloing: $userIdWhoIsFolloing
-    userIdWhoIsBeingFollowed: $userIdWhoIsBeingFollowed
-  ) {
+export const SubscribeDocument = gql`
+    mutation Subscribe($userIdWhoIsBeingFollowed: Float!) {
+  subscribe(userIdWhoIsBeingFollowed: $userIdWhoIsBeingFollowed) {
     id
     userId
     followingId
@@ -741,39 +783,35 @@ export const CreateSubscriptionDocument = gql`
   }
 }
     `;
-export type CreateSubscriptionMutationFn = Apollo.MutationFunction<CreateSubscriptionMutation, CreateSubscriptionMutationVariables>;
+export type SubscribeMutationFn = Apollo.MutationFunction<SubscribeMutation, SubscribeMutationVariables>;
 
 /**
- * __useCreateSubscriptionMutation__
+ * __useSubscribeMutation__
  *
- * To run a mutation, you first call `useCreateSubscriptionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateSubscriptionMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useSubscribeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSubscribeMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [createSubscriptionMutation, { data, loading, error }] = useCreateSubscriptionMutation({
+ * const [subscribeMutation, { data, loading, error }] = useSubscribeMutation({
  *   variables: {
- *      userIdWhoIsFolloing: // value for 'userIdWhoIsFolloing'
  *      userIdWhoIsBeingFollowed: // value for 'userIdWhoIsBeingFollowed'
  *   },
  * });
  */
-export function useCreateSubscriptionMutation(baseOptions?: Apollo.MutationHookOptions<CreateSubscriptionMutation, CreateSubscriptionMutationVariables>) {
+export function useSubscribeMutation(baseOptions?: Apollo.MutationHookOptions<SubscribeMutation, SubscribeMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateSubscriptionMutation, CreateSubscriptionMutationVariables>(CreateSubscriptionDocument, options);
+        return Apollo.useMutation<SubscribeMutation, SubscribeMutationVariables>(SubscribeDocument, options);
       }
-export type CreateSubscriptionMutationHookResult = ReturnType<typeof useCreateSubscriptionMutation>;
-export type CreateSubscriptionMutationResult = Apollo.MutationResult<CreateSubscriptionMutation>;
-export type CreateSubscriptionMutationOptions = Apollo.BaseMutationOptions<CreateSubscriptionMutation, CreateSubscriptionMutationVariables>;
+export type SubscribeMutationHookResult = ReturnType<typeof useSubscribeMutation>;
+export type SubscribeMutationResult = Apollo.MutationResult<SubscribeMutation>;
+export type SubscribeMutationOptions = Apollo.BaseMutationOptions<SubscribeMutation, SubscribeMutationVariables>;
 export const UnSubscribeDocument = gql`
-    mutation UnSubscribe($userIdWhoIsUnfollowing: Float!, $userIdWhoIsBeingUnfollowed: Float!) {
-  unSubscribe(
-    userIdWhoIsUnfollowing: $userIdWhoIsUnfollowing
-    userIdWhoIsBeingUnfollowed: $userIdWhoIsBeingUnfollowed
-  ) {
+    mutation UnSubscribe($userId: Float!) {
+  unSubscribe(userId: $userId) {
     id
     userId
     followingId
@@ -796,8 +834,7 @@ export type UnSubscribeMutationFn = Apollo.MutationFunction<UnSubscribeMutation,
  * @example
  * const [unSubscribeMutation, { data, loading, error }] = useUnSubscribeMutation({
  *   variables: {
- *      userIdWhoIsUnfollowing: // value for 'userIdWhoIsUnfollowing'
- *      userIdWhoIsBeingUnfollowed: // value for 'userIdWhoIsBeingUnfollowed'
+ *      userId: // value for 'userId'
  *   },
  * });
  */

@@ -1,0 +1,3 @@
+query ExistingSubscription($userId: Float!) {
+  existingSubscription(userId: $userId)
+}
