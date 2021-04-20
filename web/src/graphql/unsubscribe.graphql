@@ -1,6 +1,6 @@
 mutation UnSubscribe(
-  $userIdWhoIsUnfollowing: Int!
-  $userIdWhoIsBeingUnfollowed: Int!
+  $userIdWhoIsUnfollowing: Float!
+  $userIdWhoIsBeingUnfollowed: Float!
 ) {
   unSubscribe(
     userIdWhoIsUnfollowing: $userIdWhoIsUnfollowing

@@ -1,0 +1,14 @@
+mutation CreateSubscription(
+  $userIdWhoIsFolloing: Float!
+  $userIdWhoIsBeingFollowed: Float!
+) {
+  createSubscription(
+    userIdWhoIsFolloing: $userIdWhoIsFolloing
+    userIdWhoIsBeingFollowed: $userIdWhoIsBeingFollowed
+  ) {
+    id
+    userId
+    followingId
+    active
+  }
+}

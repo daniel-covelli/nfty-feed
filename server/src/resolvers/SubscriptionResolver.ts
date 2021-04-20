@@ -23,6 +23,28 @@ export class SubscriptionResolver {
     return subscriptions;
   }
 
+  // who is following a user
+  @Query(() => [Subscription])
+  @UseMiddleware(isAuth)
+  async getActiveFollowers(@Arg('userId') userId: number) {
+    const subscriptions = await Subscription.find({
+      where: { followingId: userId, active: SubStatus.ACTIVE }
+    });
+
+    return subscriptions;
+  }
+
+  // who a user follows
+  @Query(() => [Subscription])
+  @UseMiddleware(isAuth)
+  async getActiveFollowings(@Arg('userId') userId: number) {
+    const subscriptions = await Subscription.find({
+      where: { userId, active: SubStatus.ACTIVE }
+    });
+
+    return subscriptions;
+  }
+
   @Mutation(() => Subscription)
   @UseMiddleware(isAuth)
   async createSubscription(

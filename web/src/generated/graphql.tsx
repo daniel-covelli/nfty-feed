@@ -12,7 +12,10 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
+  DateTime: any;
 };
+
 
 export type GenericResponse = {
   __typename?: 'GenericResponse';
@@ -33,6 +36,8 @@ export type Mutation = {
   register: RegisterResponse;
   revokeRefreshTokensForUser: Scalars['Boolean'];
   logout: Scalars['Boolean'];
+  createSubscription: Subscription;
+  unSubscribe: Subscription;
 };
 
 
@@ -62,6 +67,18 @@ export type MutationRevokeRefreshTokensForUserArgs = {
   userId: Scalars['Int'];
 };
 
+
+export type MutationCreateSubscriptionArgs = {
+  userIdWhoIsBeingFollowed: Scalars['Float'];
+  userIdWhoIsFolloing: Scalars['Float'];
+};
+
+
+export type MutationUnSubscribeArgs = {
+  userIdWhoIsBeingUnfollowed: Scalars['Float'];
+  userIdWhoIsUnfollowing: Scalars['Float'];
+};
+
 export type Profile = {
   __typename?: 'Profile';
   id: Scalars['Int'];
@@ -79,6 +96,9 @@ export type Query = {
   users: Array<User>;
   me?: Maybe<User>;
   getUser?: Maybe<UserResponse>;
+  subscriptions: Array<Subscription>;
+  getActiveFollowers: Array<Subscription>;
+  getActiveFollowings: Array<Subscription>;
 };
 
 
@@ -86,11 +106,30 @@ export type QueryGetUserArgs = {
   path: Scalars['String'];
 };
 
+
+export type QueryGetActiveFollowersArgs = {
+  userId: Scalars['Float'];
+};
+
+
+export type QueryGetActiveFollowingsArgs = {
+  userId: Scalars['Float'];
+};
+
 export type RegisterResponse = {
   __typename?: 'RegisterResponse';
   res: Scalars['Boolean'];
   message: Scalars['String'];
   user?: Maybe<User>;
+};
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  id: Scalars['Int'];
+  userId: Scalars['Float'];
+  followingId: Scalars['Float'];
+  active: Scalars['Float'];
+  createdAt: Scalars['DateTime'];
 };
 
 export type User = {
@@ -125,6 +164,32 @@ export type CheckEmailMutation = (
     { __typename?: 'GenericResponse' }
     & Pick<GenericResponse, 'res' | 'message'>
   ) }
+);
+
+export type GetActiveFollowersQueryVariables = Exact<{
+  userId: Scalars['Float'];
+}>;
+
+
+export type GetActiveFollowersQuery = (
+  { __typename?: 'Query' }
+  & { getActiveFollowers: Array<(
+    { __typename?: 'Subscription' }
+    & Pick<Subscription, 'id' | 'userId' | 'followingId' | 'active'>
+  )> }
+);
+
+export type GetActiveFollowingsQueryVariables = Exact<{
+  userId: Scalars['Float'];
+}>;
+
+
+export type GetActiveFollowingsQuery = (
+  { __typename?: 'Query' }
+  & { getActiveFollowings: Array<(
+    { __typename?: 'Subscription' }
+    & Pick<Subscription, 'id' | 'userId' | 'followingId' | 'active'>
+  )> }
 );
 
 export type GetUserQueryVariables = Exact<{
@@ -228,6 +293,34 @@ export type RegisterMutation = (
   ) }
 );
 
+export type CreateSubscriptionMutationVariables = Exact<{
+  userIdWhoIsFolloing: Scalars['Float'];
+  userIdWhoIsBeingFollowed: Scalars['Float'];
+}>;
+
+
+export type CreateSubscriptionMutation = (
+  { __typename?: 'Mutation' }
+  & { createSubscription: (
+    { __typename?: 'Subscription' }
+    & Pick<Subscription, 'id' | 'userId' | 'followingId' | 'active'>
+  ) }
+);
+
+export type UnSubscribeMutationVariables = Exact<{
+  userIdWhoIsUnfollowing: Scalars['Float'];
+  userIdWhoIsBeingUnfollowed: Scalars['Float'];
+}>;
+
+
+export type UnSubscribeMutation = (
+  { __typename?: 'Mutation' }
+  & { unSubscribe: (
+    { __typename?: 'Subscription' }
+    & Pick<Subscription, 'id' | 'userId' | 'followingId' | 'active'>
+  ) }
+);
+
 export type UsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -310,6 +403,82 @@ export function useCheckEmailMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CheckEmailMutationHookResult = ReturnType<typeof useCheckEmailMutation>;
 export type CheckEmailMutationResult = Apollo.MutationResult<CheckEmailMutation>;
 export type CheckEmailMutationOptions = Apollo.BaseMutationOptions<CheckEmailMutation, CheckEmailMutationVariables>;
+export const GetActiveFollowersDocument = gql`
+    query GetActiveFollowers($userId: Float!) {
+  getActiveFollowers(userId: $userId) {
+    id
+    userId
+    followingId
+    active
+  }
+}
+    `;
+
+/**
+ * __useGetActiveFollowersQuery__
+ *
+ * To run a query within a React component, call `useGetActiveFollowersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetActiveFollowersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetActiveFollowersQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useGetActiveFollowersQuery(baseOptions: Apollo.QueryHookOptions<GetActiveFollowersQuery, GetActiveFollowersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetActiveFollowersQuery, GetActiveFollowersQueryVariables>(GetActiveFollowersDocument, options);
+      }
+export function useGetActiveFollowersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetActiveFollowersQuery, GetActiveFollowersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetActiveFollowersQuery, GetActiveFollowersQueryVariables>(GetActiveFollowersDocument, options);
+        }
+export type GetActiveFollowersQueryHookResult = ReturnType<typeof useGetActiveFollowersQuery>;
+export type GetActiveFollowersLazyQueryHookResult = ReturnType<typeof useGetActiveFollowersLazyQuery>;
+export type GetActiveFollowersQueryResult = Apollo.QueryResult<GetActiveFollowersQuery, GetActiveFollowersQueryVariables>;
+export const GetActiveFollowingsDocument = gql`
+    query GetActiveFollowings($userId: Float!) {
+  getActiveFollowings(userId: $userId) {
+    id
+    userId
+    followingId
+    active
+  }
+}
+    `;
+
+/**
+ * __useGetActiveFollowingsQuery__
+ *
+ * To run a query within a React component, call `useGetActiveFollowingsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetActiveFollowingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetActiveFollowingsQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useGetActiveFollowingsQuery(baseOptions: Apollo.QueryHookOptions<GetActiveFollowingsQuery, GetActiveFollowingsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetActiveFollowingsQuery, GetActiveFollowingsQueryVariables>(GetActiveFollowingsDocument, options);
+      }
+export function useGetActiveFollowingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetActiveFollowingsQuery, GetActiveFollowingsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetActiveFollowingsQuery, GetActiveFollowingsQueryVariables>(GetActiveFollowingsDocument, options);
+        }
+export type GetActiveFollowingsQueryHookResult = ReturnType<typeof useGetActiveFollowingsQuery>;
+export type GetActiveFollowingsLazyQueryHookResult = ReturnType<typeof useGetActiveFollowingsLazyQuery>;
+export type GetActiveFollowingsQueryResult = Apollo.QueryResult<GetActiveFollowingsQuery, GetActiveFollowingsQueryVariables>;
 export const GetUserDocument = gql`
     query GetUser($path: String!) {
   getUser(path: $path) {
@@ -559,6 +728,86 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const CreateSubscriptionDocument = gql`
+    mutation CreateSubscription($userIdWhoIsFolloing: Float!, $userIdWhoIsBeingFollowed: Float!) {
+  createSubscription(
+    userIdWhoIsFolloing: $userIdWhoIsFolloing
+    userIdWhoIsBeingFollowed: $userIdWhoIsBeingFollowed
+  ) {
+    id
+    userId
+    followingId
+    active
+  }
+}
+    `;
+export type CreateSubscriptionMutationFn = Apollo.MutationFunction<CreateSubscriptionMutation, CreateSubscriptionMutationVariables>;
+
+/**
+ * __useCreateSubscriptionMutation__
+ *
+ * To run a mutation, you first call `useCreateSubscriptionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateSubscriptionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createSubscriptionMutation, { data, loading, error }] = useCreateSubscriptionMutation({
+ *   variables: {
+ *      userIdWhoIsFolloing: // value for 'userIdWhoIsFolloing'
+ *      userIdWhoIsBeingFollowed: // value for 'userIdWhoIsBeingFollowed'
+ *   },
+ * });
+ */
+export function useCreateSubscriptionMutation(baseOptions?: Apollo.MutationHookOptions<CreateSubscriptionMutation, CreateSubscriptionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateSubscriptionMutation, CreateSubscriptionMutationVariables>(CreateSubscriptionDocument, options);
+      }
+export type CreateSubscriptionMutationHookResult = ReturnType<typeof useCreateSubscriptionMutation>;
+export type CreateSubscriptionMutationResult = Apollo.MutationResult<CreateSubscriptionMutation>;
+export type CreateSubscriptionMutationOptions = Apollo.BaseMutationOptions<CreateSubscriptionMutation, CreateSubscriptionMutationVariables>;
+export const UnSubscribeDocument = gql`
+    mutation UnSubscribe($userIdWhoIsUnfollowing: Float!, $userIdWhoIsBeingUnfollowed: Float!) {
+  unSubscribe(
+    userIdWhoIsUnfollowing: $userIdWhoIsUnfollowing
+    userIdWhoIsBeingUnfollowed: $userIdWhoIsBeingUnfollowed
+  ) {
+    id
+    userId
+    followingId
+    active
+  }
+}
+    `;
+export type UnSubscribeMutationFn = Apollo.MutationFunction<UnSubscribeMutation, UnSubscribeMutationVariables>;
+
+/**
+ * __useUnSubscribeMutation__
+ *
+ * To run a mutation, you first call `useUnSubscribeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnSubscribeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unSubscribeMutation, { data, loading, error }] = useUnSubscribeMutation({
+ *   variables: {
+ *      userIdWhoIsUnfollowing: // value for 'userIdWhoIsUnfollowing'
+ *      userIdWhoIsBeingUnfollowed: // value for 'userIdWhoIsBeingUnfollowed'
+ *   },
+ * });
+ */
+export function useUnSubscribeMutation(baseOptions?: Apollo.MutationHookOptions<UnSubscribeMutation, UnSubscribeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UnSubscribeMutation, UnSubscribeMutationVariables>(UnSubscribeDocument, options);
+      }
+export type UnSubscribeMutationHookResult = ReturnType<typeof useUnSubscribeMutation>;
+export type UnSubscribeMutationResult = Apollo.MutationResult<UnSubscribeMutation>;
+export type UnSubscribeMutationOptions = Apollo.BaseMutationOptions<UnSubscribeMutation, UnSubscribeMutationVariables>;
 export const UsersDocument = gql`
     query Users {
   users {
