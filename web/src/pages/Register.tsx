@@ -97,7 +97,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                   if (!data.register.res) {
                     toast({
                       title: data.register.message,
-                      duration: 3000,
+                      duration: 2000,
                       status: 'error',
                       position: 'top',
                       variant: 'subtle',

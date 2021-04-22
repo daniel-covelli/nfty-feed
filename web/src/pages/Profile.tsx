@@ -28,7 +28,12 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  Spinner
+  Spinner,
+  toast,
+  FormControl,
+  Input,
+  Textarea,
+  useToast
 } from '@chakra-ui/react';
 import {
   useGetUserQuery,
@@ -42,19 +47,24 @@ import {
   useExistingSubscriptionLazyQuery,
   ExistingSubscriptionDocument,
   ExistingSubscriptionQuery,
-  useUnSubscribeMutation
+  useUnSubscribeMutation,
+  useEditProfileMutation,
+  GetUserDocument,
+  GetUserQuery
 } from '../generated/graphql';
 import { Link as ReactLink } from 'react-router-dom';
 import { SettingsIcon } from '@chakra-ui/icons';
 import { setAccessToken } from '../accessToken';
 
 import { RouteComponentProps } from 'react-router-dom';
+import { Formik, Form, Field } from 'formik';
 
 interface ProfileProps {}
 
 export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
   const [settingsModal, openSettingsModal] = useState(false);
   const [subscriptionModal, openSubscriptionModal] = useState(false);
+  const [editModal, openEditModal] = useState(false);
   const [logoutLoading, setLogoutLoading] = useState(false);
   const [isMobile] = useMediaQuery('(max-width: 520px)');
 
@@ -62,8 +72,11 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
     unsubscribe,
     { loading: unsubscribeLoading }
   ] = useUnSubscribeMutation();
+  const toast = useToast();
   const [subscribe, { loading: subscribeLoading }] = useSubscribeMutation();
+  const [edit, { loading: editLoading }] = useEditProfileMutation();
   const [logout, { client }] = useLogoutMutation();
+
   const { data, loading, error } = useGetUserQuery({
     variables: { path: window.location.href }
   });
@@ -125,7 +138,10 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
         size='xs'
         w='100%'
         variant='outline'
-        onClick={() => openSubscriptionModal(true)}>
+        onClick={() => openSubscriptionModal(true)}
+        _focus={{
+          boxShadow: 'none'
+        }}>
         Following
       </Button>
     );
@@ -140,8 +156,11 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
         w='100%'
         variant='solid'
         colorScheme='pink'
+        _focus={{
+          boxShadow: 'none'
+        }}
         onClick={async () => {
-          const response = await subscribe({
+          await subscribe({
             variables: {
               userIdWhoIsBeingFollowed: data.getUser.user.id
             },
@@ -180,7 +199,6 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
               });
             }
           });
-          console.log('RESPONSE', response);
         }}>
         Follow
       </Button>
@@ -224,20 +242,28 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                       </Heading>
                     </Box>
                   </WrapItem>
-                  <WrapItem w='100%' maxW={isMobile ? '100%' : '100px'}>
+                  <WrapItem w='100%' maxW={isMobile ? '100%' : '150px'}>
                     <Center w='100%' h='100%'>
                       {data.getUser.me ? (
                         <ButtonGroup
+                          size={isMobile ? 'sm' : 'sm'}
                           w='100%'
                           pt='3px'
-                          size='xs'
                           variant='outline'>
-                          <Button w='100%' isDisabled>
+                          <Button
+                            w='100%'
+                            onClick={() => openEditModal(true)}
+                            _focus={{
+                              boxShadow: 'none'
+                            }}>
                             Edit Profile
                           </Button>
                           <IconButton
                             aria-label='Settings'
                             icon={<SettingsIcon />}
+                            _focus={{
+                              boxShadow: 'none'
+                            }}
                             onClick={() => openSettingsModal(true)}
                           />
                         </ButtonGroup>
@@ -473,7 +499,7 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                     });
                     openSubscriptionModal(false);
                   }}>
-                  Unsubscribe
+                  Unfollow
                 </Button>
                 <Button
                   w='100%'
@@ -486,6 +512,174 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
           </ModalBody>
         </ModalContent>
       </Modal>
+      {data.getUser.me ? (
+        <Modal
+          isOpen={editModal}
+          onClose={() => openEditModal(false)}
+          size='xs'>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Edit Profile</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Center>
+                <Formik
+                  initialValues={{
+                    username: data.getUser.user.profile.username,
+                    first: data.getUser.user.profile.first,
+                    last: data.getUser.user.profile.last,
+                    bio: data.getUser.user.profile.bio
+                  }}
+                  onSubmit={async ({ username, first, last, bio }) => {
+                    const { data } = await edit({
+                      variables: {
+                        username,
+                        first,
+                        last,
+                        bio
+                      },
+                      update: (store, { data }) => {
+                        console.log('DATA RESPONSE', data);
+                        store.writeQuery<GetUserQuery>({
+                          query: GetUserDocument,
+                          data: {
+                            __typename: 'Query',
+                            getUser: {
+                              __typename: 'UserResponse',
+                              me: true,
+                              user: data.editProfile.user
+                            }
+                          },
+                          variables: { path: window.location.href }
+                        });
+                      }
+                    });
+                    console.log('RESPONSE', data);
+                    if (!data.editProfile.res) {
+                      toast({
+                        title: data.editProfile.message,
+                        duration: 3000,
+                        status: 'error',
+                        position: 'top',
+                        variant: 'subtle',
+                        isClosable: true
+                      });
+                    } else {
+                      toast({
+                        title: `Profile sucessfully updated`,
+                        duration: 3000,
+                        status: 'success',
+                        position: 'bottom',
+                        variant: 'subtle',
+                        isClosable: true
+                      });
+                      if (data.editProfile.message === 'refresh') {
+                        history.push(
+                          `/at/${data.editProfile.user.profile.username}`
+                        );
+                      }
+                      openEditModal(false);
+                    }
+
+                    // ,
+                    // update: (store, { data }) => {
+                    //   const old = store.readQuery<UsersQuery>({
+                    //     query: UsersDocument
+                    //   });
+                    //   if (!data || !old) {
+                    //     return null;
+                    //   }
+                    //   store.writeQuery<UsersQuery>({
+                    //     query: UsersDocument,
+                    //     data: {
+                    //       __typename: 'Query',
+                    //       users: [...old.users, data.register.user]
+                    //     }
+                    //   });
+                    // }
+
+                    // if (!data.user.res) {
+                    //   toast({
+                    //     title: data.user.message,
+                    //     duration: 3000,
+                    //     status: 'error',
+                    //     position: 'top',
+                    //     variant: 'subtle',
+                    //     isClosable: true
+                    //   });
+                    // }
+                  }}>
+                  <Form>
+                    {/* <Box pb='10px'>
+                    <FormControl>
+                      <Text fontSize='xs'>Image</Text>
+                    </FormControl>
+                  </Box> */}
+                    <Box pb='10px'>
+                      <Field id='username' name='username'>
+                        {({ field }) => (
+                          <FormControl>
+                            <Text fontSize='xs'>Username</Text>
+                            <Input
+                              {...field}
+                              id='username'
+                              w='250px'
+                              placeholder='username'
+                            />
+                          </FormControl>
+                        )}
+                      </Field>
+                    </Box>
+                    <Box pb='10px'>
+                      <Field id='first' name='first'>
+                        {({ field }) => (
+                          <FormControl>
+                            <Text fontSize='xs'>First</Text>
+                            <Input {...field} id='first' placeholder='first' />
+                          </FormControl>
+                        )}
+                      </Field>
+                    </Box>
+                    <Box pb='10px'>
+                      <Field id='last' name='last'>
+                        {({ field }) => (
+                          <FormControl>
+                            <Text fontSize='xs'>Last</Text>
+                            <Input {...field} id='last' placeholder='last' />
+                          </FormControl>
+                        )}
+                      </Field>
+                    </Box>
+                    <Box pb='10px'>
+                      <Field id='bio' name='bio'>
+                        {({ field }) => (
+                          <FormControl>
+                            <Text fontSize='xs'>Bio</Text>
+                            <Textarea {...field} id='bio' placeholder='bio' />
+                          </FormControl>
+                        )}
+                      </Field>
+                    </Box>
+                    <Box pb='10px'>
+                      <Button
+                        isLoading={editLoading}
+                        type='submit'
+                        colorScheme='pink'
+                        variant='outline'
+                        size='sm'
+                        _focus={{
+                          boxShadow: 'none'
+                        }}>
+                        edit profile
+                      </Button>
+                    </Box>
+                  </Form>
+                </Formik>
+              </Center>
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+      ) : null}
     </>
   );
 };
@@ -508,3 +702,19 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
         )}
       </Box> */
 }
+
+// {
+//   __typename: 'User',
+//   id: data.editProfile.user.id,
+//   email: data.editProfile.user.email,
+//   profile: {
+//     __typename: 'Profile',
+//     id: data.editProfile.user.profile.id,
+//     first: data.editProfile.user.profile.first,
+//     last: data.editProfile.user.profile.last,
+//     username:
+//       data.editProfile.user.profile.username,
+//     bio: data.editProfile.user.profile.bio,
+//     phone: data.editProfile.user.profile.phone
+//   }
+// }

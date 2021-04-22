@@ -43,9 +43,10 @@ This project is starting off using [Ben Awad](https://github.com/benawad)'s YouT
 - [x] profile menu image instead of text
 - [x] design profile page
 - [ ] fix logout error on reload on mobile
-- [ ] implement profile editing
+- [x] implement profile editing
 - [ ] profile image uploading
 - [ ] add url to profile
 - [x] following/unfollowing
+- [ ] posts
 
 Website: https://nftyfeed.com/

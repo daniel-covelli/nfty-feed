@@ -1,0 +1,23 @@
+mutation EditProfile(
+  $username: String!
+  $first: String!
+  $last: String!
+  $bio: String!
+) {
+  editProfile(username: $username, first: $first, last: $last, bio: $bio) {
+    res
+    message
+    user {
+      id
+      email
+      profile {
+        id
+        username
+        phone
+        first
+        last
+        bio
+      }
+    }
+  }
+}
