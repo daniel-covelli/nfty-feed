@@ -29,9 +29,10 @@ import {
   Spinner,
   IconButton
 } from '@chakra-ui/react';
-import { ArrowForwardIcon, DeleteIcon, SettingsIcon } from '@chakra-ui/icons';
+import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { setAccessToken } from '../accessToken';
 import { CropperModal } from '../componenets/register/CropperModal';
+import { DropzoneComponent } from '../componenets/register/DropzoneComponent';
 
 export const Register: React.FC<RouteComponentProps> = ({ history }) => {
   const { isOpen, onToggle } = useDisclosure();
@@ -40,6 +41,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [image, setImage] = useState([]);
+  const [croppedFile, setCroppedFile] = useState({});
   const [open, setOpen] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
 
@@ -56,6 +58,10 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
   useEffect(() => {
     console.log('CROPDATA', cropData);
   }, [cropData]);
+
+  useEffect(() => {
+    console.log('CROPFILE', croppedFile);
+  }, [croppedFile]);
 
   return (
     <>
@@ -158,103 +164,14 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                   }}>
                   <Form>
                     <Center pb='10px'>
-                      <Box position='relative'>
-                        {cropData ? (
-                          <>
-                            <IconButton
-                              position='absolute'
-                              right='1'
-                              bottom='1'
-                              aria-label='Edit Photo'
-                              icon={<SettingsIcon />}
-                              size='xs'
-                              onClick={() => setOpen(true)}
-                              _focus={{
-                                boxShadow: 'none'
-                              }}
-                            />
-                            <IconButton
-                              position='absolute'
-                              right='1'
-                              top='1'
-                              colorScheme='red'
-                              aria-label='Delete Photo'
-                              icon={<DeleteIcon />}
-                              size='xs'
-                              onClick={() => setCropData('')}
-                              _focus={{
-                                boxShadow: 'none'
-                              }}
-                            />
-                          </>
-                        ) : null}
-                        <Dropzone
-                          noClick={cropData ? true : false}
-                          noDrag={cropData ? true : false}
-                          onDrop={(files) => {
-                            setImageLoading(true);
-                            const file = files[0];
-                            const reader = new FileReader();
-                            const url = reader.readAsDataURL(file);
-                            console.log('BER', image);
-                            reader.onloadend = () => {
-                              setImage([reader.result]);
-                            };
-                            setImageLoading(false);
-
-                            console.log('BEFORE SET OPEN');
-                            setOpen(true);
-                            console.log('AFTER SET OPEN');
-
-                            console.log('IS OPEN', open);
-
-                            console.log('AFTER', image);
-                          }}>
-                          {({ getRootProps, getInputProps }) => (
-                            <Box
-                              style={{
-                                borderWidth: '2px',
-                                borderColor: `${
-                                  cropData ? 'lightGrey' : 'grey'
-                                }`,
-                                borderStyle: `${cropData ? 'solid' : 'dashed'}`,
-                                borderRadius: '100px',
-                                outlineColor: 'transparent'
-                              }}
-                              {...getRootProps()}
-                              __hover={{ boxShadow: 'grey' }}>
-                              <input {...getInputProps()} />
-                              <Box
-                                style={{
-                                  backgroundImage: `url(${
-                                    cropData ? cropData : null
-                                  })`,
-                                  backgroundPosition: 'center',
-                                  backgroundSize: 'cover',
-                                  backgroundColor: 'lightgrey',
-                                  height: '120px',
-                                  width: '120px',
-                                  borderRadius: '100px',
-                                  display: 'flex',
-                                  justifyContent: 'center',
-                                  alignItems: 'center',
-                                  color: 'white',
-                                  cursor: `${cropData ? 'auto' : 'pointer'}`,
-                                  borderStyle: 'dotted'
-                                }}
-                                __hover={{ boxShadow: 'grey' }}>
-                                {!cropData ? (
-                                  imageLoading ? (
-                                    <Spinner size='sm' />
-                                  ) : (
-                                    <b>add image</b>
-                                  )
-                                ) : null}
-                              </Box>
-                            </Box>
-                          )}
-                        </Dropzone>
-                      </Box>
+                      <DropzoneComponent
+                        cropData={cropData}
+                        setImageLoading={setImageLoading}
+                        imageLoading={imageLoading}
+                        setCropData={setCropData}
+                        setOpen={setOpen}
+                        setImage={setImage}
+                      />
                     </Center>
                     <Box pb='10px'>
                       <Field id='username' name='username'>
@@ -447,6 +364,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
         setOpen={setOpen}
         cropData={cropData}
         setCropData={setCropData}
+        setCroppedFile={setCroppedFile}
       />
     </>
   );

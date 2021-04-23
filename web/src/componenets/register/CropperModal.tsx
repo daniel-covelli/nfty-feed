@@ -5,7 +5,6 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-  Text,
   ModalFooter,
   Button
 } from '@chakra-ui/react';
@@ -17,6 +16,7 @@ interface CropperModalProps {
   setOpen: any;
   cropData: string;
   setCropData: any;
+  setCroppedFile: any;
 }
 
 export const CropperModal: React.FC<CropperModalProps> = ({
@@ -24,13 +24,17 @@ export const CropperModal: React.FC<CropperModalProps> = ({
   image,
   setOpen,
   cropData,
-  setCropData
+  setCropData,
+  setCroppedFile
 }) => {
   const [cropper, setCropper] = useState<any>();
 
   const getCropData = () => {
     if (typeof cropper !== 'undefined') {
-      setCropData(cropper.getCroppedCanvas().toDataURL());
+      setCropData(cropper.getCroppedCanvas().toDataURL('image/png'));
+      cropper.getCroppedCanvas().toBlob((blob) => {
+        setCroppedFile(new File([blob], 'cropped-file.png'));
+      });
     }
     setOpen(false);
   };
