@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   useRegisterMutation,
   useLoginMutation,
@@ -7,13 +7,13 @@ import {
   MeDocument,
   useCheckEmailMutation,
   UsersQuery,
-  UsersDocument,
-  useUnSubscribeMutation
+  UsersDocument
 } from '../generated/graphql';
 import { RouteComponentProps } from 'react-router-dom';
 import { Link as ReactLink } from 'react-router-dom';
-
+import Dropzone, { useDropzone } from 'react-dropzone';
 import { Formik, Form, Field } from 'formik';
+import Radium from 'radium';
 import {
   Center,
   Box,
@@ -26,7 +26,8 @@ import {
   SimpleGrid,
   SlideFade,
   useDisclosure,
-  Textarea
+  Textarea,
+  Spinner
 } from '@chakra-ui/react';
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { setAccessToken } from '../accessToken';
@@ -36,6 +37,9 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
   const { data: me } = useMeQuery();
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
+  const [image, setImage] = useState([]);
+  const [uploaded, setUploaded] = useState(false);
+  const [imageLoading, setImageLoading] = useState(false);
 
   const [checkEmail] = useCheckEmailMutation();
 
@@ -143,11 +147,57 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                   }
                 }}>
                 <Form>
-                  {/* <Box pb='10px'>
-                    <FormControl>
-                      <Text fontSize='xs'>Image</Text>
-                    </FormControl>
-                  </Box> */}
+                  <Center pb='10px'>
+                    <Dropzone
+                      onDrop={async (files) => {
+                        setImageLoading(true);
+                        const file = files[0];
+                        const reader = new FileReader();
+                        const url = await reader.readAsDataURL(file);
+                        console.log('BER', image);
+                        reader.onloadend = () => {
+                          setImage([reader.result]);
+                        };
+                        setImageLoading(false);
+                        setUploaded(true);
+
+                        console.log('AFTER', image);
+                      }}>
+                      {({ getRootProps, getInputProps }) => (
+                        <div
+                          {...getRootProps()}
+                          style={{ outlineColor: 'transparent' }}>
+                          <input {...getInputProps()} />
+                          <Box
+                            style={{
+                              backgroundImage: `url(${
+                                uploaded ? image[0] : null
+                              })`,
+                              backgroundPosition: 'center',
+                              backgroundSize: 'cover',
+                              backgroundColor: 'lightgrey',
+                              height: '120px',
+                              width: '120px',
+                              borderRadius: '100px',
+                              display: 'flex',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              color: 'white',
+                              cursor: 'pointer',
+                              borderStyle: 'dotted'
+                            }}>
+                            {!uploaded ? (
+                              imageLoading ? (
+                                <Spinner size='sm' />
+                              ) : (
+                                <b>add image</b>
+                              )
+                            ) : null}
+                          </Box>
+                        </div>
+                      )}
+                    </Dropzone>
+                  </Center>
                   <Box pb='10px'>
                     <Field id='username' name='username'>
                       {({ field }) => (

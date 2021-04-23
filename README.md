@@ -48,5 +48,6 @@ This project is starting off using [Ben Awad](https://github.com/benawad)'s YouT
 - [ ] add url to profile
 - [x] following/unfollowing
 - [ ] posts
+- [ ] page not found
 
 Website: https://nftyfeed.com/
