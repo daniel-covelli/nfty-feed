@@ -539,7 +539,6 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                         bio
                       },
                       update: (store, { data }) => {
-                        console.log('DATA RESPONSE', data);
                         store.writeQuery<GetUserQuery>({
                           query: GetUserDocument,
                           data: {
@@ -554,7 +553,6 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                         });
                       }
                     });
-                    console.log('RESPONSE', data);
                     if (!data.editProfile.res) {
                       toast({
                         title: data.editProfile.message,
@@ -580,34 +578,6 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                       }
                       openEditModal(false);
                     }
-
-                    // ,
-                    // update: (store, { data }) => {
-                    //   const old = store.readQuery<UsersQuery>({
-                    //     query: UsersDocument
-                    //   });
-                    //   if (!data || !old) {
-                    //     return null;
-                    //   }
-                    //   store.writeQuery<UsersQuery>({
-                    //     query: UsersDocument,
-                    //     data: {
-                    //       __typename: 'Query',
-                    //       users: [...old.users, data.register.user]
-                    //     }
-                    //   });
-                    // }
-
-                    // if (!data.user.res) {
-                    //   toast({
-                    //     title: data.user.message,
-                    //     duration: 3000,
-                    //     status: 'error',
-                    //     position: 'top',
-                    //     variant: 'subtle',
-                    //     isClosable: true
-                    //   });
-                    // }
                   }}>
                   <Form>
                     {/* <Box pb='10px'>
@@ -660,7 +630,7 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                         )}
                       </Field>
                     </Box>
-                    <Box pb='10px'>
+                    <Box pb='10px' float='right'>
                       <Button
                         isLoading={editLoading}
                         type='submit'

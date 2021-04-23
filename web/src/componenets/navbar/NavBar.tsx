@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Flex, useOutsideClick } from '@chakra-ui/react';
-import { MenuLinks } from './components/MenuLinks';
-import { MenuToggle } from './components/MenuToggle';
-import { Logo } from './components/Logo';
+import { MenuLinks } from './MenuLinks';
+import { MenuToggle } from './MenuToggle';
+import { Logo } from './Logo';
 
 interface NavBarProps {}
 
