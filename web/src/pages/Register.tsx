@@ -164,9 +164,10 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                         console.log('AFTER', image);
                       }}>
                       {({ getRootProps, getInputProps }) => (
-                        <div
+                        <Box
                           {...getRootProps()}
-                          style={{ outlineColor: 'transparent' }}>
+                          style={{ outlineColor: 'transparent' }}
+                          __hover={{ boxShadow: 'grey' }}>
                           <input {...getInputProps()} />
                           <Box
                             style={{
@@ -185,7 +186,8 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                               color: 'white',
                               cursor: 'pointer',
                               borderStyle: 'dotted'
-                            }}>
+                            }}
+                            __hover={{ boxShadow: 'grey' }}>
                             {!uploaded ? (
                               imageLoading ? (
                                 <Spinner size='sm' />
@@ -194,7 +196,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                               )
                             ) : null}
                           </Box>
-                        </div>
+                        </Box>
                       )}
                     </Dropzone>
                   </Center>
