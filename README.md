@@ -44,7 +44,7 @@ This project is starting off using [Ben Awad](https://github.com/benawad)'s YouT
 - [x] design profile page
 - [ ] fix logout error on reload on mobile
 - [x] implement profile editing
-- [ ] profile image uploading
+- [x] profile image uploading
 - [ ] add url to profile
 - [x] following/unfollowing
 - [ ] posts
