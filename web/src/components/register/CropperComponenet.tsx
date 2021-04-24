@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Box } from '@chakra-ui/react';
 import Cropper from 'react-cropper';
 import 'cropperjs/dist/cropper.css';
@@ -11,7 +11,6 @@ interface CropperProps {
 
 export const CropperComponenet: React.FC<CropperProps> = ({
   image,
-  cropData,
   setCropper
 }) => {
   return (

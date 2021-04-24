@@ -11,6 +11,7 @@ query GetUser($path: String!) {
         first
         last
         bio
+        profileImageId
       }
     }
   }

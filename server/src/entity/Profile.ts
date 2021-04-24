@@ -15,6 +15,10 @@ export class Profile extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  profileImageId?: string;
+
   @Field()
   @Column()
   username: string;

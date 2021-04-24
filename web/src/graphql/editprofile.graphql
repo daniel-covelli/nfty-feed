@@ -17,6 +17,7 @@ mutation EditProfile(
         first
         last
         bio
+        profileImageId
       }
     }
   }

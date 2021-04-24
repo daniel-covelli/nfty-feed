@@ -33,7 +33,7 @@ export const CropperModal: React.FC<CropperModalProps> = ({
     if (typeof cropper !== 'undefined') {
       setCropData(cropper.getCroppedCanvas().toDataURL('image/png'));
       cropper.getCroppedCanvas().toBlob((blob) => {
-        setCroppedFile(new File([blob], 'cropped-file.png'));
+        setCroppedFile([new File([blob], 'cropped-file.png')]);
       });
     }
     setOpen(false);

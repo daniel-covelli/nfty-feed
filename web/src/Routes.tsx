@@ -4,7 +4,7 @@ import { Home } from './pages/Home';
 import { Register } from './pages/Register';
 import { Login } from './pages/Login';
 import { Bye } from './pages/Bye';
-import { NavBar } from './navbar/NavBar';
+import { NavBar } from './components/navbar/NavBar';
 import { Container } from '@chakra-ui/react';
 import { Profile } from './pages/Profile';
 

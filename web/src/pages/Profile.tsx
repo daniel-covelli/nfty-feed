@@ -43,7 +43,6 @@ import {
   useSubscribeMutation,
   GetActiveFollowersDocument,
   GetActiveFollowersQuery,
-  useMeQuery,
   useExistingSubscriptionLazyQuery,
   ExistingSubscriptionDocument,
   ExistingSubscriptionQuery,
@@ -225,7 +224,11 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                         ? `${data.getUser.user.profile.first} ${data.getUser.user.profile.last}`
                         : null
                     }
-                    src=''
+                    src={
+                      data.getUser.user.profile.profileImageId
+                        ? `${data.getUser.user.profile.profileImageId}`
+                        : ''
+                    }
                   />
                 </AspectRatio>
               </Box>
@@ -448,7 +451,11 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                         ? `${data.getUser.user.profile.first} ${data.getUser.user.profile.last}`
                         : null
                     }
-                    src=''
+                    src={
+                      data.getUser.user.profile.profileImageId
+                        ? `${data.getUser.user.profile.profileImageId}`
+                        : ''
+                    }
                   />
                 </Box>
                 <Text pb='15px' fontSize='sm' isTruncated>

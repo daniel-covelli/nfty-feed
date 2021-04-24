@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   useRegisterMutation,
   useLoginMutation,
@@ -11,7 +11,6 @@ import {
 } from '../generated/graphql';
 import { RouteComponentProps } from 'react-router-dom';
 import { Link as ReactLink } from 'react-router-dom';
-import Dropzone, { useDropzone } from 'react-dropzone';
 import { Formik, Form, Field } from 'formik';
 import {
   Center,
@@ -31,8 +30,8 @@ import {
 } from '@chakra-ui/react';
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { setAccessToken } from '../accessToken';
-import { CropperModal } from '../componenets/register/CropperModal';
-import { DropzoneComponent } from '../componenets/register/DropzoneComponent';
+import { CropperModal } from '../components/register/CropperModal';
+import { DropzoneComponent } from '../components/register/DropzoneComponent';
 
 export const Register: React.FC<RouteComponentProps> = ({ history }) => {
   const { isOpen, onToggle } = useDisclosure();
@@ -41,9 +40,10 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [image, setImage] = useState([]);
-  const [croppedFile, setCroppedFile] = useState({});
+  const [croppedFile, setCroppedFile] = useState([]);
   const [open, setOpen] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
+  const [registrationLoading, setRegistrationLoading] = useState(false);
 
   const [checkEmail] = useCheckEmailMutation();
 
@@ -51,8 +51,8 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
     history.push('/');
   }
 
-  const [register, { loading: registerLoading }] = useRegisterMutation();
-  const [login, { loading: loginLoading }] = useLoginMutation();
+  const [register] = useRegisterMutation();
+  const [login] = useLoginMutation();
   const toast = useToast();
 
   useEffect(() => {
@@ -84,10 +84,14 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                     bio: ''
                   }}
                   onSubmit={async ({ username, phone, first, last, bio }) => {
+                    setRegistrationLoading(true);
+
+                    // profileImage: response
                     const { data } = await register({
                       variables: {
                         email: loginEmail,
                         password: loginPassword,
+                        profileImage: `${cropData ? cropData : ''}`,
                         username,
                         phone,
                         first,
@@ -161,6 +165,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                         });
                       }
                     }
+                    setRegistrationLoading(false);
                   }}>
                   <Form>
                     <Center pb='10px'>
@@ -236,7 +241,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                     </Box>
                     <Box pb='10px'>
                       <Button
-                        isLoading={registerLoading || loginLoading}
+                        isLoading={registrationLoading}
                         type='submit'
                         colorScheme='pink'
                         variant='outline'

@@ -6,6 +6,7 @@ query Users {
       first
       last
       username
+      profileImageId
     }
   }
 }

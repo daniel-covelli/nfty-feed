@@ -49,6 +49,11 @@ export const Home: React.FC<HomeProps> = () => {
                       <Avatar
                         name={`${x.profile.first} ${x.profile.last}`}
                         size='sm'
+                        src={
+                          x.profile.profileImageId
+                            ? `${x.profile.profileImageId}`
+                            : ''
+                        }
                       />
                     ) : (
                       <Avatar size='sm' />

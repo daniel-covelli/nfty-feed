@@ -18,6 +18,7 @@ import { sendRefreshToken } from '../sendRefreshToken';
 import { getConnection } from 'typeorm';
 import { verify } from 'jsonwebtoken';
 import { Profile } from '../entity/Profile';
+const cloudinary = require('cloudinary');
 
 @ObjectType()
 class RegisterResponse {
@@ -181,7 +182,8 @@ export class UserResolver {
     @Arg('phone') phone: string,
     @Arg('first') first: string,
     @Arg('last') last: string,
-    @Arg('bio') bio: string
+    @Arg('bio') bio: string,
+    @Arg('profileImage') profileImage: string
   ) {
     if (!username) {
       return {
@@ -286,6 +288,40 @@ export class UserResolver {
       };
     }
 
+    let result: any;
+    if (profileImage) {
+      cloudinary.config({
+        cloud_name: process.env.CLOUDINARY_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET
+      });
+
+      try {
+        result = await cloudinary.v2.uploader.upload(profileImage, {
+          allowed_formats: ['jpg', 'png'],
+          public_id: ''
+        });
+      } catch (e) {
+        return {
+          res: false,
+          message: `Image could not be uploaded:${e.message}`,
+          user: null
+        };
+      }
+      console.log(`Successful-Photo URL: ${result.url}`);
+      // try {
+      //   response = await axios({
+      //     url: "http://localhost:4000",
+      //     method: "post",
+      //     `https://api.cloudinary.com/${process.env.CLOUD_NAME}/image/upload`,
+      //     formData
+
+      //   });
+      // } catch (e) {
+      //   throw new Error('unable to process post');
+      // }
+    }
+
     const hashedPassword = await hash(password, 12);
 
     let user;
@@ -296,6 +332,7 @@ export class UserResolver {
       profile.first = first;
       profile.last = last;
       profile.bio = bio;
+      profile.profileImageId = `${result ? result.url : ''}`;
       await Profile.save(profile);
 
       user = new User();
