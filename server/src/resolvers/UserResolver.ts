@@ -298,7 +298,7 @@ export class UserResolver {
 
       try {
         result = await cloudinary.v2.uploader.upload(profileImage, {
-          allowed_formats: ['jpg', 'png'],
+          allowed_formats: ['jpg', 'png', 'heic'],
           public_id: ''
         });
       } catch (e) {
@@ -309,17 +309,6 @@ export class UserResolver {
         };
       }
       console.log(`Successful-Photo URL: ${result.url}`);
-      // try {
-      //   response = await axios({
-      //     url: "http://localhost:4000",
-      //     method: "post",
-      //     `https://api.cloudinary.com/${process.env.CLOUD_NAME}/image/upload`,
-      //     formData
-
-      //   });
-      // } catch (e) {
-      //   throw new Error('unable to process post');
-      // }
     }
 
     const hashedPassword = await hash(password, 12);

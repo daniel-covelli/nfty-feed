@@ -55,13 +55,13 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
   const [login] = useLoginMutation();
   const toast = useToast();
 
-  useEffect(() => {
-    console.log('CROPDATA', cropData);
-  }, [cropData]);
+  // useEffect(() => {
+  //   console.log('CROPDATA', cropData);
+  // }, [cropData]);
 
-  useEffect(() => {
-    console.log('CROPFILE', croppedFile);
-  }, [croppedFile]);
+  // useEffect(() => {
+  //   console.log('CROPFILE', croppedFile);
+  // }, [croppedFile]);
 
   return (
     <>
@@ -86,7 +86,6 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                   onSubmit={async ({ username, phone, first, last, bio }) => {
                     setRegistrationLoading(true);
 
-                    // profileImage: response
                     const { data } = await register({
                       variables: {
                         email: loginEmail,

@@ -16,7 +16,7 @@ export const CropperComponenet: React.FC<CropperProps> = ({
   return (
     <Box style={{ width: '100%' }}>
       <Cropper
-        style={{ height: '400px', width: '100%' }}
+        style={{ height: '350px', width: '100%' }}
         initialAspectRatio={1}
         preview='.img-preview'
         src={image}
@@ -24,11 +24,11 @@ export const CropperComponenet: React.FC<CropperProps> = ({
         aspectRatio={1}
         guides={true}
         dragMode='move'
+        autoCropArea={0.6}
         minCropBoxHeight={10}
         minCropBoxWidth={10}
         background={false}
         responsive={true}
-        autoCropArea={1}
         checkOrientation={true} // https://github.com/fengyuanchen/cropperjs/issues/671
         onInitialized={(instance) => {
           setCropper(instance);

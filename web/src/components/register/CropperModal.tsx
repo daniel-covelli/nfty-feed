@@ -31,10 +31,12 @@ export const CropperModal: React.FC<CropperModalProps> = ({
 
   const getCropData = () => {
     if (typeof cropper !== 'undefined') {
+      // console.log('CROPPER', cropper);
+      // cropper.getCroppedCanvas().toBlob((blob) => {
+      //   setCroppedFile([new File([blob], 'cropped-file.png')]);
+      // });
+
       setCropData(cropper.getCroppedCanvas().toDataURL('image/png'));
-      cropper.getCroppedCanvas().toBlob((blob) => {
-        setCroppedFile([new File([blob], 'cropped-file.png')]);
-      });
     }
     setOpen(false);
   };
@@ -44,13 +46,11 @@ export const CropperModal: React.FC<CropperModalProps> = ({
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Profile Image</ModalHeader>
-        <ModalBody w='100%'>
-          <CropperComponenet
-            image={image}
-            cropData={cropData}
-            setCropper={setCropper}
-          />
-        </ModalBody>
+        <CropperComponenet
+          image={image}
+          cropData={cropData}
+          setCropper={setCropper}
+        />
         <ModalFooter>
           <Button
             onClick={() => setOpen(false)}
