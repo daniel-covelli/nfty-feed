@@ -18,12 +18,7 @@ import { sendRefreshToken } from '../sendRefreshToken';
 import { getConnection } from 'typeorm';
 import { verify } from 'jsonwebtoken';
 import { Profile } from '../entity/Profile';
-// import { Upload } from '../enums';
-// import { GraphQLUpload } from 'apollo-server-express';
-// import { GraphQLUpload } from 'apollo-server-express';
-import { FileUpload, GraphQLUpload } from 'graphql-upload';
 
-import { createWriteStream } from 'fs';
 const cloudinary = require('cloudinary');
 
 @ObjectType()
@@ -180,33 +175,6 @@ export class UserResolver {
     }
   }
 
-  // '{"query":"mutation AddProfilePicture($picture: Upload!) {\n  addProfilePicture(picture: $picture)\n}\n"}' --compressed
-  // @Mutation(() => Boolean)
-  // async registerImage(@Arg("picture", () => GraphQLUpload)
-  // {
-  //   createReadStream,
-  //   filename
-  // }: Upload): Promise<boolean> {
-  //   return new Promise(async (resolve, reject) =>
-  //     createReadStream()
-  //       .pipe()
-  //       .on("finish", () => resolve(true))
-  //       .on("error", () => reject(false))
-  //   );
-  // }
-  @Mutation(() => Boolean)
-  async addProfilePicture(
-    @Arg('picture', () => GraphQLUpload)
-    { createReadStream, filename }: FileUpload
-  ): Promise<boolean> {
-    return new Promise(async (resolve, reject) =>
-      createReadStream()
-        .pipe(createWriteStream(__dirname + `../images/${filename}`))
-        .on('finish', () => resolve(true))
-        .on('error', () => reject(false))
-    );
-  }
-
   @Mutation(() => RegisterResponse)
   async register(
     @Arg('email') email: string,
@@ -324,7 +292,7 @@ export class UserResolver {
 
     let profileImageResult: any;
     let originalProfileImageResult: any;
-    if (profileImage) {
+    if (profileImage && ogProfileImage) {
       cloudinary.config({
         cloud_name: process.env.CLOUDINARY_NAME,
         api_key: process.env.CLOUDINARY_API_KEY,
@@ -336,7 +304,6 @@ export class UserResolver {
           allowed_formats: ['jpg', 'png', 'heic', 'jpeg'],
           public_id: ''
         });
-        console.log(`Successful-Profile-Photo URL: ${profileImageResult.url}`);
       } catch (e) {
         return {
           res: false,
@@ -352,9 +319,6 @@ export class UserResolver {
             allowed_formats: ['jpg', 'png', 'heic', 'jpeg'],
             public_id: ''
           }
-        );
-        console.log(
-          `Successful-Original-Profile-Photo URL: ${originalProfileImageResult.url}`
         );
       } catch (e) {
         return {

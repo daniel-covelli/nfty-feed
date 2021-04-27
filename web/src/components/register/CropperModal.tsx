@@ -12,20 +12,20 @@ import { CropperComponenet } from './CropperComponenet';
 
 interface CropperModalProps {
   open: boolean;
-  image: string;
+  imageToBeCropped: string;
   setOpen: any;
   cropData: string;
   setCropData: any;
-  setOriginalData: any;
+  onClose: any;
 }
 
 export const CropperModal: React.FC<CropperModalProps> = ({
   open,
-  image,
+  imageToBeCropped,
   setOpen,
   cropData,
   setCropData,
-  setOriginalData
+  onClose
 }) => {
   const [cropper, setCropper] = useState<any>();
 
@@ -34,11 +34,7 @@ export const CropperModal: React.FC<CropperModalProps> = ({
       const dataUrl = await cropper.getCroppedCanvas().toDataURL();
       setCropData(dataUrl);
     }
-    setOpen(false);
-  };
 
-  const onClose = () => {
-    setOriginalData('');
     setOpen(false);
   };
 
@@ -48,7 +44,7 @@ export const CropperModal: React.FC<CropperModalProps> = ({
       <ModalContent>
         <ModalHeader>Profile Image</ModalHeader>
         <CropperComponenet
-          image={image}
+          image={imageToBeCropped}
           cropData={cropData}
           cropper={cropper}
           setCropper={setCropper}

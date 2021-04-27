@@ -24,7 +24,7 @@ import bodyParser from 'body-parser';
 (async () => {
   var corsOptions = {
     credentials: true,
-    origin: [`${process.env.FRONTEND_HOST}`]
+    origin: process.env.FRONTEND_HOST
   };
 
   const app = express();

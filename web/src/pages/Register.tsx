@@ -40,7 +40,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
   const [loginPassword, setLoginPassword] = useState('');
   const [image, setImage] = useState([]);
   const [open, setOpen] = useState(false);
-  const [imageLoading, setImageLoading] = useState(false);
+
   const [registrationLoading, setRegistrationLoading] = useState(false);
 
   const [checkEmail] = useCheckEmailMutation();
@@ -56,6 +56,11 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
   useEffect(() => {
     console.log('ORIGINAL DATA', originalData);
   }, [originalData]);
+
+  const onCropperModalClose = () => {
+    setOriginalData('');
+    setOpen(false);
+  };
 
   if (error) {
     return (
@@ -173,8 +178,6 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                     <Center pb='10px'>
                       <DropzoneComponent
                         cropData={cropData}
-                        setImageLoading={setImageLoading}
-                        imageLoading={imageLoading}
                         setCropData={setCropData}
                         setOpen={setOpen}
                         setImage={setImage}
@@ -367,12 +370,12 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
       </Center>
 
       <CropperModal
-        image={image[0]}
+        imageToBeCropped={image[0]}
         open={open}
         setOpen={setOpen}
         cropData={cropData}
         setCropData={setCropData}
-        setOriginalData={setOriginalData}
+        onClose={onCropperModalClose}
       />
     </>
   );

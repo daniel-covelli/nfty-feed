@@ -12,6 +12,7 @@ query GetUser($path: String!) {
         last
         bio
         profileImageId
+        ogProfileImageId
       }
     }
   }

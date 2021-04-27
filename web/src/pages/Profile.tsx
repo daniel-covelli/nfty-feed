@@ -56,12 +56,19 @@ import { setAccessToken } from '../accessToken';
 
 import { RouteComponentProps } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
+import { DropzoneComponent } from '../components/profile/DropzoneComponenet';
+import { CropperModal } from '../components/register/CropperModal';
 
 export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
   const [settingsModal, openSettingsModal] = useState(false);
   const [subscriptionModal, openSubscriptionModal] = useState(false);
   const [editModal, openEditModal] = useState(false);
   const [logoutLoading, setLogoutLoading] = useState(false);
+  const [croppedImage, setCroppedImage] = useState('');
+  const [originalData, setOriginalData] = useState('');
+  const [cropperModalOpen, setCropperModalOpen] = useState(false);
+  const [image, setImage] = useState([]);
+
   const [isMobile] = useMediaQuery('(max-width: 520px)');
 
   const [
@@ -91,6 +98,13 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
       getExistingSubscription({ variables: { userId: data.getUser.user.id } });
     }
   }, [data]);
+
+  useEffect(() => {
+    console.log('CROPPED IMAGE', croppedImage);
+    console.log('CORPPED IMAGE BOOL', Boolean(croppedImage));
+  }, [croppedImage]);
+
+  const onCropperModalClose = () => {};
 
   if (loading) {
     return (
@@ -526,130 +540,155 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
             <ModalHeader>Edit Profile</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              <Center>
-                <Formik
-                  initialValues={{
-                    username: data.getUser.user.profile.username,
-                    first: data.getUser.user.profile.first,
-                    last: data.getUser.user.profile.last,
-                    bio: data.getUser.user.profile.bio
-                  }}
-                  onSubmit={async ({ username, first, last, bio }) => {
-                    const { data } = await edit({
-                      variables: {
-                        username,
-                        first,
-                        last,
-                        bio
-                      },
-                      update: (store, { data }) => {
-                        store.writeQuery<GetUserQuery>({
-                          query: GetUserDocument,
-                          data: {
-                            __typename: 'Query',
-                            getUser: {
-                              __typename: 'UserResponse',
-                              me: true,
-                              user: data.editProfile.user
-                            }
-                          },
-                          variables: { path: window.location.href }
+              <>
+                <Center>
+                  <Formik
+                    initialValues={{
+                      username: data.getUser.user.profile.username,
+                      first: data.getUser.user.profile.first,
+                      last: data.getUser.user.profile.last,
+                      bio: data.getUser.user.profile.bio
+                    }}
+                    onSubmit={async ({ username, first, last, bio }) => {
+                      const { data } = await edit({
+                        variables: {
+                          username,
+                          first,
+                          last,
+                          bio
+                        },
+                        update: (store, { data }) => {
+                          store.writeQuery<GetUserQuery>({
+                            query: GetUserDocument,
+                            data: {
+                              __typename: 'Query',
+                              getUser: {
+                                __typename: 'UserResponse',
+                                me: true,
+                                user: data.editProfile.user
+                              }
+                            },
+                            variables: { path: window.location.href }
+                          });
+                        }
+                      });
+                      if (!data.editProfile.res) {
+                        toast({
+                          title: data.editProfile.message,
+                          duration: 3000,
+                          status: 'error',
+                          position: 'top',
+                          variant: 'subtle',
+                          isClosable: true
                         });
+                      } else {
+                        toast({
+                          title: `Profile sucessfully updated`,
+                          duration: 3000,
+                          status: 'success',
+                          position: 'bottom',
+                          variant: 'subtle',
+                          isClosable: true
+                        });
+                        if (data.editProfile.message === 'refresh') {
+                          history.push(
+                            `/at/${data.editProfile.user.profile.username}`
+                          );
+                        }
+                        openEditModal(false);
                       }
-                    });
-                    if (!data.editProfile.res) {
-                      toast({
-                        title: data.editProfile.message,
-                        duration: 3000,
-                        status: 'error',
-                        position: 'top',
-                        variant: 'subtle',
-                        isClosable: true
-                      });
-                    } else {
-                      toast({
-                        title: `Profile sucessfully updated`,
-                        duration: 3000,
-                        status: 'success',
-                        position: 'bottom',
-                        variant: 'subtle',
-                        isClosable: true
-                      });
-                      if (data.editProfile.message === 'refresh') {
-                        history.push(
-                          `/at/${data.editProfile.user.profile.username}`
-                        );
-                      }
-                      openEditModal(false);
-                    }
-                  }}>
-                  <Form>
-                    {/* <Box pb='10px'>
-                    <FormControl>
-                      <Text fontSize='xs'>Image</Text>
-                    </FormControl>
-                  </Box> */}
-                    <Box pb='10px'>
-                      <Field id='username' name='username'>
-                        {({ field }) => (
-                          <FormControl>
-                            <Text fontSize='xs'>Username</Text>
-                            <Input
-                              {...field}
-                              id='username'
-                              w='250px'
-                              placeholder='username'
-                            />
-                          </FormControl>
-                        )}
-                      </Field>
-                    </Box>
-                    <Box pb='10px'>
-                      <Field id='first' name='first'>
-                        {({ field }) => (
-                          <FormControl>
-                            <Text fontSize='xs'>First</Text>
-                            <Input {...field} id='first' placeholder='first' />
-                          </FormControl>
-                        )}
-                      </Field>
-                    </Box>
-                    <Box pb='10px'>
-                      <Field id='last' name='last'>
-                        {({ field }) => (
-                          <FormControl>
-                            <Text fontSize='xs'>Last</Text>
-                            <Input {...field} id='last' placeholder='last' />
-                          </FormControl>
-                        )}
-                      </Field>
-                    </Box>
-                    <Box pb='10px'>
-                      <Field id='bio' name='bio'>
-                        {({ field }) => (
-                          <FormControl>
-                            <Text fontSize='xs'>Bio</Text>
-                            <Textarea {...field} id='bio' placeholder='bio' />
-                          </FormControl>
-                        )}
-                      </Field>
-                    </Box>
-                    <Box pb='10px' float='right'>
-                      <Button
-                        isLoading={editLoading}
-                        type='submit'
-                        colorScheme='pink'
-                        variant='outline'
-                        size='sm'
-                        _focus={{
-                          boxShadow: 'none'
-                        }}>
-                        edit profile
-                      </Button>
-                    </Box>
-                  </Form>
-                </Formik>
-              </Center>
+                    }}>
+                    <Form>
+                      <Center pb='10px'>
+                        <DropzoneComponent
+                          setOpen={setCropperModalOpen}
+                          setImage={setImage}
+                          setOriginalData={setOriginalData}
+                          initialDisplayImage={
+                            croppedImage
+                              ? croppedImage
+                              : data
+                              ? data.getUser.user.profile.profileImageId
+                              : ''
+                          }
+                        />
+                      </Center>
+                      <Box pb='10px'>
+                        <Field id='username' name='username'>
+                          {({ field }) => (
+                            <FormControl>
+                              <Text fontSize='xs'>Username</Text>
+                              <Input
+                                {...field}
+                                id='username'
+                                w='250px'
+                                placeholder='username'
+                              />
+                            </FormControl>
+                          )}
+                        </Field>
+                      </Box>
+                      <Box pb='10px'>
+                        <Field id='first' name='first'>
+                          {({ field }) => (
+                            <FormControl>
+                              <Text fontSize='xs'>First</Text>
+                              <Input
+                                {...field}
+                                id='first'
+                                placeholder='first'
+                              />
+                            </FormControl>
+                          )}
+                        </Field>
+                      </Box>
+                      <Box pb='10px'>
+                        <Field id='last' name='last'>
+                          {({ field }) => (
+                            <FormControl>
+                              <Text fontSize='xs'>Last</Text>
+                              <Input {...field} id='last' placeholder='last' />
+                            </FormControl>
+                          )}
+                        </Field>
+                      </Box>
+                      <Box pb='10px'>
+                        <Field id='bio' name='bio'>
+                          {({ field }) => (
+                            <FormControl>
+                              <Text fontSize='xs'>Bio</Text>
+                              <Textarea {...field} id='bio' placeholder='bio' />
+                            </FormControl>
+                          )}
+                        </Field>
+                      </Box>
+                      <Box pb='10px' float='right'>
+                        <Button
+                          isLoading={editLoading}
+                          type='submit'
+                          colorScheme='pink'
+                          variant='outline'
+                          size='sm'
+                          _focus={{
+                            boxShadow: 'none'
+                          }}>
+                          edit profile
+                        </Button>
+                      </Box>
+                    </Form>
+                  </Formik>
+                </Center>
+                <CropperModal
+                  imageToBeCropped={
+                    data ? data.getUser.user.profile.ogProfileImageId : ''
+                  }
+                  open={cropperModalOpen}
+                  setOpen={setCropperModalOpen}
+                  cropData={croppedImage}
+                  setCropData={setCroppedImage}
+                  onClose={onCropperModalClose}
+                />
+              </>
             </ModalBody>
           </ModalContent>
         </Modal>

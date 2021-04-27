@@ -4,25 +4,24 @@ import { Box, IconButton, Spinner, Link, useToast } from '@chakra-ui/react';
 import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
 
 interface DropzoneComponentProps {
-  cropData: string;
-  setCropData: any;
   setOpen: any;
   setImage: any;
   setOriginalData: any;
+  initialDisplayImage: string;
 }
 
 export const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
-  cropData,
-  setCropData,
   setOpen,
   setImage,
-  setOriginalData
+  setOriginalData,
+  initialDisplayImage
 }) => {
   const [imageLoading, setImageLoading] = useState(false);
+  const [displayImage, setDisplayImage] = useState(initialDisplayImage);
   const toast = useToast();
   return (
     <Box position='relative'>
-      {cropData ? (
+      {displayImage ? (
         <>
           <IconButton
             position='absolute'
@@ -34,7 +33,7 @@ export const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
             aria-label='Delete Photo'
             icon={<DeleteIcon />}
             size='xs'
-            onClick={() => setCropData('')}
+            onClick={() => setDisplayImage('')}
             _focus={{
               boxShadow: 'none'
             }}
@@ -57,8 +56,8 @@ export const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
       ) : null}
       <Dropzone
         maxFiles={1}
-        noClick={cropData ? true : false}
-        noDrag={cropData ? true : false}
+        noClick={displayImage ? true : false}
+        noDrag={displayImage ? true : false}
         onDrop={(files) => {
           setImageLoading(true);
           const file = files[0];
@@ -88,8 +87,8 @@ export const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
           <Box
             style={{
               borderWidth: '2px',
-              borderColor: `${cropData ? 'lightGrey' : 'grey'}`,
-              borderStyle: `${cropData ? 'solid' : 'dashed'}`,
+              borderColor: `${displayImage ? 'lightGrey' : 'grey'}`,
+              borderStyle: `${displayImage ? 'solid' : 'dashed'}`,
               borderRadius: '100px',
               outlineColor: 'transparent'
             }}
@@ -98,7 +97,7 @@ export const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
             <input {...getInputProps()} />
             <Box
               style={{
-                backgroundImage: `url(${cropData ? cropData : null})`,
+                backgroundImage: `url(${displayImage ? displayImage : null})`,
                 backgroundPosition: 'center',
                 backgroundSize: 'cover',
                 backgroundColor: '#f0f0f0',
@@ -108,11 +107,11 @@ export const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                cursor: `${cropData ? 'auto' : 'pointer'}`,
+                cursor: `${displayImage ? 'auto' : 'pointer'}`,
                 borderStyle: 'dotted'
               }}
               __hover={{ boxShadow: 'grey' }}>
-              {!cropData ? (
+              {!displayImage ? (
                 imageLoading ? (
                   <Spinner size='sm' />
                 ) : (

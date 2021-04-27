@@ -14,8 +14,6 @@ export type Scalars = {
   Float: number;
   /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
   DateTime: any;
-  /** The `Upload` scalar type represents a file upload. */
-  Upload: any;
 };
 
 
@@ -42,7 +40,6 @@ export type Mutation = {
   __typename?: 'Mutation';
   login: LoginResponse;
   checkEmail: GenericResponse;
-  addProfilePicture: Scalars['Boolean'];
   register: RegisterResponse;
   revokeRefreshTokensForUser: Scalars['Boolean'];
   logout: Scalars['Boolean'];
@@ -60,11 +57,6 @@ export type MutationLoginArgs = {
 
 export type MutationCheckEmailArgs = {
   email: Scalars['String'];
-};
-
-
-export type MutationAddProfilePictureArgs = {
-  picture: Scalars['Upload'];
 };
 
 
@@ -164,7 +156,6 @@ export type Subscription = {
   createdAt: Scalars['DateTime'];
 };
 
-
 export type User = {
   __typename?: 'User';
   id: Scalars['Int'];
@@ -217,7 +208,7 @@ export type EditProfileMutation = (
       & Pick<User, 'id' | 'email'>
       & { profile?: Maybe<(
         { __typename?: 'Profile' }
-        & Pick<Profile, 'id' | 'username' | 'phone' | 'first' | 'last' | 'bio' | 'profileImageId'>
+        & Pick<Profile, 'id' | 'username' | 'phone' | 'first' | 'last' | 'bio' | 'profileImageId' | 'ogProfileImageId'>
       )> }
     )> }
   ) }
@@ -274,7 +265,7 @@ export type GetUserQuery = (
       & Pick<User, 'id' | 'email'>
       & { profile?: Maybe<(
         { __typename?: 'Profile' }
-        & Pick<Profile, 'id' | 'username' | 'phone' | 'first' | 'last' | 'bio' | 'profileImageId'>
+        & Pick<Profile, 'id' | 'username' | 'phone' | 'first' | 'last' | 'bio' | 'profileImageId' | 'ogProfileImageId'>
       )> }
     ) }
   )> }
@@ -486,6 +477,7 @@ export const EditProfileDocument = gql`
         last
         bio
         profileImageId
+        ogProfileImageId
       }
     }
   }
@@ -644,6 +636,7 @@ export const GetUserDocument = gql`
         last
         bio
         profileImageId
+        ogProfileImageId
       }
     }
   }

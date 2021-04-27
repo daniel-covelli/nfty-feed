@@ -18,6 +18,7 @@ mutation EditProfile(
         last
         bio
         profileImageId
+        ogProfileImageId
       }
     }
   }
