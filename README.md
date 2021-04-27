@@ -49,6 +49,7 @@ This project is starting off using [Ben Awad](https://github.com/benawad)'s YouT
 - [x] following/unfollowing
 - [ ] posts
 - [ ] page not found
-- [ ] cropping
+- [x] cropping
+- [ ] edit profile photo
 
 Website: https://nftyfeed.com/
