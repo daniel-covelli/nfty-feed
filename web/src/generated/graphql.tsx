@@ -14,6 +14,8 @@ export type Scalars = {
   Float: number;
   /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
   DateTime: any;
+  /** The `Upload` scalar type represents a file upload. */
+  Upload: any;
 };
 
 
@@ -40,6 +42,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   login: LoginResponse;
   checkEmail: GenericResponse;
+  addProfilePicture: Scalars['Boolean'];
   register: RegisterResponse;
   revokeRefreshTokensForUser: Scalars['Boolean'];
   logout: Scalars['Boolean'];
@@ -60,7 +63,13 @@ export type MutationCheckEmailArgs = {
 };
 
 
+export type MutationAddProfilePictureArgs = {
+  picture: Scalars['Upload'];
+};
+
+
 export type MutationRegisterArgs = {
+  ogProfileImage: Scalars['String'];
   profileImage: Scalars['String'];
   bio: Scalars['String'];
   last: Scalars['String'];
@@ -98,6 +107,7 @@ export type Profile = {
   __typename?: 'Profile';
   id: Scalars['Int'];
   profileImageId?: Maybe<Scalars['String']>;
+  ogProfileImageId?: Maybe<Scalars['String']>;
   username: Scalars['String'];
   phone: Scalars['String'];
   first: Scalars['String'];
@@ -153,6 +163,7 @@ export type Subscription = {
   active: Scalars['Float'];
   createdAt: Scalars['DateTime'];
 };
+
 
 export type User = {
   __typename?: 'User';
@@ -331,6 +342,7 @@ export type RegisterMutationVariables = Exact<{
   last: Scalars['String'];
   bio: Scalars['String'];
   profileImage: Scalars['String'];
+  ogProfileImage: Scalars['String'];
 }>;
 
 
@@ -386,7 +398,7 @@ export type UsersQuery = (
     & Pick<User, 'id' | 'email'>
     & { profile?: Maybe<(
       { __typename?: 'Profile' }
-      & Pick<Profile, 'first' | 'last' | 'username' | 'profileImageId'>
+      & Pick<Profile, 'first' | 'last' | 'username' | 'profileImageId' | 'ogProfileImageId'>
     )> }
   )> }
 );
@@ -811,7 +823,7 @@ export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const RegisterDocument = gql`
-    mutation Register($email: String!, $password: String!, $username: String!, $phone: String!, $first: String!, $last: String!, $bio: String!, $profileImage: String!) {
+    mutation Register($email: String!, $password: String!, $username: String!, $phone: String!, $first: String!, $last: String!, $bio: String!, $profileImage: String!, $ogProfileImage: String!) {
   register(
     email: $email
     password: $password
@@ -821,6 +833,7 @@ export const RegisterDocument = gql`
     last: $last
     bio: $bio
     profileImage: $profileImage
+    ogProfileImage: $ogProfileImage
   ) {
     res
     message
@@ -860,6 +873,7 @@ export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, Regis
  *      last: // value for 'last'
  *      bio: // value for 'bio'
  *      profileImage: // value for 'profileImage'
+ *      ogProfileImage: // value for 'ogProfileImage'
  *   },
  * });
  */
@@ -952,6 +966,7 @@ export const UsersDocument = gql`
       last
       username
       profileImageId
+      ogProfileImageId
     }
   }
 }

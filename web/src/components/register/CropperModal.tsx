@@ -16,6 +16,7 @@ interface CropperModalProps {
   setOpen: any;
   cropData: string;
   setCropData: any;
+  setOriginalData: any;
 }
 
 export const CropperModal: React.FC<CropperModalProps> = ({
@@ -23,26 +24,26 @@ export const CropperModal: React.FC<CropperModalProps> = ({
   image,
   setOpen,
   cropData,
-  setCropData
+  setCropData,
+  setOriginalData
 }) => {
   const [cropper, setCropper] = useState<any>();
 
   const getCropData = async () => {
-    console.log('START GET CROP DATA METHOD');
     if (typeof cropper !== 'undefined') {
-      // console.log('CROPPER', cropper);
-      // cropper.getCroppedCanvas().toBlob((blob) => {
-      //   setCroppedFile([new File([blob], 'cropped-file.png')]);
-      // });
-
       const dataUrl = await cropper.getCroppedCanvas().toDataURL();
       setCropData(dataUrl);
     }
     setOpen(false);
   };
 
+  const onClose = () => {
+    setOriginalData('');
+    setOpen(false);
+  };
+
   return (
-    <Modal onClose={() => setOpen(false)} size={'xl'} isOpen={open}>
+    <Modal onClose={onClose} size={'xl'} isOpen={open}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Profile Image</ModalHeader>
@@ -54,7 +55,7 @@ export const CropperModal: React.FC<CropperModalProps> = ({
         />
         <ModalFooter>
           <Button
-            onClick={() => setOpen(false)}
+            onClick={onClose}
             mr={3}
             variant='outline'
             size='sm'

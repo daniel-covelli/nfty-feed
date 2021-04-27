@@ -216,7 +216,8 @@ export class UserResolver {
     @Arg('first') first: string,
     @Arg('last') last: string,
     @Arg('bio') bio: string,
-    @Arg('profileImage') profileImage: string
+    @Arg('profileImage') profileImage: string,
+    @Arg('ogProfileImage') ogProfileImage: string
   ) {
     if (!username) {
       return {
@@ -321,7 +322,8 @@ export class UserResolver {
       };
     }
 
-    let result: any;
+    let profileImageResult: any;
+    let originalProfileImageResult: any;
     if (profileImage) {
       cloudinary.config({
         cloud_name: process.env.CLOUDINARY_NAME,
@@ -330,10 +332,11 @@ export class UserResolver {
       });
 
       try {
-        result = await cloudinary.v2.uploader.upload(profileImage, {
+        profileImageResult = await cloudinary.v2.uploader.upload(profileImage, {
           allowed_formats: ['jpg', 'png', 'heic', 'jpeg'],
           public_id: ''
         });
+        console.log(`Successful-Profile-Photo URL: ${profileImageResult.url}`);
       } catch (e) {
         return {
           res: false,
@@ -341,7 +344,25 @@ export class UserResolver {
           user: null
         };
       }
-      console.log(`Successful-Photo URL: ${result.url}`);
+
+      try {
+        originalProfileImageResult = await cloudinary.v2.uploader.upload(
+          ogProfileImage,
+          {
+            allowed_formats: ['jpg', 'png', 'heic', 'jpeg'],
+            public_id: ''
+          }
+        );
+        console.log(
+          `Successful-Original-Profile-Photo URL: ${originalProfileImageResult.url}`
+        );
+      } catch (e) {
+        return {
+          res: false,
+          message: `Image could not be uploaded:${e.message}`,
+          user: null
+        };
+      }
     }
 
     const hashedPassword = await hash(password, 12);
@@ -354,7 +375,12 @@ export class UserResolver {
       profile.first = first;
       profile.last = last;
       profile.bio = bio;
-      profile.profileImageId = `${result ? result.url : ''}`;
+      profile.ogProfileImageId = `${
+        originalProfileImageResult ? originalProfileImageResult.url : ''
+      }`;
+      profile.profileImageId = `${
+        profileImageResult ? profileImageResult.url : ''
+      }`;
       await Profile.save(profile);
 
       user = new User();

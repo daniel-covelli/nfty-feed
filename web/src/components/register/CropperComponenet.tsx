@@ -18,6 +18,7 @@ export const CropperComponenet: React.FC<CropperProps> = ({
   const onRotate = () => {
     cropper.rotate(90);
   };
+
   return (
     <Box style={{ width: '100%' }}>
       <Cropper

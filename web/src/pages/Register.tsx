@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   useRegisterMutation,
   useLoginMutation,
@@ -34,6 +34,7 @@ import { DropzoneComponent } from '../components/register/DropzoneComponent';
 export const Register: React.FC<RouteComponentProps> = ({ history }) => {
   const { isOpen, onToggle } = useDisclosure();
   const { data: me } = useMeQuery();
+  const [originalData, setOriginalData] = useState('');
   const [cropData, setCropData] = useState('');
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
@@ -51,6 +52,10 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
   const [register, { error }] = useRegisterMutation();
   const [login] = useLoginMutation();
   const toast = useToast();
+
+  useEffect(() => {
+    console.log('ORIGINAL DATA', originalData);
+  }, [originalData]);
 
   if (error) {
     return (
@@ -88,6 +93,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                         email: loginEmail,
                         password: loginPassword,
                         profileImage: `${cropData ? cropData : ''}`,
+                        ogProfileImage: `${cropData ? originalData : ''}`,
                         username,
                         phone,
                         first,
@@ -172,6 +178,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                         setCropData={setCropData}
                         setOpen={setOpen}
                         setImage={setImage}
+                        setOriginalData={setOriginalData}
                       />
                     </Center>
                     <Box pb='10px'>
@@ -365,6 +372,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
         setOpen={setOpen}
         cropData={cropData}
         setCropData={setCropData}
+        setOriginalData={setOriginalData}
       />
     </>
   );

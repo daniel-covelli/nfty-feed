@@ -19,6 +19,10 @@ export class Profile extends BaseEntity {
   @Column({ nullable: true })
   profileImageId?: string;
 
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  ogProfileImageId?: string;
+
   @Field()
   @Column()
   username: string;

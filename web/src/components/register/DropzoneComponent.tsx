@@ -10,6 +10,7 @@ interface DropzoneComponentProps {
   setOpen: any;
   setImageLoading: any;
   setImage: any;
+  setOriginalData: any;
 }
 
 export const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
@@ -18,7 +19,8 @@ export const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
   imageLoading,
   setCropData,
   setOpen,
-  setImage
+  setImage,
+  setOriginalData
 }) => {
   const toast = useToast();
   return (
@@ -79,6 +81,7 @@ export const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
             reader.readAsDataURL(file);
             reader.onloadend = (e) => {
               setImage([e.target.result]);
+              setOriginalData([e.target.result]);
             };
             setOpen(true);
           }
