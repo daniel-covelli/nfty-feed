@@ -17,22 +17,20 @@ import { getConnectionOptions, createConnection } from 'typeorm';
 import { Profile } from './entity/Profile';
 import { Subscription as Sub } from './entity/Subscription';
 import { SubscriptionResolver } from './resolvers/SubscriptionResolver';
+
 import bodyParser from 'body-parser';
 
 // server set up
 (async () => {
   var corsOptions = {
     credentials: true,
-    origin: [
-      `${process.env.FRONTEND_HOST}`,
-      `${process.env.CLOUDINARY_UPLOAD_URL}`
-    ]
+    origin: [`${process.env.FRONTEND_HOST}`]
   };
 
   const app = express();
   app.use(cors(corsOptions));
   app.use(cookieParser());
-  app.use(bodyParser.json({ limit: '1mb' }));
+  app.use(bodyParser.json({ limit: '50mb' }));
 
   app.get('/', (_req, res) => res.send('Hello World'));
 

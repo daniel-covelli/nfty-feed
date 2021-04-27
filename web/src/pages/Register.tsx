@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   useRegisterMutation,
   useLoginMutation,
@@ -24,9 +24,7 @@ import {
   SimpleGrid,
   SlideFade,
   useDisclosure,
-  Textarea,
-  Spinner,
-  IconButton
+  Textarea
 } from '@chakra-ui/react';
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { setAccessToken } from '../accessToken';
@@ -40,7 +38,6 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [image, setImage] = useState([]);
-  const [croppedFile, setCroppedFile] = useState([]);
   const [open, setOpen] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
   const [registrationLoading, setRegistrationLoading] = useState(false);
@@ -51,17 +48,17 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
     history.push('/');
   }
 
-  const [register] = useRegisterMutation();
+  const [register, { error }] = useRegisterMutation();
   const [login] = useLoginMutation();
   const toast = useToast();
 
-  // useEffect(() => {
-  //   console.log('CROPDATA', cropData);
-  // }, [cropData]);
-
-  // useEffect(() => {
-  //   console.log('CROPFILE', croppedFile);
-  // }, [croppedFile]);
+  if (error) {
+    return (
+      <>
+        <Text>image uploading failed</Text>
+      </>
+    );
+  }
 
   return (
     <>
@@ -368,7 +365,6 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
         setOpen={setOpen}
         cropData={cropData}
         setCropData={setCropData}
-        setCroppedFile={setCroppedFile}
       />
     </>
   );

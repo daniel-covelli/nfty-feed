@@ -70,7 +70,7 @@ const client = new ApolloClient({
           `${
             process.env.NODE_ENV === 'production'
               ? 'https://blooming-scrubland-30700.herokuapp.com/graphql'
-              : 'http://localhost:4000/graphql'
+              : `${process.env.REACT_APP_SERVER_URL}/graphql`
           }/refresh_token`,
           {
             method: 'POST',
@@ -95,11 +95,12 @@ const client = new ApolloClient({
       uri: `${
         process.env.NODE_ENV === 'production'
           ? 'https://blooming-scrubland-30700.herokuapp.com/graphql'
-          : 'http://localhost:4000/graphql'
+          : `${process.env.REACT_APP_SERVER_URL}/graphql`
       }`,
       credentials: 'include'
     })
   ]),
+  uploads: false,
   defaultOptions: {
     mutate: { errorPolicy: 'ignore' }
   },

@@ -15,7 +15,7 @@ export const App: React.FC<AppProps> = () => {
       `${
         process.env.NODE_ENV === 'production'
           ? `https://blooming-scrubland-30700.herokuapp.com`
-          : `http://localhost:4000`
+          : `${process.env.REACT_APP_PHONE_SERVER_URL}`
       }/refresh_token`,
       {
         method: 'POST',

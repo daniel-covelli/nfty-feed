@@ -12,8 +12,6 @@ import {
   Tr,
   Td,
   useMediaQuery,
-  Stack,
-  Skeleton,
   Spinner
 } from '@chakra-ui/react';
 import { Link as ReactLink } from 'react-router-dom';

@@ -18,6 +18,12 @@ import { sendRefreshToken } from '../sendRefreshToken';
 import { getConnection } from 'typeorm';
 import { verify } from 'jsonwebtoken';
 import { Profile } from '../entity/Profile';
+// import { Upload } from '../enums';
+// import { GraphQLUpload } from 'apollo-server-express';
+// import { GraphQLUpload } from 'apollo-server-express';
+import { FileUpload, GraphQLUpload } from 'graphql-upload';
+
+import { createWriteStream } from 'fs';
 const cloudinary = require('cloudinary');
 
 @ObjectType()
@@ -174,6 +180,33 @@ export class UserResolver {
     }
   }
 
+  // '{"query":"mutation AddProfilePicture($picture: Upload!) {\n  addProfilePicture(picture: $picture)\n}\n"}' --compressed
+  // @Mutation(() => Boolean)
+  // async registerImage(@Arg("picture", () => GraphQLUpload)
+  // {
+  //   createReadStream,
+  //   filename
+  // }: Upload): Promise<boolean> {
+  //   return new Promise(async (resolve, reject) =>
+  //     createReadStream()
+  //       .pipe()
+  //       .on("finish", () => resolve(true))
+  //       .on("error", () => reject(false))
+  //   );
+  // }
+  @Mutation(() => Boolean)
+  async addProfilePicture(
+    @Arg('picture', () => GraphQLUpload)
+    { createReadStream, filename }: FileUpload
+  ): Promise<boolean> {
+    return new Promise(async (resolve, reject) =>
+      createReadStream()
+        .pipe(createWriteStream(__dirname + `../images/${filename}`))
+        .on('finish', () => resolve(true))
+        .on('error', () => reject(false))
+    );
+  }
+
   @Mutation(() => RegisterResponse)
   async register(
     @Arg('email') email: string,
@@ -298,7 +331,7 @@ export class UserResolver {
 
       try {
         result = await cloudinary.v2.uploader.upload(profileImage, {
-          allowed_formats: ['jpg', 'png', 'heic'],
+          allowed_formats: ['jpg', 'png', 'heic', 'jpeg'],
           public_id: ''
         });
       } catch (e) {

@@ -29,7 +29,6 @@ import {
   ModalCloseButton,
   ModalContent,
   Spinner,
-  toast,
   FormControl,
   Input,
   Textarea,
@@ -58,8 +57,6 @@ import { setAccessToken } from '../accessToken';
 import { RouteComponentProps } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
 
-interface ProfileProps {}
-
 export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
   const [settingsModal, openSettingsModal] = useState(false);
   const [subscriptionModal, openSubscriptionModal] = useState(false);
@@ -84,7 +81,7 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
   const [getFollowing, { data: following }] = useGetActiveFollowingLazyQuery();
   const [
     getExistingSubscription,
-    { data: existingSubscription, loading: existingSubscriptionLoading }
+    { data: existingSubscription }
   ] = useExistingSubscriptionLazyQuery();
 
   useEffect(() => {
@@ -485,7 +482,7 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                           data: {
                             __typename: 'Query',
                             getActiveFollowers: old.getActiveFollowers.filter(
-                              (user) => user.id != data.unSubscribe.id
+                              (user) => user.id !== data.unSubscribe.id
                             )
                           },
                           variables: {
@@ -661,24 +658,24 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
   );
 };
 
-{
-  /* <Box py='10px'>
-        <Text>Me?: {data.getUser.me ? 'True' : 'False'}</Text>
-        <Text>Id: {data.getUser.user['id']}</Text>
-        <Text>Email: {data.getUser.user['email']}</Text>
-        {data.getUser.user.profile ? (
-          <>
-            <Text>Username: {data.getUser.user.profile.username}</Text>
-            <Text>Number: {data.getUser.user.profile.phone}</Text>
-            <Text>First: {data.getUser.user.profile.first}</Text>
-            <Text>Last: {data.getUser.user.profile.last}</Text>
-            <Text>Bio: {data.getUser.user.profile.bio}</Text>
-          </>
-        ) : (
-          <Text>Profile: no profile</Text>
-        )}
-      </Box> */
-}
+// {
+//   /* <Box py='10px'>
+//         <Text>Me?: {data.getUser.me ? 'True' : 'False'}</Text>
+//         <Text>Id: {data.getUser.user['id']}</Text>
+//         <Text>Email: {data.getUser.user['email']}</Text>
+//         {data.getUser.user.profile ? (
+//           <>
+//             <Text>Username: {data.getUser.user.profile.username}</Text>
+//             <Text>Number: {data.getUser.user.profile.phone}</Text>
+//             <Text>First: {data.getUser.user.profile.first}</Text>
+//             <Text>Last: {data.getUser.user.profile.last}</Text>
+//             <Text>Bio: {data.getUser.user.profile.bio}</Text>
+//           </>
+//         ) : (
+//           <Text>Profile: no profile</Text>
+//         )}
+//       </Box> */
+// }
 
 // {
 //   __typename: 'User',

@@ -1,14 +1,7 @@
 import React from 'react';
 import Dropzone from 'react-dropzone';
-import {
-  Box,
-  position,
-  IconButton,
-  Spinner,
-  Link,
-  useToast
-} from '@chakra-ui/react';
-import { SettingsIcon, DeleteIcon } from '@chakra-ui/icons';
+import { Box, IconButton, Spinner, Link, useToast } from '@chakra-ui/react';
+import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
 
 interface DropzoneComponentProps {
   cropData: string;
@@ -54,7 +47,7 @@ export const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
             variant='outline'
             backgroundColor='white'
             aria-label='Edit Photo'
-            icon={<SettingsIcon />}
+            icon={<EditIcon />}
             size='xs'
             onClick={() => setOpen(true)}
             _focus={{
@@ -70,7 +63,6 @@ export const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
         onDrop={(files) => {
           setImageLoading(true);
           const file = files[0];
-          console.log('FILE', file);
           const input = file['name'];
           const lastIndex = input.lastIndexOf('.');
           const fileType = input.substring(lastIndex + 1);
@@ -84,9 +76,9 @@ export const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
             });
           } else {
             const reader = new FileReader();
-            const url = reader.readAsDataURL(file);
-            reader.onloadend = () => {
-              setImage([reader.result]);
+            reader.readAsDataURL(file);
+            reader.onloadend = (e) => {
+              setImage([e.target.result]);
             };
             setOpen(true);
           }

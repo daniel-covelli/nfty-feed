@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box } from '@chakra-ui/react';
+import React, { useRef } from 'react';
+import { Box, Button } from '@chakra-ui/react';
 import Cropper from 'react-cropper';
 import 'cropperjs/dist/cropper.css';
 
@@ -7,12 +7,17 @@ interface CropperProps {
   image: string;
   cropData: string;
   setCropper: any;
+  cropper: any;
 }
 
 export const CropperComponenet: React.FC<CropperProps> = ({
   image,
-  setCropper
+  setCropper,
+  cropper
 }) => {
+  const onRotate = () => {
+    cropper.rotate(90);
+  };
   return (
     <Box style={{ width: '100%' }}>
       <Cropper
@@ -26,14 +31,29 @@ export const CropperComponenet: React.FC<CropperProps> = ({
         dragMode='move'
         autoCropArea={0.6}
         minCropBoxHeight={10}
+        cropBoxResizable={false}
+        cropBoxMovable={false}
         minCropBoxWidth={10}
         background={false}
         responsive={true}
+        rotatable={true}
         checkOrientation={true} // https://github.com/fengyuanchen/cropperjs/issues/671
         onInitialized={(instance) => {
           setCropper(instance);
         }}
       />
+      <Button
+        onClick={onRotate}
+        position='absolute'
+        size='sm'
+        top={20}
+        right={4}
+        zIndex={10}
+        _focus={{
+          boxShadow: 'none'
+        }}>
+        Rotate
+      </Button>
     </Box>
   );
 };
