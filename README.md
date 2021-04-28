@@ -50,6 +50,6 @@ This project is starting off using [Ben Awad](https://github.com/benawad)'s YouT
 - [ ] posts
 - [ ] page not found
 - [x] cropping
-- [ ] edit profile photo
+- [x] edit profile photo
 
 Website: https://nftyfeed.com/

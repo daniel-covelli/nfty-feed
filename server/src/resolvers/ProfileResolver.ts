@@ -156,7 +156,7 @@ export class ProfileResolver {
         } else {
           try {
             const originalProfileImageResult = await cloudinary.v2.uploader.upload(
-              profileImage,
+              ogProfileImage,
               {
                 allowed_formats: ['jpg', 'png', 'heic', 'jpeg'],
                 public_id: ''

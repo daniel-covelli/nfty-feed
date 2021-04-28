@@ -100,11 +100,6 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
     }
   }, [data]);
 
-  useEffect(() => {
-    console.log('CROPPED IMAGE', croppedImage);
-    console.log('CORPPED IMAGE BOOL', Boolean(croppedImage));
-  }, [croppedImage]);
-
   const onEditModalClose = () => {
     setCroppedImage(data.getUser.user.profile.profileImageId);
     setOriginalImage(data.getUser.user.profile.ogProfileImageId);
