@@ -4,6 +4,10 @@ Beginnings of a Social Network for NFTs.
 
 This project is starting off using [Ben Awad](https://github.com/benawad)'s YouTube tutorial on [JWT and React](https://www.youtube.com/watch?v=25GS0MLT8JU&ab_channel=BenAwad). The starter code can be found [here](https://github.com/benawad/jwt-auth-example).
 
+#### Architecture
+
+![simplified architecture](https://res.cloudinary.com/nftyfeed/image/upload/v1619587135/Screen_Shot_2021-04-27_at_10.16.04_PM_ncgrbn.png)
+
 #### Technologies
 
 - Typescript
