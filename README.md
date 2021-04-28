@@ -52,4 +52,9 @@ This project is starting off using [Ben Awad](https://github.com/benawad)'s YouT
 - [x] cropping
 - [x] edit profile photo
 
+#### Known Technical Debt
+
+- [ ] dropzone/cropper components
+- [ ] register/editprofile resolver logic
+
 Website: https://nftyfeed.com/
