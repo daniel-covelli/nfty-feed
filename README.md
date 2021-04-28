@@ -30,6 +30,7 @@ This project is starting off using [Ben Awad](https://github.com/benawad)'s YouT
 - [ ] page not found
 - [x] cropping
 - [x] edit profile photo
+- [x] profile photo modal
 
 #### Known Technical Debt
 

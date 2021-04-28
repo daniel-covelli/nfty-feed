@@ -20,6 +20,7 @@ import {
   VStack,
   Spacer,
   Center,
+  LinkOverlay,
   ButtonGroup,
   IconButton,
   Modal,
@@ -32,7 +33,8 @@ import {
   FormControl,
   Input,
   Textarea,
-  useToast
+  useToast,
+  LinkBox
 } from '@chakra-ui/react';
 import {
   useGetUserQuery,
@@ -67,6 +69,7 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
   const [croppedImage, setCroppedImage] = useState('');
   const [originalImage, setOriginalImage] = useState('');
   const [cropperModalOpen, setCropperModalOpen] = useState(false);
+  const [profilePhotoModalOpen, setProfilePhotoModalOpen] = useState(false);
 
   const [isMobile] = useMediaQuery('(max-width: 520px)');
 
@@ -150,7 +153,7 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
   if (existingSubscription && existingSubscription.existingSubscription) {
     subscriptionDisplay = (
       <Button
-        size='xs'
+        size='sm'
         w='100%'
         variant='outline'
         onClick={() => openSubscriptionModal(true)}
@@ -167,7 +170,7 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
     subscriptionDisplay = (
       <Button
         isLoading={subscribeLoading}
-        size='xs'
+        size='sm'
         w='100%'
         variant='solid'
         colorScheme='pink'
@@ -232,20 +235,27 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
             <GridItem colSpan={3}>
               <Box pb='10px' pr='10px'>
                 <AspectRatio maxW='150px' w='100%' ratio={1 / 1}>
-                  <Avatar
-                    size='full'
-                    fontSize='60px'
-                    name={
-                      data.getUser.user.profile
-                        ? `${data.getUser.user.profile.first} ${data.getUser.user.profile.last}`
-                        : null
-                    }
-                    src={
-                      data.getUser.user.profile.profileImageId
-                        ? `${data.getUser.user.profile.profileImageId}`
-                        : ''
-                    }
-                  />
+                  <Box
+                    as='button'
+                    onClick={() => {
+                      console.log('AVATAR CLICKED');
+                      setProfilePhotoModalOpen(true);
+                    }}>
+                    <Avatar
+                      size='full'
+                      fontSize='60px'
+                      name={
+                        data.getUser.user.profile
+                          ? `${data.getUser.user.profile.first} ${data.getUser.user.profile.last}`
+                          : null
+                      }
+                      src={
+                        data.getUser.user.profile.profileImageId
+                          ? `${data.getUser.user.profile.profileImageId}`
+                          : ''
+                      }
+                    />
+                  </Box>
                 </AspectRatio>
               </Box>
             </GridItem>
@@ -692,6 +702,35 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
           </ModalContent>
         </Modal>
       ) : null}
+      <Modal
+        onClose={() => setProfilePhotoModalOpen(false)}
+        isOpen={profilePhotoModalOpen}
+        isCentered>
+        <ModalOverlay />
+        <ModalContent padding={0} width='0'>
+          <Center>
+            <Avatar
+              padding={0}
+              margin={0}
+              size='full'
+              height='400px'
+              width='400px'
+              maxW='90vw'
+              fontSize='60px'
+              name={
+                data.getUser.user.profile
+                  ? `${data.getUser.user.profile.first} ${data.getUser.user.profile.last}`
+                  : null
+              }
+              src={
+                data.getUser.user.profile.profileImageId
+                  ? `${data.getUser.user.profile.profileImageId}`
+                  : ''
+              }
+            />
+          </Center>
+        </ModalContent>
+      </Modal>
     </>
   );
 };
