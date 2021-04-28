@@ -8,6 +8,7 @@ mutation Login($email: String!, $password: String!) {
         username
         first
         last
+        profileImageId
       }
     }
   }

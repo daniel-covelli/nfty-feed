@@ -11,7 +11,7 @@ export const Logo: React.FC<LogoProps> = (props) => {
   return (
     <Box {...props}>
       <Text
-        fontSize='lg'
+        fontSize='xl'
         fontWeight='extrabold'
         bgGradient='linear(to-l, #7928CA,#FF0080)'
         bgClip='text'>

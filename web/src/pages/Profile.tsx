@@ -238,7 +238,6 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                   <Box
                     as='button'
                     onClick={() => {
-                      console.log('AVATAR CLICKED');
                       setProfilePhotoModalOpen(true);
                     }}>
                     <Avatar

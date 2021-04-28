@@ -299,7 +299,7 @@ export type LoginMutation = (
       & Pick<User, 'id' | 'email'>
       & { profile?: Maybe<(
         { __typename?: 'Profile' }
-        & Pick<Profile, 'username' | 'first' | 'last'>
+        & Pick<Profile, 'username' | 'first' | 'last' | 'profileImageId'>
       )> }
     ) }
   ) }
@@ -323,7 +323,7 @@ export type MeQuery = (
     & Pick<User, 'id' | 'email'>
     & { profile?: Maybe<(
       { __typename?: 'Profile' }
-      & Pick<Profile, 'first' | 'last' | 'username'>
+      & Pick<Profile, 'first' | 'last' | 'username' | 'profileImageId'>
     )> }
   )> }
 );
@@ -726,6 +726,7 @@ export const LoginDocument = gql`
         username
         first
         last
+        profileImageId
       }
     }
   }
@@ -797,6 +798,7 @@ export const MeDocument = gql`
       first
       last
       username
+      profileImageId
     }
   }
 }

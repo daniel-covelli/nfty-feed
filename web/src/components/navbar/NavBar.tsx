@@ -25,7 +25,8 @@ export const NavBar: React.FC<NavBarProps> = () => {
       wrap='wrap'
       w='100%'
       mb={8}
-      p={4}
+      px={4}
+      py={2}
       pos='fixed'
       zIndex={100}
       borderBottom='1px'
