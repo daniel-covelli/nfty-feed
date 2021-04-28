@@ -16,27 +16,6 @@ This project is starting off using [Ben Awad](https://github.com/benawad)'s YouT
 - Express (server)
 - Docker
 
-#### Backend Setup
-
-- [x] Setup a GraphQL Server using TypeGraphQL and TypeORM
-- [x] Register a user/add them to DB
-- [x] Login users and create access and refresh tokens
-- [x] Make authenticated (protected) mutations and queries in GQL
-- [x] Refresh token if it expires
-- [x] Revoke tokens for a user if user logs out, deletes there account, or if their account gets hacked
-- [x] Put yarn workspace in a docker image
-
-#### Frontend SetUp
-
-- [x] Setup Apollo and GraphQL via Code Generator
-- [x] Create some routes using react router
-- [x] Register and Login form
-- [x] Protecting routes/persisting session on refresh
-- [x] Handling expired tokens
-- [x] Fetching current user in headers, etc...
-- [x] Logging out a user
-- [x] Add nav bar
-
 #### Active Scrum
 
 - [x] fix message for routes that don't exist
@@ -56,5 +35,23 @@ This project is starting off using [Ben Awad](https://github.com/benawad)'s YouT
 
 - [ ] dropzone/cropper components
 - [ ] register/editprofile resolver logic
+
+#### Archive
+
+- [x] Setup a GraphQL Server using TypeGraphQL and TypeORM
+- [x] Register a user/add them to DB
+- [x] Login users and create access and refresh tokens
+- [x] Make authenticated (protected) mutations and queries in GQL
+- [x] Refresh token if it expires
+- [x] Revoke tokens for a user if user logs out, deletes there account, or if their account gets hacked
+- [x] Put yarn workspace in a docker image
+- [x] Setup Apollo and GraphQL via Code Generator
+- [x] Create some routes using react router
+- [x] Register and Login form
+- [x] Protecting routes/persisting session on refresh
+- [x] Handling expired tokens
+- [x] Fetching current user in headers, etc...
+- [x] Logging out a user
+- [x] Add nav bar
 
 Website: https://nftyfeed.com/
