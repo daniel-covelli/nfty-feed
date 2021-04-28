@@ -56,6 +56,13 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
     setPopoverOpen(false);
   };
 
+  const onLogout = async () => {
+    await logout();
+    setAccessToken('');
+    await client!.resetStore();
+    setPopoverOpen(false);
+  };
+
   return (
     <Box
       paddingRight={paddingRight}
@@ -171,13 +178,13 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
                     <Link
                       as={ReactLink}
                       to={'/'}
-                      onClick={onClose}
                       colorScheme='pink'
                       border='none'
                       _focus={{
                         boxShadow: 'none'
                       }}
-                      _hover={{ textDecoration: 'none' }}>
+                      _hover={{ textDecoration: 'none' }}
+                      onClick={onLogout}>
                       <Box
                         py={2}
                         transition='0.1s'
