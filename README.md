@@ -8,6 +8,8 @@ This project is starting off using [Ben Awad](https://github.com/benawad)'s YouT
 
 ![simplified architecture](https://res.cloudinary.com/nftyfeed/image/upload/v1619587135/Screen_Shot_2021-04-27_at_10.16.04_PM_ncgrbn.png)
 
+The project is deployed to Heroku (backend) and Netlify (frontend) with GQL/Apollo as the intermediary API layer.
+
 #### Technologies
 
 - Typescript
