@@ -79,6 +79,8 @@ export type MutationRevokeRefreshTokensForUserArgs = {
 
 
 export type MutationEditProfileArgs = {
+  ogProfileImage: Scalars['String'];
+  profileImage: Scalars['String'];
   bio: Scalars['String'];
   last: Scalars['String'];
   first: Scalars['String'];
@@ -195,6 +197,8 @@ export type EditProfileMutationVariables = Exact<{
   first: Scalars['String'];
   last: Scalars['String'];
   bio: Scalars['String'];
+  profileImage: Scalars['String'];
+  ogProfileImage: Scalars['String'];
 }>;
 
 
@@ -462,8 +466,15 @@ export type CheckEmailMutationHookResult = ReturnType<typeof useCheckEmailMutati
 export type CheckEmailMutationResult = Apollo.MutationResult<CheckEmailMutation>;
 export type CheckEmailMutationOptions = Apollo.BaseMutationOptions<CheckEmailMutation, CheckEmailMutationVariables>;
 export const EditProfileDocument = gql`
-    mutation EditProfile($username: String!, $first: String!, $last: String!, $bio: String!) {
-  editProfile(username: $username, first: $first, last: $last, bio: $bio) {
+    mutation EditProfile($username: String!, $first: String!, $last: String!, $bio: String!, $profileImage: String!, $ogProfileImage: String!) {
+  editProfile(
+    username: $username
+    first: $first
+    last: $last
+    bio: $bio
+    profileImage: $profileImage
+    ogProfileImage: $ogProfileImage
+  ) {
     res
     message
     user {
@@ -502,6 +513,8 @@ export type EditProfileMutationFn = Apollo.MutationFunction<EditProfileMutation,
  *      first: // value for 'first'
  *      last: // value for 'last'
  *      bio: // value for 'bio'
+ *      profileImage: // value for 'profileImage'
+ *      ogProfileImage: // value for 'ogProfileImage'
  *   },
  * });
  */

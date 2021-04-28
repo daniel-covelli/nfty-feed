@@ -56,7 +56,7 @@ export const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
         </>
       ) : null}
       <Dropzone
-        maxFiles={1}
+        multiple={false}
         noClick={cropData ? true : false}
         noDrag={cropData ? true : false}
         onDrop={(files) => {

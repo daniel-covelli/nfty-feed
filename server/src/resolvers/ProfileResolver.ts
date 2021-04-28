@@ -12,6 +12,8 @@ import { User } from '../entity/User';
 import { isAuth } from '../isAuth';
 import { Profile } from '../entity/Profile';
 
+const cloudinary = require('cloudinary');
+
 @ObjectType()
 class EditResponse {
   @Field()
@@ -31,7 +33,9 @@ export class ProfileResolver {
     @Arg('username') username: string,
     @Arg('first') first: string,
     @Arg('last') last: string,
-    @Arg('bio') bio: string
+    @Arg('bio') bio: string,
+    @Arg('profileImage') profileImage: string,
+    @Arg('ogProfileImage') ogProfileImage: string
   ) {
     const existingUser = await User.findOne({
       where: { id: payload?.userId }
@@ -120,6 +124,63 @@ export class ProfileResolver {
       existingUser.profile.first = first;
       existingUser.profile.last = last;
       existingUser.profile.bio = bio;
+
+      console.log('PROFILE IMAGE', profileImage);
+      console.log(existingUser.profile.profileImageId);
+      console.log('ORIGINAL PROFILE IMAGE', ogProfileImage);
+      console.log(existingUser.profile.ogProfileImageId);
+      if (profileImage !== existingUser.profile.profileImageId) {
+        console.log('SHOULD BE HERE');
+        cloudinary.config({
+          cloud_name: process.env.CLOUDINARY_NAME,
+          api_key: process.env.CLOUDINARY_API_KEY,
+          api_secret: process.env.CLOUDINARY_API_SECRET
+        });
+        if (profileImage === '') {
+          console.log(`PROFILE IMAGE EQUALS "" CASE`);
+          existingUser.profile.profileImageId = '';
+        } else {
+          try {
+            const response = await cloudinary.v2.uploader.upload(profileImage, {
+              allowed_formats: ['jpg', 'png', 'heic', 'jpeg'],
+              public_id: ''
+            });
+            existingUser.profile.profileImageId = response.url;
+          } catch (e) {
+            return {
+              res: false,
+              message: `Image could not be uploaded:${e.message}`,
+              user: null
+            };
+          }
+        }
+      }
+
+      if (ogProfileImage !== existingUser.profile.ogProfileImageId) {
+        if (ogProfileImage === '') {
+          console.log(`OG PROFILE IMAGE EQUALS "" CASE`);
+          existingUser.profile.ogProfileImageId = '';
+        } else {
+          try {
+            const originalProfileImageResult = await cloudinary.v2.uploader.upload(
+              profileImage,
+              {
+                allowed_formats: ['jpg', 'png', 'heic', 'jpeg'],
+                public_id: ''
+              }
+            );
+            existingUser.profile.ogProfileImageId =
+              originalProfileImageResult.url;
+          } catch (e) {
+            return {
+              res: false,
+              message: `Image could not be uploaded:${e.message}`,
+              user: null
+            };
+          }
+        }
+      }
+
       if (existingUser.profile.username !== username) {
         const existing = await Profile.findOne({ where: { username } });
 
@@ -135,6 +196,7 @@ export class ProfileResolver {
         await existingUser.save();
         return { res: true, message: 'refresh', user: existingUser };
       }
+
       await existingUser.save();
     } else {
       // edge case: if user doesnt have profile
@@ -143,6 +205,46 @@ export class ProfileResolver {
       profile.first = first;
       profile.last = last;
       profile.bio = bio;
+
+      if (profileImage != '') {
+        cloudinary.config({
+          cloud_name: process.env.CLOUDINARY_NAME,
+          api_key: process.env.CLOUDINARY_API_KEY,
+          api_secret: process.env.CLOUDINARY_API_SECRET
+        });
+
+        try {
+          const response = await cloudinary.v2.uploader.upload(profileImage, {
+            allowed_formats: ['jpg', 'png', 'heic', 'jpeg'],
+            public_id: ''
+          });
+          profile.ogProfileImageId = response.url;
+        } catch (e) {
+          return {
+            res: false,
+            message: `Image could not be uploaded:${e.message}`,
+            user: null
+          };
+        }
+
+        try {
+          const originalProfileImageResult = await cloudinary.v2.uploader.upload(
+            profileImage,
+            {
+              allowed_formats: ['jpg', 'png', 'heic', 'jpeg'],
+              public_id: ''
+            }
+          );
+          profile.ogProfileImageId = originalProfileImageResult.url;
+        } catch (e) {
+          return {
+            res: false,
+            message: `Image could not be uploaded:${e.message}`,
+            user: null
+          };
+        }
+      }
+
       await profile.save();
       existingUser.profile = profile;
       await existingUser.save();

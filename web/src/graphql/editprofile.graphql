@@ -3,8 +3,17 @@ mutation EditProfile(
   $first: String!
   $last: String!
   $bio: String!
+  $profileImage: String!
+  $ogProfileImage: String!
 ) {
-  editProfile(username: $username, first: $first, last: $last, bio: $bio) {
+  editProfile(
+    username: $username
+    first: $first
+    last: $last
+    bio: $bio
+    profileImage: $profileImage
+    ogProfileImage: $ogProfileImage
+  ) {
     res
     message
     user {

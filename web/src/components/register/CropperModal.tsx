@@ -5,8 +5,7 @@ import {
   ModalContent,
   ModalHeader,
   ModalFooter,
-  Button,
-  Text
+  Button
 } from '@chakra-ui/react';
 import { CropperComponenet } from './CropperComponenet';
 
@@ -34,7 +33,6 @@ export const CropperModal: React.FC<CropperModalProps> = ({
       const dataUrl = await cropper.getCroppedCanvas().toDataURL();
       setCropData(dataUrl);
     }
-
     setOpen(false);
   };
 

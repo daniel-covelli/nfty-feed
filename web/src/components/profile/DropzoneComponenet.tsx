@@ -1,24 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Dropzone from 'react-dropzone';
 import { Box, IconButton, Spinner, Link, useToast } from '@chakra-ui/react';
 import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
 
 interface DropzoneComponentProps {
   setOpen: any;
-  setImage: any;
   setOriginalData: any;
   initialDisplayImage: string;
+  setCroppedImage: any;
 }
 
 export const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
   setOpen,
-  setImage,
   setOriginalData,
-  initialDisplayImage
+  initialDisplayImage,
+  setCroppedImage
 }) => {
   const [imageLoading, setImageLoading] = useState(false);
-  const [displayImage, setDisplayImage] = useState(initialDisplayImage);
+  const [displayImage, setDisplayImage] = useState('');
+
+  useEffect(() => {
+    setDisplayImage(initialDisplayImage);
+  }, [initialDisplayImage]);
+
+  const onDelete = () => {
+    setCroppedImage('');
+    setOriginalData('');
+    setDisplayImage('');
+  };
+
   const toast = useToast();
+
   return (
     <Box position='relative'>
       {displayImage ? (
@@ -33,7 +45,7 @@ export const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
             aria-label='Delete Photo'
             icon={<DeleteIcon />}
             size='xs'
-            onClick={() => setDisplayImage('')}
+            onClick={onDelete}
             _focus={{
               boxShadow: 'none'
             }}
@@ -55,7 +67,7 @@ export const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
         </>
       ) : null}
       <Dropzone
-        maxFiles={1}
+        multiple={false}
         noClick={displayImage ? true : false}
         noDrag={displayImage ? true : false}
         onDrop={(files) => {
@@ -76,11 +88,11 @@ export const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onloadend = (e) => {
-              setImage([e.target.result]);
-              setOriginalData([e.target.result]);
+              setOriginalData(e.target.result);
             };
             setOpen(true);
           }
+
           setImageLoading(false);
         }}>
         {({ getRootProps, getInputProps }) => (

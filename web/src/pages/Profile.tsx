@@ -65,9 +65,8 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
   const [editModal, openEditModal] = useState(false);
   const [logoutLoading, setLogoutLoading] = useState(false);
   const [croppedImage, setCroppedImage] = useState('');
-  const [originalData, setOriginalData] = useState('');
+  const [originalImage, setOriginalImage] = useState('');
   const [cropperModalOpen, setCropperModalOpen] = useState(false);
-  const [image, setImage] = useState([]);
 
   const [isMobile] = useMediaQuery('(max-width: 520px)');
 
@@ -96,6 +95,8 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
       getFollowers({ variables: { userId: data.getUser.user.id } });
       getFollowing({ variables: { userId: data.getUser.user.id } });
       getExistingSubscription({ variables: { userId: data.getUser.user.id } });
+      setCroppedImage(data.getUser.user.profile.profileImageId);
+      setOriginalImage(data.getUser.user.profile.ogProfileImageId);
     }
   }, [data]);
 
@@ -104,7 +105,16 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
     console.log('CORPPED IMAGE BOOL', Boolean(croppedImage));
   }, [croppedImage]);
 
-  const onCropperModalClose = () => {};
+  const onEditModalClose = () => {
+    setCroppedImage(data.getUser.user.profile.profileImageId);
+    setOriginalImage(data.getUser.user.profile.ogProfileImageId);
+    openEditModal(false);
+  };
+
+  const onCropperModalClose = () => {
+    setOriginalImage(data.getUser.user.profile.ogProfileImageId);
+    setCropperModalOpen(false);
+  };
 
   if (loading) {
     return (
@@ -533,7 +543,7 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
       {data.getUser.me ? (
         <Modal
           isOpen={editModal}
-          onClose={() => openEditModal(false)}
+          onClose={onEditModalClose} // onEditModalClose
           size='xs'>
           <ModalOverlay />
           <ModalContent>
@@ -552,6 +562,8 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                     onSubmit={async ({ username, first, last, bio }) => {
                       const { data } = await edit({
                         variables: {
+                          profileImage: croppedImage,
+                          ogProfileImage: originalImage,
                           username,
                           first,
                           last,
@@ -602,15 +614,9 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                       <Center pb='10px'>
                         <DropzoneComponent
                           setOpen={setCropperModalOpen}
-                          setImage={setImage}
-                          setOriginalData={setOriginalData}
-                          initialDisplayImage={
-                            croppedImage
-                              ? croppedImage
-                              : data
-                              ? data.getUser.user.profile.profileImageId
-                              : ''
-                          }
+                          setOriginalData={setOriginalImage}
+                          initialDisplayImage={croppedImage ? croppedImage : ''}
+                          setCroppedImage={setCroppedImage}
                         />
                       </Center>
                       <Box pb='10px'>
@@ -679,9 +685,7 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                   </Formik>
                 </Center>
                 <CropperModal
-                  imageToBeCropped={
-                    data ? data.getUser.user.profile.ogProfileImageId : ''
-                  }
+                  imageToBeCropped={originalImage ? originalImage : ''}
                   open={cropperModalOpen}
                   setOpen={setCropperModalOpen}
                   cropData={croppedImage}
