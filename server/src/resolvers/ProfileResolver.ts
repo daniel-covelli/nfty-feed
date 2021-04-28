@@ -125,19 +125,13 @@ export class ProfileResolver {
       existingUser.profile.last = last;
       existingUser.profile.bio = bio;
 
-      console.log('PROFILE IMAGE', profileImage);
-      console.log(existingUser.profile.profileImageId);
-      console.log('ORIGINAL PROFILE IMAGE', ogProfileImage);
-      console.log(existingUser.profile.ogProfileImageId);
+      cloudinary.config({
+        cloud_name: process.env.CLOUDINARY_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET
+      });
       if (profileImage !== existingUser.profile.profileImageId) {
-        console.log('SHOULD BE HERE');
-        cloudinary.config({
-          cloud_name: process.env.CLOUDINARY_NAME,
-          api_key: process.env.CLOUDINARY_API_KEY,
-          api_secret: process.env.CLOUDINARY_API_SECRET
-        });
         if (profileImage === '') {
-          console.log(`PROFILE IMAGE EQUALS "" CASE`);
           existingUser.profile.profileImageId = '';
         } else {
           try {
@@ -158,7 +152,6 @@ export class ProfileResolver {
 
       if (ogProfileImage !== existingUser.profile.ogProfileImageId) {
         if (ogProfileImage === '') {
-          console.log(`OG PROFILE IMAGE EQUALS "" CASE`);
           existingUser.profile.ogProfileImageId = '';
         } else {
           try {
@@ -206,19 +199,18 @@ export class ProfileResolver {
       profile.last = last;
       profile.bio = bio;
 
-      if (profileImage != '') {
-        cloudinary.config({
-          cloud_name: process.env.CLOUDINARY_NAME,
-          api_key: process.env.CLOUDINARY_API_KEY,
-          api_secret: process.env.CLOUDINARY_API_SECRET
-        });
-
+      cloudinary.config({
+        cloud_name: process.env.CLOUDINARY_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET
+      });
+      if (profileImage !== '') {
         try {
           const response = await cloudinary.v2.uploader.upload(profileImage, {
             allowed_formats: ['jpg', 'png', 'heic', 'jpeg'],
             public_id: ''
           });
-          profile.ogProfileImageId = response.url;
+          profile.profileImageId = response.url;
         } catch (e) {
           return {
             res: false,
@@ -226,7 +218,9 @@ export class ProfileResolver {
             user: null
           };
         }
+      }
 
+      if (ogProfileImage !== 'existingUser.profile.ogProfileImageId') {
         try {
           const originalProfileImageResult = await cloudinary.v2.uploader.upload(
             profileImage,
