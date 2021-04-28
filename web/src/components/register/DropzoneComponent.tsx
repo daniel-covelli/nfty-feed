@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Dropzone from 'react-dropzone';
 import { Box, IconButton, Spinner, Link, useToast } from '@chakra-ui/react';
 import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
+import { DisplayButtons } from '../shared/DisplayButtons';
 
 interface DropzoneComponentProps {
   cropData: string;
@@ -20,41 +21,18 @@ export const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
 }) => {
   const [imageLoading, setImageLoading] = useState(false);
   const toast = useToast();
+
+  const onDelete = () => {
+    setCropData('');
+  };
+
+  const onEdit = () => {
+    setOpen(true);
+  };
+
   return (
     <Box position='relative'>
-      {cropData ? (
-        <>
-          <IconButton
-            position='absolute'
-            right='1'
-            top='1'
-            variant='outline'
-            backgroundColor='white'
-            colorScheme='red'
-            aria-label='Delete Photo'
-            icon={<DeleteIcon />}
-            size='xs'
-            onClick={() => setCropData('')}
-            _focus={{
-              boxShadow: 'none'
-            }}
-          />
-          <IconButton
-            position='absolute'
-            right='1'
-            bottom='1'
-            variant='outline'
-            backgroundColor='white'
-            aria-label='Edit Photo'
-            icon={<EditIcon />}
-            size='xs'
-            onClick={() => setOpen(true)}
-            _focus={{
-              boxShadow: 'none'
-            }}
-          />
-        </>
-      ) : null}
+      {cropData ? <DisplayButtons onDelete={onDelete} onEdit={onEdit} /> : null}
       <Dropzone
         multiple={false}
         noClick={cropData ? true : false}

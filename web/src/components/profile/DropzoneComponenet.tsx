@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Dropzone from 'react-dropzone';
-import { Box, IconButton, Spinner, Link, useToast } from '@chakra-ui/react';
-import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
+import { Box, Spinner, Link, useToast } from '@chakra-ui/react';
+import { DisplayButtons } from '../shared/DisplayButtons';
 
 interface DropzoneComponentProps {
   setOpen: any;
@@ -29,42 +29,16 @@ export const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
     setDisplayImage('');
   };
 
+  const onEdit = () => {
+    setOpen(true);
+  };
+
   const toast = useToast();
 
   return (
     <Box position='relative'>
       {displayImage ? (
-        <>
-          <IconButton
-            position='absolute'
-            right='1'
-            top='1'
-            variant='outline'
-            backgroundColor='white'
-            colorScheme='red'
-            aria-label='Delete Photo'
-            icon={<DeleteIcon />}
-            size='xs'
-            onClick={onDelete}
-            _focus={{
-              boxShadow: 'none'
-            }}
-          />
-          <IconButton
-            position='absolute'
-            right='1'
-            bottom='1'
-            variant='outline'
-            backgroundColor='white'
-            aria-label='Edit Photo'
-            icon={<EditIcon />}
-            size='xs'
-            onClick={() => setOpen(true)}
-            _focus={{
-              boxShadow: 'none'
-            }}
-          />
-        </>
+        <DisplayButtons onDelete={onDelete} onEdit={onEdit} />
       ) : null}
       <Dropzone
         multiple={false}
