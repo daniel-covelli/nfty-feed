@@ -13,13 +13,12 @@ import {
   Popover,
   PopoverArrow,
   VStack,
-  StackDivider,
   HStack,
   Icon,
   useMediaQuery,
   Avatar,
   IconButton,
-  Tooltip
+  Tag
 } from '@chakra-ui/react';
 import { setAccessToken } from '../../accessToken';
 import { Link as ReactLink } from 'react-router-dom';
@@ -133,6 +132,11 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
             </>
           ) : (
             <>
+              {data.me.admin ? (
+                <Tag size='lg' variant='outline' colorScheme='red'>
+                  Admin
+                </Tag>
+              ) : null}
               <IconButton
                 borderRadius='20px'
                 aria-label='create a post'

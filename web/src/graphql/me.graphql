@@ -2,6 +2,7 @@ query Me {
   me {
     id
     email
+    admin
     profile {
       first
       last

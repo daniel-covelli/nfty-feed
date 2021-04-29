@@ -162,6 +162,7 @@ export type User = {
   __typename?: 'User';
   id: Scalars['Int'];
   email?: Maybe<Scalars['String']>;
+  admin: Scalars['Float'];
   profile?: Maybe<Profile>;
 };
 
@@ -320,7 +321,7 @@ export type MeQuery = (
   { __typename?: 'Query' }
   & { me?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'email'>
+    & Pick<User, 'id' | 'email' | 'admin'>
     & { profile?: Maybe<(
       { __typename?: 'Profile' }
       & Pick<Profile, 'first' | 'last' | 'username' | 'profileImageId'>
@@ -794,6 +795,7 @@ export const MeDocument = gql`
   me {
     id
     email
+    admin
     profile {
       first
       last

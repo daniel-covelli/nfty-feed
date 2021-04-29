@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { ObjectType, Field, Int } from 'type-graphql';
 import { Profile } from './Profile';
+import { AdminStatus } from '../enums';
 
 @ObjectType()
 @Entity()
@@ -25,6 +26,10 @@ export class User extends BaseEntity {
 
   @Column('int', { default: 0 })
   tokenVersion: number;
+
+  @Field()
+  @Column('int', { default: AdminStatus.NORMY })
+  admin: AdminStatus;
 
   @Field({ nullable: true })
   @OneToOne(() => Profile, {
