@@ -327,7 +327,7 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                           </Text>
                         </Box>
                         <Spacer />
-                        <Box>
+                        <Box float='right'>
                           <Text size='md'>
                             <Link>
                               <b>
@@ -361,10 +361,10 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
             </GridItem>
           </Grid>
           {isMobile ? (
-            <Box maxW='300px' w='100%'>
-              <VStack spacing={2} align='stretch'>
+            <Box w='100%'>
+              <VStack spacing={2} align='stretch' w='100%'>
                 <Box>
-                  <Text fontSize='sm' isTruncated>
+                  <Text fontSize='md' isTruncated>
                     <b>
                       {data.getUser.user.profile
                         ? `${data.getUser.user.profile.first} ${data.getUser.user.profile.last}`
@@ -374,7 +374,7 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                 </Box>
 
                 <Box>
-                  <Text fontSize='sm' noOfLines={4}>
+                  <Text fontSize='md' noOfLines={4}>
                     {data.getUser.user.profile
                       ? data.getUser.user.profile.bio
                       : null}
