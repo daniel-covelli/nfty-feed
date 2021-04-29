@@ -27,7 +27,7 @@ import { useMeQuery, useLogoutMutation } from '../../generated/graphql';
 import { ClickableAvatar, Size } from '../shared/ClickableAvatar';
 import { AtSignIcon } from '@chakra-ui/icons';
 import { IoIosHome } from 'react-icons/io';
-import { IoAdd } from 'react-icons/io5';
+import { IoAdd, IoNotifications } from 'react-icons/io5';
 
 interface MenuLinksProps {
   isOpen: boolean;
@@ -138,13 +138,25 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
                 aria-label='create a post'
                 icon={<Icon as={IoAdd} fontSize='20px' />}
                 colorScheme='pink'
-                variant='solid'
+                variant='outline'
                 size='sm'
                 _focus={{
                   boxShadow: 'none'
                 }}
+                isDisabled
               />
-
+              <IconButton
+                borderRadius='20px'
+                aria-label='create a post'
+                icon={<Icon as={IoNotifications} fontSize='20px' />}
+                colorScheme='pink'
+                variant='outline'
+                size='sm'
+                _focus={{
+                  boxShadow: 'none'
+                }}
+                isDisabled
+              />
               <Popover
                 onClose={onClose}
                 isOpen={popoverOpen}
@@ -272,7 +284,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
               to='/register'
               onClick={toggle}
               w='100%'
-              py={`${isTabletOrMobile ? '0' : '5px'}`}
+              py={`${isTabletOrMobile ? '0' : '4px'}`}
               _focus={{
                 boxShadow: 'none'
               }}>
@@ -291,7 +303,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
             <Link
               as={ReactLink}
               to='/login'
-              py={`${isTabletOrMobile ? '0' : '5px'}`}
+              py={`${isTabletOrMobile ? '0' : '4px'}`}
               onClick={toggle}
               w='100%'
               _focus={{
