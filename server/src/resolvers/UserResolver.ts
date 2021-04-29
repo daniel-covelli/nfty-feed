@@ -18,6 +18,7 @@ import { sendRefreshToken } from '../sendRefreshToken';
 import { getConnection } from 'typeorm';
 import { verify } from 'jsonwebtoken';
 import { Profile } from '../entity/Profile';
+import { AdminStatus } from '../enums';
 
 const cloudinary = require('cloudinary');
 
@@ -380,7 +381,7 @@ export class UserResolver {
 
   // @Mutation(() => User)
   // async adminify() {
-  //   const user = await User.findOne({ id: jhwdqncadiuwna });
+  //   const user = await User.findOne({ id: asdjhasjkd });
 
   //   user!.admin = AdminStatus.ADMIN;
 
