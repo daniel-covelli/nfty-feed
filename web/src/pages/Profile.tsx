@@ -374,7 +374,7 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                 </Box>
 
                 <Box>
-                  <Text fontSize='md' noOfLines={4}>
+                  <Text fontSize='sm' noOfLines={4}>
                     {data.getUser.user.profile
                       ? data.getUser.user.profile.bio
                       : null}

@@ -37,6 +37,7 @@ The project is deployed to Heroku (backend) and Netlify (frontend) with GQL/Apol
 - [x] cropping
 - [x] edit profile photo
 - [x] profile photo modal
+- [x] navbar update
 
 #### Known Technical Debt
 
