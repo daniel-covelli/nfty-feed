@@ -29,48 +29,58 @@ export const Home: React.FC<HomeProps> = () => {
       <Text>users:</Text>
       {!loading ? (
         !isSmall ? (
-          <Table variant='simple' size='sm'>
+          <Table size='sm'>
             <Thead>
               <Tr>
                 <Th>Avatar</Th>
                 <Th>Id</Th>
                 <Th>Username</Th>
                 <Th>Email</Th>
-                <Th>Link</Th>
               </Tr>
             </Thead>
             <Tbody>
               {data.users.map((x) => (
                 <Tr key={x.id}>
                   <Td>
-                    {x.profile ? (
-                      <Avatar
-                        name={`${x.profile.first} ${x.profile.last}`}
-                        size='sm'
-                        src={
-                          x.profile.profileImageId
-                            ? `${x.profile.profileImageId}`
-                            : ''
-                        }
-                      />
-                    ) : (
-                      <Avatar size='sm' />
-                    )}
+                    <Link
+                      as={ReactLink}
+                      _focus={{
+                        boxShadow: 'none'
+                      }}
+                      to={`at/${x.profile ? x.profile.username : x.id}`}>
+                      {x.profile ? (
+                        <Avatar
+                          name={`${x.profile.first} ${x.profile.last}`}
+                          size='sm'
+                          src={
+                            x.profile.profileImageId
+                              ? `${x.profile.profileImageId}`
+                              : ''
+                          }
+                        />
+                      ) : (
+                        <Avatar size='sm' />
+                      )}
+                    </Link>
                   </Td>
                   <Td>{x.id}</Td>
                   <Td>
-                    <b>{x.profile ? x.profile.username : 'no username'}</b>
-                  </Td>
-                  <Td>{x.email ? x.email : 'no email'}</Td>
-
-                  <Td>
                     <Link
                       as={ReactLink}
-                      to={`at/${x.profile ? x.profile.username : x.id}`}
-                      color='teal.500'>
-                      <ExternalLinkIcon ml='6px' mb='3px' />
+                      _focus={{
+                        boxShadow: 'none'
+                      }}
+                      to={`at/${x.profile ? x.profile.username : x.id}`}>
+                      <b>
+                        {x.profile ? (
+                          <Text>{x.profile.username}</Text>
+                        ) : (
+                          'no username'
+                        )}
+                      </b>
                     </Link>
                   </Td>
+                  <Td>{x.email ? x.email : 'no email'}</Td>
                 </Tr>
               ))}
             </Tbody>
@@ -81,44 +91,49 @@ export const Home: React.FC<HomeProps> = () => {
               <Tr>
                 <Th>Avatar</Th>
                 <Th>Username</Th>
-                <Th>Link</Th>
               </Tr>
             </Thead>
             <Tbody>
               {data.users.map((x) => (
                 <Tr key={x.id}>
                   <Td>
-                    {x.profile ? (
-                      <Avatar
-                        name={`${x.profile.first} ${x.profile.last}`}
-                        size='sm'
-                        src={
-                          x.profile.profileImageId
-                            ? `${x.profile.profileImageId}`
-                            : ''
-                        }
-                      />
-                    ) : (
-                      <Avatar size='sm' />
-                    )}
-                  </Td>
-                  <Td>
-                    <b>
+                    <Link
+                      as={ReactLink}
+                      _focus={{
+                        boxShadow: 'none'
+                      }}
+                      to={`at/${x.profile ? x.profile.username : x.id}`}>
                       {x.profile ? (
-                        <Text isTruncated maxW='110px'>
-                          {x.profile.username}
-                        </Text>
+                        <Avatar
+                          name={`${x.profile.first} ${x.profile.last}`}
+                          size='sm'
+                          src={
+                            x.profile.profileImageId
+                              ? `${x.profile.profileImageId}`
+                              : ''
+                          }
+                        />
                       ) : (
-                        'no username'
+                        <Avatar size='sm' />
                       )}
-                    </b>
+                    </Link>
                   </Td>
                   <Td>
                     <Link
                       as={ReactLink}
-                      to={`at/${x.profile ? x.profile.username : x.id}`}
-                      color='teal.500'>
-                      <ExternalLinkIcon ml='6px' mb='3px' />
+                      _focus={{
+                        boxShadow: 'none'
+                      }}
+                      to={`at/${x.profile ? x.profile.username : x.id}`}>
+                      {x.profile ? (
+                        <b>
+                          <Text isTruncated maxW='110px'>
+                            {x.profile.username}
+                          </Text>
+                        </b>
+                      ) : (
+                        'no username'
+                      )}
                     </Link>
                   </Td>
                 </Tr>

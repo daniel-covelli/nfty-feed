@@ -94,7 +94,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
                   boxShadow: 'none'
                 }}
                 _hover={{ textDecoration: 'none' }}>
-                <Button variant='outline' w='100%' size='sm'>
+                <Button variant='outline' w='100%' size='md'>
                   <HStack>
                     <Avatar
                       size='2xs'
@@ -115,14 +115,14 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
                   boxShadow: 'none'
                 }}
                 _hover={{ textDecoration: 'none' }}>
-                <Button variant='outline' w='100%' size='sm'>
+                <Button variant='outline' w='100%' size='md'>
                   <Text display='block'>Home</Text>
                 </Button>
               </Link>
               <Button
                 w='100%'
                 colorScheme='red'
-                size='sm'
+                size='md'
                 variant='outline'
                 _focus={{
                   boxShadow: 'none'
@@ -291,7 +291,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
               <Button
                 w='100%'
                 display='block'
-                size='sm'
+                size={isTabletOrMobile ? 'md' : 'sm'}
                 colorScheme='pink'
                 variant='ghost'
                 _focus={{
@@ -311,7 +311,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
               }}>
               <Button
                 w='100%'
-                size='sm'
+                size={isTabletOrMobile ? 'md' : 'sm'}
                 colorScheme='pink'
                 display='block'
                 variant='solid'

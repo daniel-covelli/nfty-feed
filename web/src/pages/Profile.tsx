@@ -712,7 +712,9 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
               padding={0}
               margin={0}
               size='full'
+              h='400px'
               width='400px'
+              maxH='90vw'
               maxW='90vw'
               fontSize='60px'
               name={
