@@ -17,7 +17,9 @@ import {
   HStack,
   Icon,
   useMediaQuery,
-  Avatar
+  Avatar,
+  IconButton,
+  Tooltip
 } from '@chakra-ui/react';
 import { setAccessToken } from '../../accessToken';
 import { Link as ReactLink } from 'react-router-dom';
@@ -25,7 +27,7 @@ import { useMeQuery, useLogoutMutation } from '../../generated/graphql';
 import { ClickableAvatar, Size } from '../shared/ClickableAvatar';
 import { AtSignIcon } from '@chakra-ui/icons';
 import { IoIosHome } from 'react-icons/io';
-import { IoAddCircleOutline } from 'react-icons/io5';
+import { IoAdd } from 'react-icons/io5';
 
 interface MenuLinksProps {
   isOpen: boolean;
@@ -92,7 +94,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
                   boxShadow: 'none'
                 }}
                 _hover={{ textDecoration: 'none' }}>
-                <Button variant='outline' w='100%'>
+                <Button variant='outline' w='100%' size='sm'>
                   <HStack>
                     <Avatar
                       size='2xs'
@@ -113,31 +115,36 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
                   boxShadow: 'none'
                 }}
                 _hover={{ textDecoration: 'none' }}>
-                <Button variant='outline' w='100%'>
+                <Button variant='outline' w='100%' size='sm'>
                   <Text display='block'>Home</Text>
                 </Button>
               </Link>
               <Button
                 w='100%'
                 colorScheme='red'
+                size='sm'
                 variant='outline'
-                onClick={async () => {
-                  await logout();
-                  setAccessToken('');
-                  await client!.resetStore();
-                }}>
+                _focus={{
+                  boxShadow: 'none'
+                }}
+                onClick={onLogout}>
                 Logout
               </Button>
             </>
           ) : (
             <>
-              <Button
-                isDisabled
-                leftIcon={<Icon as={IoAddCircleOutline} fontSize='20px' />}
+              <IconButton
+                borderRadius='20px'
+                aria-label='create a post'
+                icon={<Icon as={IoAdd} fontSize='20px' />}
                 colorScheme='pink'
-                size='sm'>
-                Post
-              </Button>
+                variant='solid'
+                size='sm'
+                _focus={{
+                  boxShadow: 'none'
+                }}
+              />
+
               <Popover
                 onClose={onClose}
                 isOpen={popoverOpen}
@@ -228,7 +235,6 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
                           </HStack>
                         </Box>
                       </Link>
-
                       <Link
                         as={ReactLink}
                         to={'/'}
@@ -261,25 +267,17 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
           <Spinner size='sm' />
         ) : (
           <>
-            {/* <Link
-              as={ReactLink}
-              to='/bye'
-              onClick={toggle}
-              _focus={{
-                boxShadow: 'none'
-              }}>
-              <Text display='block' fontSize='sm'>
-                Bye
-              </Text>
-            </Link> */}
             <Link
               as={ReactLink}
               to='/register'
               onClick={toggle}
+              w='100%'
+              py={`${isTabletOrMobile ? '0' : '5px'}`}
               _focus={{
                 boxShadow: 'none'
               }}>
               <Button
+                w='100%'
                 display='block'
                 size='sm'
                 colorScheme='pink'
@@ -293,11 +291,14 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
             <Link
               as={ReactLink}
               to='/login'
+              py={`${isTabletOrMobile ? '0' : '5px'}`}
               onClick={toggle}
+              w='100%'
               _focus={{
                 boxShadow: 'none'
               }}>
               <Button
+                w='100%'
                 size='sm'
                 colorScheme='pink'
                 display='block'
