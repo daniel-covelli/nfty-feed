@@ -39,6 +39,7 @@ export const NavBar: React.FC<NavBarProps> = () => {
       />
       <MenuToggle toggle={toggle} isOpen={isOpen} />
       <MenuLinks
+        setIsOpen={setIsOpen}
         isOpen={isOpen}
         toggle={toggle}
         paddingRight='calc((100vw - 1024px) / 2)'

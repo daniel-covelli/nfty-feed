@@ -15,7 +15,9 @@ import {
   VStack,
   StackDivider,
   HStack,
-  Icon
+  Icon,
+  useMediaQuery,
+  Avatar
 } from '@chakra-ui/react';
 import { setAccessToken } from '../../accessToken';
 import { Link as ReactLink } from 'react-router-dom';
@@ -29,16 +31,19 @@ interface MenuLinksProps {
   isOpen: boolean;
   paddingRight: string;
   toggle: any;
+  setIsOpen: any;
 }
 
 export const MenuLinks: React.FC<MenuLinksProps> = ({
   isOpen,
   toggle,
-  paddingRight
+  paddingRight,
+  setIsOpen
 }) => {
   const { data, loading } = useMeQuery();
   const [logout, { client }] = useLogoutMutation();
   const [popoverOpen, setPopoverOpen] = useState(false);
+  const [isTabletOrMobile] = useMediaQuery('(max-width: 767px)');
 
   let body: any = null;
 
@@ -47,12 +52,11 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
   }
 
   const avatarClick = () => {
-    console.log('AVATAR CLICK');
     setPopoverOpen(true);
   };
 
   const onClose = () => {
-    console.log('POP OVER CLOSE');
+    setIsOpen(false);
     setPopoverOpen(false);
   };
 
@@ -60,6 +64,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
     await logout();
     setAccessToken('');
     await client!.resetStore();
+    setIsOpen(false);
     setPopoverOpen(false);
   };
 
@@ -70,138 +75,188 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
       display={{ base: isOpen ? 'block' : 'none', md: 'block' }}
       flexBasis={{ base: '100%', md: 'auto' }}>
       <Stack
-        spacing={6}
+        spacing={4}
         align='center'
         justify={['center', 'space-between', 'flex-end', 'flex-end']}
         direction={['column', 'row', 'row', 'row']}
         pt={[4, 4, 0, 0]}>
         {!loading && data && data.me ? (
-          <>
-            <Button
-              isDisabled
-              leftIcon={<Icon as={IoAddCircleOutline} fontSize='20px' />}
-              colorScheme='pink'
-              size='sm'>
-              Post
-            </Button>
-            <Popover
-              onClose={onClose}
-              isOpen={popoverOpen}
-              placement='bottom-end'>
-              <PopoverTrigger>
-                <Button
-                  onClick={avatarClick}
-                  variant='link'
-                  _focus={{
-                    boxShadow: 'none'
-                  }}>
-                  <Box
-                    borderColor={`${popoverOpen ? '#7928CA' : 'transparent'}`}
-                    boxSizing='border-box'
-                    borderWidth='2px'
-                    padding='2px'
-                    borderRadius='50px'>
-                    <ClickableAvatar
-                      onClick={avatarClick}
-                      profilePhoto={data.me.profile.profileImageId}
-                      first={data.me.profile.first}
-                      last={data.me.profile.last}
-                      size={Size.SM}
-                    />
-                  </Box>
-                </Button>
-              </PopoverTrigger>
-
-              <PopoverContent
-                width='175px'
-                top='-2px'
-                boxShadow='rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;'
+          isTabletOrMobile ? (
+            <>
+              <Link
+                as={ReactLink}
+                to={`/at/${data.me.profile.username}`}
+                onClick={toggle}
+                w='100%'
                 _focus={{
-                  boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;'
+                  boxShadow: 'none'
+                }}
+                _hover={{ textDecoration: 'none' }}>
+                <Button variant='outline' w='100%'>
+                  <HStack>
+                    <Avatar
+                      size='2xs'
+                      name={`${data.me.profile.first} ${data.me.profile.last}`}
+                      src={data.me.profile.profileImageId}
+                    />
+
+                    <Text display='block'>Profile</Text>
+                  </HStack>
+                </Button>
+              </Link>
+              <Link
+                as={ReactLink}
+                to={`/`}
+                w='100%'
+                onClick={toggle}
+                _focus={{
+                  boxShadow: 'none'
+                }}
+                _hover={{ textDecoration: 'none' }}>
+                <Button variant='outline' w='100%'>
+                  <Text display='block'>Home</Text>
+                </Button>
+              </Link>
+              <Button
+                w='100%'
+                colorScheme='red'
+                variant='outline'
+                onClick={async () => {
+                  await logout();
+                  setAccessToken('');
+                  await client!.resetStore();
                 }}>
-                <PopoverArrow />
-                <PopoverHeader>
-                  <Text fontSize='14px'>{body}</Text>
-                </PopoverHeader>
+                Logout
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                isDisabled
+                leftIcon={<Icon as={IoAddCircleOutline} fontSize='20px' />}
+                colorScheme='pink'
+                size='sm'>
+                Post
+              </Button>
+              <Popover
+                onClose={onClose}
+                isOpen={popoverOpen}
+                placement='bottom-end'>
+                <PopoverTrigger>
+                  <Button
+                    onClick={avatarClick}
+                    variant='link'
+                    _focus={{
+                      boxShadow: 'none'
+                    }}>
+                    <Box
+                      borderColor={`${popoverOpen ? '#7928CA' : 'transparent'}`}
+                      boxSizing='border-box'
+                      borderWidth='2px'
+                      padding='2px'
+                      borderRadius='50px'>
+                      <ClickableAvatar
+                        onClick={avatarClick}
+                        profilePhoto={data.me.profile.profileImageId}
+                        first={data.me.profile.first}
+                        last={data.me.profile.last}
+                        size={Size.SM}
+                      />
+                    </Box>
+                  </Button>
+                </PopoverTrigger>
 
-                <PopoverBody p={0}>
-                  <VStack align='stretch' spacing={0}>
-                    <Link
-                      as={ReactLink}
-                      onClick={onClose}
-                      to={`/at/${data.me.profile.username}`}
-                      colorScheme='pink'
-                      border='none'
-                      _focus={{
-                        boxShadow: 'none'
-                      }}
-                      _hover={{ textDecoration: 'none' }}>
-                      <Box
-                        py={2}
-                        transition='0.2s'
-                        borderRadius='4px'
-                        pl={4}
-                        _hover={{ backgroundColor: 'gray.100' }}>
-                        <HStack>
-                          <Icon fontSize='14px' as={AtSignIcon} />
-                          <Text fontSize='14px'>
-                            <b>Profile</b>
-                          </Text>
-                        </HStack>
-                      </Box>
-                    </Link>
-                    <Link
-                      as={ReactLink}
-                      onClick={onClose}
-                      to={`/`}
-                      colorScheme='pink'
-                      border='none'
-                      _focus={{
-                        boxShadow: 'none'
-                      }}
-                      _hover={{ textDecoration: 'none' }}>
-                      <Box
-                        py={2}
-                        transition='0.2s'
-                        borderRadius='4px'
-                        pl={4}
-                        _hover={{ backgroundColor: 'gray.100' }}>
-                        <HStack>
-                          <Icon fontSize='14px' as={IoIosHome} />
-                          <Text fontSize='14px'>
-                            <b>Home</b>
-                          </Text>
-                        </HStack>
-                      </Box>
-                    </Link>
+                <PopoverContent
+                  width='175px'
+                  top='-2px'
+                  boxShadow='rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;'
+                  _focus={{
+                    boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;'
+                  }}>
+                  <PopoverArrow />
+                  <PopoverHeader>
+                    <Text fontSize='14px'>{body}</Text>
+                  </PopoverHeader>
 
-                    <Link
-                      as={ReactLink}
-                      to={'/'}
-                      colorScheme='pink'
-                      border='none'
-                      _focus={{
-                        boxShadow: 'none'
-                      }}
-                      _hover={{ textDecoration: 'none' }}
-                      onClick={onLogout}>
-                      <Box
-                        py={2}
-                        transition='0.1s'
-                        borderRadius='3px'
-                        pl={4}
-                        color='red.600'
-                        _hover={{ backgroundColor: 'red.50' }}>
-                        <Text fontSize='14px'>
-                          <b>Logout</b>
-                        </Text>
-                      </Box>
-                    </Link>
-                  </VStack>
-                </PopoverBody>
-              </PopoverContent>
-            </Popover>
-          </>
+                  <PopoverBody p={0}>
+                    <VStack align='stretch' spacing={0}>
+                      <Link
+                        as={ReactLink}
+                        onClick={onClose}
+                        to={`/at/${data.me.profile.username}`}
+                        colorScheme='pink'
+                        border='none'
+                        _focus={{
+                          boxShadow: 'none'
+                        }}
+                        _hover={{ textDecoration: 'none' }}>
+                        <Box
+                          py={2}
+                          transition='0.2s'
+                          borderRadius='4px'
+                          pl={4}
+                          _hover={{ backgroundColor: 'gray.100' }}>
+                          <HStack>
+                            <Icon fontSize='14px' as={AtSignIcon} />
+                            <Text fontSize='14px'>
+                              <b>Profile</b>
+                            </Text>
+                          </HStack>
+                        </Box>
+                      </Link>
+                      <Link
+                        as={ReactLink}
+                        onClick={onClose}
+                        to={`/`}
+                        colorScheme='pink'
+                        border='none'
+                        _focus={{
+                          boxShadow: 'none'
+                        }}
+                        _hover={{ textDecoration: 'none' }}>
+                        <Box
+                          py={2}
+                          transition='0.2s'
+                          borderRadius='4px'
+                          pl={4}
+                          _hover={{ backgroundColor: 'gray.100' }}>
+                          <HStack>
+                            <Icon fontSize='14px' as={IoIosHome} />
+                            <Text fontSize='14px'>
+                              <b>Home</b>
+                            </Text>
+                          </HStack>
+                        </Box>
+                      </Link>
+
+                      <Link
+                        as={ReactLink}
+                        to={'/'}
+                        colorScheme='pink'
+                        border='none'
+                        _focus={{
+                          boxShadow: 'none'
+                        }}
+                        _hover={{ textDecoration: 'none' }}
+                        onClick={onLogout}>
+                        <Box
+                          py={2}
+                          transition='0.1s'
+                          borderRadius='3px'
+                          pl={4}
+                          color='red.600'
+                          _hover={{ backgroundColor: 'red.50' }}>
+                          <Text fontSize='14px'>
+                            <b>Logout</b>
+                          </Text>
+                        </Box>
+                      </Link>
+                    </VStack>
+                  </PopoverBody>
+                </PopoverContent>
+              </Popover>
+            </>
+          )
         ) : loading ? (
           <Spinner size='sm' />
         ) : (
