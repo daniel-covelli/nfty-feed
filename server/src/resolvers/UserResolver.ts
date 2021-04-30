@@ -18,7 +18,6 @@ import { sendRefreshToken } from '../sendRefreshToken';
 import { getConnection } from 'typeorm';
 import { verify } from 'jsonwebtoken';
 import { Profile } from '../entity/Profile';
-import { AdminStatus } from '../enums';
 
 const cloudinary = require('cloudinary');
 

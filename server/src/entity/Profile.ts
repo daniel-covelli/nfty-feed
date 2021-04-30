@@ -3,10 +3,13 @@ import {
   PrimaryGeneratedColumn,
   Column,
   BaseEntity,
-  OneToOne
+  OneToOne,
+  OneToMany
 } from 'typeorm';
 import { ObjectType, Field, Int } from 'type-graphql';
 import { User } from './User';
+import { Like } from './Like';
+import { Post } from './Post';
 
 @ObjectType()
 @Entity('profile')
@@ -45,4 +48,11 @@ export class Profile extends BaseEntity {
 
   @OneToOne(() => User, (user) => user.profile)
   user: User;
+
+  @Field(() => [Post])
+  @OneToMany(() => Post, (post) => post.owner)
+  posts: Post[];
+
+  @OneToMany(() => Like, (like) => like.owner)
+  likes: Like[];
 }

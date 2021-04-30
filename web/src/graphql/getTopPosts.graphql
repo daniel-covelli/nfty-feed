@@ -1,0 +1,22 @@
+query GetTopPosts {
+  getTopPosts {
+    id
+    owner {
+      id
+      username
+      profileImageId
+      first
+      last
+    }
+    media
+    title
+    artist
+    link
+    type
+    visibility
+    removed
+    likes {
+      id
+    }
+  }
+}

@@ -4,6 +4,7 @@ query Me {
     email
     admin
     profile {
+      id
       first
       last
       username

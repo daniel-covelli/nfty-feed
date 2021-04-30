@@ -4,7 +4,9 @@ mutation Login($email: String!, $password: String!) {
     user {
       id
       email
+      admin
       profile {
+        id
         username
         first
         last

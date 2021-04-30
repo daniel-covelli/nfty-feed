@@ -1,11 +1,13 @@
 import {
   Entity,
-  Column,
   CreateDateColumn,
   PrimaryGeneratedColumn,
-  BaseEntity
+  BaseEntity,
+  ManyToOne
 } from 'typeorm';
 import { Field, Int, ObjectType } from 'type-graphql';
+import { Post } from './Post';
+import { Profile } from './Profile';
 
 @ObjectType()
 @Entity()
@@ -14,13 +16,12 @@ export class Like extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field()
-  @Column()
-  postId: number;
+  @Field(() => Profile)
+  @ManyToOne(() => Profile, (profile) => profile.likes)
+  owner: Profile;
 
-  @Field()
-  @Column()
-  ownerId: string;
+  @ManyToOne(() => Post, (post) => post.likes)
+  post: Post;
 
   @Field()
   @CreateDateColumn()

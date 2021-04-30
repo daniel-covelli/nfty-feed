@@ -12,7 +12,7 @@ const Routes: React.FC = () => {
   return (
     <BrowserRouter>
       <NavBar />
-      <Container maxW='container.lg' p='75px 20px 0 20px' h='90vh'>
+      <Container maxW='container.lg' p='75px 20px 0 20px' h='0'>
         <Switch>
           <Route exact path='/' component={Home} />
           <Route exact path='/register' component={Register} />

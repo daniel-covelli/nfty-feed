@@ -19,6 +19,9 @@ import { Subscription as Sub } from './entity/Subscription';
 import { SubscriptionResolver } from './resolvers/SubscriptionResolver';
 
 import bodyParser from 'body-parser';
+import { Post } from './entity/Post';
+import { Like } from './entity/Like';
+import { PostResolver } from './resolvers/PostResolver';
 
 // server set up
 (async () => {
@@ -73,7 +76,7 @@ import bodyParser from 'body-parser';
       ? createConnection({
           ...connectionOptions,
           url: process.env.DATABASE_URL,
-          entities: [User, Profile, Sub],
+          entities: [User, Profile, Sub, Post, Like],
           name: 'default'
         })
       : createConnection({ ...connectionOptions, name: 'default' });
@@ -83,7 +86,12 @@ import bodyParser from 'body-parser';
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [UserResolver, ProfileResolver, SubscriptionResolver]
+      resolvers: [
+        UserResolver,
+        ProfileResolver,
+        SubscriptionResolver,
+        PostResolver
+      ]
     }),
     context: ({ req, res }) => ({ req, res }),
     playground: true

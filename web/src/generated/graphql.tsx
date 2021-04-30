@@ -30,6 +30,13 @@ export type GenericResponse = {
   message: Scalars['String'];
 };
 
+export type Like = {
+  __typename?: 'Like';
+  id: Scalars['Int'];
+  owner: Profile;
+  createdAt: Scalars['DateTime'];
+};
+
 export type LoginResponse = {
   __typename?: 'LoginResponse';
   accessToken: Scalars['String'];
@@ -46,6 +53,7 @@ export type Mutation = {
   editProfile: EditResponse;
   subscribe: Subscription;
   unSubscribe: Subscription;
+  createPost: PostResponse;
 };
 
 
@@ -97,6 +105,38 @@ export type MutationUnSubscribeArgs = {
   userId: Scalars['Float'];
 };
 
+
+export type MutationCreatePostArgs = {
+  type?: Maybe<Scalars['Float']>;
+  title?: Maybe<Scalars['String']>;
+  link?: Maybe<Scalars['String']>;
+  artist?: Maybe<Scalars['String']>;
+  media: Scalars['String'];
+  profileId: Scalars['Float'];
+};
+
+export type Post = {
+  __typename?: 'Post';
+  id: Scalars['Int'];
+  owner: Profile;
+  media: Scalars['String'];
+  artist: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
+  link: Scalars['String'];
+  type: Scalars['Float'];
+  visibility: Scalars['Float'];
+  removed: Scalars['Float'];
+  likes: Array<Like>;
+  createdAt: Scalars['DateTime'];
+};
+
+export type PostResponse = {
+  __typename?: 'PostResponse';
+  res: Scalars['Boolean'];
+  message: Scalars['String'];
+  post?: Maybe<Post>;
+};
+
 export type Profile = {
   __typename?: 'Profile';
   id: Scalars['Int'];
@@ -107,6 +147,7 @@ export type Profile = {
   first: Scalars['String'];
   last: Scalars['String'];
   bio?: Maybe<Scalars['String']>;
+  posts: Array<Post>;
 };
 
 export type Query = {
@@ -120,6 +161,8 @@ export type Query = {
   getActiveFollowers: Array<Subscription>;
   getActiveFollowing: Array<Subscription>;
   existingSubscription: Scalars['Boolean'];
+  posts: Array<Post>;
+  getTopPosts: Array<Post>;
 };
 
 
@@ -255,6 +298,24 @@ export type GetActiveFollowingQuery = (
   )> }
 );
 
+export type GetTopPostsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetTopPostsQuery = (
+  { __typename?: 'Query' }
+  & { getTopPosts: Array<(
+    { __typename?: 'Post' }
+    & Pick<Post, 'id' | 'media' | 'title' | 'artist' | 'link' | 'type' | 'visibility' | 'removed'>
+    & { owner: (
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'id' | 'username' | 'profileImageId' | 'first' | 'last'>
+    ), likes: Array<(
+      { __typename?: 'Like' }
+      & Pick<Like, 'id'>
+    )> }
+  )> }
+);
+
 export type GetUserQueryVariables = Exact<{
   path: Scalars['String'];
 }>;
@@ -297,10 +358,10 @@ export type LoginMutation = (
     & Pick<LoginResponse, 'accessToken'>
     & { user: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'email'>
+      & Pick<User, 'id' | 'email' | 'admin'>
       & { profile?: Maybe<(
         { __typename?: 'Profile' }
-        & Pick<Profile, 'username' | 'first' | 'last' | 'profileImageId'>
+        & Pick<Profile, 'id' | 'username' | 'first' | 'last' | 'profileImageId'>
       )> }
     ) }
   ) }
@@ -324,7 +385,7 @@ export type MeQuery = (
     & Pick<User, 'id' | 'email' | 'admin'>
     & { profile?: Maybe<(
       { __typename?: 'Profile' }
-      & Pick<Profile, 'first' | 'last' | 'username' | 'profileImageId'>
+      & Pick<Profile, 'id' | 'first' | 'last' | 'username' | 'profileImageId'>
     )> }
   )> }
 );
@@ -635,6 +696,57 @@ export function useGetActiveFollowingLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type GetActiveFollowingQueryHookResult = ReturnType<typeof useGetActiveFollowingQuery>;
 export type GetActiveFollowingLazyQueryHookResult = ReturnType<typeof useGetActiveFollowingLazyQuery>;
 export type GetActiveFollowingQueryResult = Apollo.QueryResult<GetActiveFollowingQuery, GetActiveFollowingQueryVariables>;
+export const GetTopPostsDocument = gql`
+    query GetTopPosts {
+  getTopPosts {
+    id
+    owner {
+      id
+      username
+      profileImageId
+      first
+      last
+    }
+    media
+    title
+    artist
+    link
+    type
+    visibility
+    removed
+    likes {
+      id
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetTopPostsQuery__
+ *
+ * To run a query within a React component, call `useGetTopPostsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTopPostsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTopPostsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetTopPostsQuery(baseOptions?: Apollo.QueryHookOptions<GetTopPostsQuery, GetTopPostsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTopPostsQuery, GetTopPostsQueryVariables>(GetTopPostsDocument, options);
+      }
+export function useGetTopPostsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTopPostsQuery, GetTopPostsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTopPostsQuery, GetTopPostsQueryVariables>(GetTopPostsDocument, options);
+        }
+export type GetTopPostsQueryHookResult = ReturnType<typeof useGetTopPostsQuery>;
+export type GetTopPostsLazyQueryHookResult = ReturnType<typeof useGetTopPostsLazyQuery>;
+export type GetTopPostsQueryResult = Apollo.QueryResult<GetTopPostsQuery, GetTopPostsQueryVariables>;
 export const GetUserDocument = gql`
     query GetUser($path: String!) {
   getUser(path: $path) {
@@ -723,7 +835,9 @@ export const LoginDocument = gql`
     user {
       id
       email
+      admin
       profile {
+        id
         username
         first
         last
@@ -797,6 +911,7 @@ export const MeDocument = gql`
     email
     admin
     profile {
+      id
       first
       last
       username

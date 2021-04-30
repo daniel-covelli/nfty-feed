@@ -3,10 +3,14 @@ import {
   Column,
   CreateDateColumn,
   PrimaryGeneratedColumn,
-  BaseEntity
+  BaseEntity,
+  OneToMany,
+  ManyToOne
 } from 'typeorm';
 import { Field, Int, ObjectType } from 'type-graphql';
-import { VisStatus, GlobalStatus } from '../enums';
+import { VisStatus, GlobalStatus, PostStatus } from '../enums';
+import { Like } from './Like';
+import { Profile } from './Profile';
 
 @ObjectType()
 @Entity()
@@ -15,25 +19,46 @@ export class Post extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field()
-  @Column()
-  ownerId: number;
+  @Field(() => Profile)
+  @ManyToOne(() => Profile, (profile) => profile.posts, {
+    eager: true,
+    cascade: true
+  })
+  owner: Profile;
 
   @Field()
   @Column()
-  content: string;
+  media: string;
 
   @Field()
-  @Column()
+  @Column({ nullable: true })
+  artist: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  title: string;
+
+  @Field()
+  @Column({ nullable: true })
+  link: string;
+
+  @Field()
+  @Column('int', { default: PostStatus.SHARE })
+  type: PostStatus;
+
+  @Field()
+  @Column('int', { default: VisStatus.VISIBLE })
   visibility: VisStatus;
 
   @Field()
-  @Column()
+  @Column('int', { default: GlobalStatus.VISIBLE })
   removed: GlobalStatus;
 
-  @Field()
-  @Column()
-  likes: string;
+  @Field(() => [Like])
+  @OneToMany(() => Like, (like) => like.post, {
+    eager: true
+  })
+  likes: Like[];
 
   @Field()
   @CreateDateColumn()
