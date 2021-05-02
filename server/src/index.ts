@@ -22,6 +22,7 @@ import bodyParser from 'body-parser';
 import { Post } from './entity/Post';
 import { Like } from './entity/Like';
 import { PostResolver } from './resolvers/PostResolver';
+import { LikeResolver } from './resolvers/LikeResolver';
 
 // server set up
 (async () => {
@@ -90,7 +91,8 @@ import { PostResolver } from './resolvers/PostResolver';
         UserResolver,
         ProfileResolver,
         SubscriptionResolver,
-        PostResolver
+        PostResolver,
+        LikeResolver
       ]
     }),
     context: ({ req, res }) => ({ req, res }),

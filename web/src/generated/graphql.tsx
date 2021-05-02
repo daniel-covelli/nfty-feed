@@ -33,7 +33,8 @@ export type GenericResponse = {
 export type Like = {
   __typename?: 'Like';
   id: Scalars['Int'];
-  owner: Profile;
+  owner?: Maybe<Profile>;
+  post?: Maybe<Post>;
   createdAt: Scalars['DateTime'];
 };
 
@@ -53,6 +54,8 @@ export type Mutation = {
   editProfile: EditResponse;
   subscribe: Subscription;
   unSubscribe: Subscription;
+  like: Post;
+  unlike: Post;
   invisible: PostResponse;
   visible: PostResponse;
   remove: PostResponse;
@@ -107,6 +110,16 @@ export type MutationSubscribeArgs = {
 
 export type MutationUnSubscribeArgs = {
   userId: Scalars['Float'];
+};
+
+
+export type MutationLikeArgs = {
+  postId: Scalars['Float'];
+};
+
+
+export type MutationUnlikeArgs = {
+  postId: Scalars['Float'];
 };
 
 
@@ -171,6 +184,7 @@ export type Profile = {
   first: Scalars['String'];
   last: Scalars['String'];
   bio?: Maybe<Scalars['String']>;
+  user: User;
   posts: Array<Post>;
 };
 
@@ -188,6 +202,7 @@ export type Query = {
   posts: Array<Post>;
   getTopPosts: Array<Post>;
   getTopPostsAdmin: Array<Post>;
+  likes: Array<Like>;
 };
 
 
@@ -337,6 +352,10 @@ export type GetTopPostsQuery = (
     ), likes: Array<(
       { __typename?: 'Like' }
       & Pick<Like, 'id'>
+      & { owner?: Maybe<(
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id'>
+      )> }
     )> }
   )> }
 );
@@ -355,6 +374,10 @@ export type GetTopPostsAdminQuery = (
     ), likes: Array<(
       { __typename?: 'Like' }
       & Pick<Like, 'id'>
+      & { owner?: Maybe<(
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id'>
+      )> }
     )> }
   )> }
 );
@@ -407,6 +430,34 @@ export type InvisibleMutation = (
       ), likes: Array<(
         { __typename?: 'Like' }
         & Pick<Like, 'id'>
+        & { owner?: Maybe<(
+          { __typename?: 'Profile' }
+          & Pick<Profile, 'id'>
+        )> }
+      )> }
+    )> }
+  ) }
+);
+
+export type LikeMutationVariables = Exact<{
+  postId: Scalars['Float'];
+}>;
+
+
+export type LikeMutation = (
+  { __typename?: 'Mutation' }
+  & { like: (
+    { __typename?: 'Post' }
+    & Pick<Post, 'id' | 'media' | 'title' | 'artist' | 'link' | 'type' | 'visibility' | 'removed'>
+    & { owner: (
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'id' | 'username' | 'profileImageId' | 'first' | 'last'>
+    ), likes: Array<(
+      { __typename?: 'Like' }
+      & Pick<Like, 'id'>
+      & { owner?: Maybe<(
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id'>
       )> }
     )> }
   ) }
@@ -547,6 +598,30 @@ export type SubscribeMutation = (
   ) }
 );
 
+export type UnlikeMutationVariables = Exact<{
+  postId: Scalars['Float'];
+}>;
+
+
+export type UnlikeMutation = (
+  { __typename?: 'Mutation' }
+  & { unlike: (
+    { __typename?: 'Post' }
+    & Pick<Post, 'id' | 'media' | 'title' | 'artist' | 'link' | 'type' | 'visibility' | 'removed'>
+    & { owner: (
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'id' | 'username' | 'profileImageId' | 'first' | 'last'>
+    ), likes: Array<(
+      { __typename?: 'Like' }
+      & Pick<Like, 'id'>
+      & { owner?: Maybe<(
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id'>
+      )> }
+    )> }
+  ) }
+);
+
 export type UnSubscribeMutationVariables = Exact<{
   userId: Scalars['Float'];
 }>;
@@ -594,6 +669,10 @@ export type VisibleMutation = (
       ), likes: Array<(
         { __typename?: 'Like' }
         & Pick<Like, 'id'>
+        & { owner?: Maybe<(
+          { __typename?: 'Profile' }
+          & Pick<Profile, 'id'>
+        )> }
       )> }
     )> }
   ) }
@@ -855,6 +934,9 @@ export const GetTopPostsDocument = gql`
     removed
     likes {
       id
+      owner {
+        id
+      }
     }
   }
 }
@@ -904,6 +986,9 @@ export const GetTopPostsAdminDocument = gql`
     removed
     likes {
       id
+      owner {
+        id
+      }
     }
   }
 }
@@ -1039,6 +1124,9 @@ export const InvisibleDocument = gql`
       removed
       likes {
         id
+        owner {
+          id
+        }
       }
     }
   }
@@ -1070,6 +1158,59 @@ export function useInvisibleMutation(baseOptions?: Apollo.MutationHookOptions<In
 export type InvisibleMutationHookResult = ReturnType<typeof useInvisibleMutation>;
 export type InvisibleMutationResult = Apollo.MutationResult<InvisibleMutation>;
 export type InvisibleMutationOptions = Apollo.BaseMutationOptions<InvisibleMutation, InvisibleMutationVariables>;
+export const LikeDocument = gql`
+    mutation Like($postId: Float!) {
+  like(postId: $postId) {
+    id
+    owner {
+      id
+      username
+      profileImageId
+      first
+      last
+    }
+    media
+    title
+    artist
+    link
+    type
+    visibility
+    removed
+    likes {
+      id
+      owner {
+        id
+      }
+    }
+  }
+}
+    `;
+export type LikeMutationFn = Apollo.MutationFunction<LikeMutation, LikeMutationVariables>;
+
+/**
+ * __useLikeMutation__
+ *
+ * To run a mutation, you first call `useLikeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLikeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [likeMutation, { data, loading, error }] = useLikeMutation({
+ *   variables: {
+ *      postId: // value for 'postId'
+ *   },
+ * });
+ */
+export function useLikeMutation(baseOptions?: Apollo.MutationHookOptions<LikeMutation, LikeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LikeMutation, LikeMutationVariables>(LikeDocument, options);
+      }
+export type LikeMutationHookResult = ReturnType<typeof useLikeMutation>;
+export type LikeMutationResult = Apollo.MutationResult<LikeMutation>;
+export type LikeMutationOptions = Apollo.BaseMutationOptions<LikeMutation, LikeMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   login(email: $email, password: $password) {
@@ -1395,6 +1536,59 @@ export function useSubscribeMutation(baseOptions?: Apollo.MutationHookOptions<Su
 export type SubscribeMutationHookResult = ReturnType<typeof useSubscribeMutation>;
 export type SubscribeMutationResult = Apollo.MutationResult<SubscribeMutation>;
 export type SubscribeMutationOptions = Apollo.BaseMutationOptions<SubscribeMutation, SubscribeMutationVariables>;
+export const UnlikeDocument = gql`
+    mutation Unlike($postId: Float!) {
+  unlike(postId: $postId) {
+    id
+    owner {
+      id
+      username
+      profileImageId
+      first
+      last
+    }
+    media
+    title
+    artist
+    link
+    type
+    visibility
+    removed
+    likes {
+      id
+      owner {
+        id
+      }
+    }
+  }
+}
+    `;
+export type UnlikeMutationFn = Apollo.MutationFunction<UnlikeMutation, UnlikeMutationVariables>;
+
+/**
+ * __useUnlikeMutation__
+ *
+ * To run a mutation, you first call `useUnlikeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnlikeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unlikeMutation, { data, loading, error }] = useUnlikeMutation({
+ *   variables: {
+ *      postId: // value for 'postId'
+ *   },
+ * });
+ */
+export function useUnlikeMutation(baseOptions?: Apollo.MutationHookOptions<UnlikeMutation, UnlikeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UnlikeMutation, UnlikeMutationVariables>(UnlikeDocument, options);
+      }
+export type UnlikeMutationHookResult = ReturnType<typeof useUnlikeMutation>;
+export type UnlikeMutationResult = Apollo.MutationResult<UnlikeMutation>;
+export type UnlikeMutationOptions = Apollo.BaseMutationOptions<UnlikeMutation, UnlikeMutationVariables>;
 export const UnSubscribeDocument = gql`
     mutation UnSubscribe($userId: Float!) {
   unSubscribe(userId: $userId) {
@@ -1496,6 +1690,9 @@ export const VisibleDocument = gql`
       removed
       likes {
         id
+        owner {
+          id
+        }
       }
     }
   }

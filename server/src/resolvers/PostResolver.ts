@@ -21,6 +21,7 @@ import {
 import { Profile } from '../entity/Profile';
 import { MyContext } from 'src/migration/MyContext';
 import { User } from '../entity/User';
+import { Like } from '../entity/Like';
 const cloudinary = require('cloudinary');
 
 @ObjectType()
@@ -39,6 +40,89 @@ export class PostResolver {
   async posts() {
     const posts = await Post.find();
     return posts;
+  }
+
+  @Mutation(() => Post)
+  @UseMiddleware(isAuth)
+  async like(@Ctx() { payload }: MyContext, @Arg('postId') postId: number) {
+    const user = await User.findOne(payload!.userId);
+
+    if (!user) {
+      throw new Error(`Unable to find user`);
+    }
+
+    const profile = await Profile.findOne(user.profile!.id);
+
+    if (!profile) {
+      throw new Error(`Unable to find profile`);
+    }
+
+    const post = await Post.findOne({ id: postId });
+
+    if (!post) {
+      throw new Error(`Unable to find post`);
+    }
+
+    const existingLike = await Like.findOne({
+      where: { post, owner: profile }
+    });
+
+    if (existingLike) {
+      throw new Error(`You can't like a post twice`);
+    }
+
+    const like = new Like();
+    like.owner = profile;
+    like.post = post;
+
+    await Like.save(like);
+
+    post.likes = [...post.likes, like];
+
+    await Post.save(post);
+
+    // console.log('LIKE', like);
+    return post;
+  }
+
+  @Mutation(() => Post)
+  @UseMiddleware(isAuth)
+  async unlike(@Ctx() { payload }: MyContext, @Arg('postId') postId: number) {
+    const user = await User.findOne(payload!.userId);
+
+    if (!user) {
+      throw new Error(`Unable to find user`);
+    }
+
+    const profile = await Profile.findOne(user.profile!.id);
+
+    if (!profile) {
+      throw new Error(`Unable to find profile`);
+    }
+
+    const post = await Post.findOne({ id: postId });
+
+    if (!post) {
+      throw new Error(`Unable to find post`);
+    }
+
+    const existingLike = await Like.findOne({
+      where: { post, owner: profile }
+    });
+
+    if (!existingLike) {
+      throw new Error(`You can't unlike a post you haven't liked`);
+    }
+
+    const index = post.likes.findIndex((like) => like.id === existingLike.id);
+
+    post.likes.splice(index, 1);
+
+    await Post.save(post);
+
+    await Like.delete(existingLike?.id);
+
+    return post;
   }
 
   @Mutation(() => PostResponse)
@@ -183,7 +267,8 @@ export class PostResolver {
       order: {
         createdAt: 'DESC'
       },
-      take: 10
+      take: 10,
+      relations: ['owner']
     });
     return posts;
   }
@@ -194,7 +279,8 @@ export class PostResolver {
       order: {
         createdAt: 'DESC'
       },
-      take: 10
+      take: 10,
+      relations: ['likes', 'likes.owner']
     });
     return posts;
   }

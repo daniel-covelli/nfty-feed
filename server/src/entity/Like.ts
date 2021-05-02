@@ -16,10 +16,13 @@ export class Like extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field(() => Profile)
-  @ManyToOne(() => Profile, (profile) => profile.likes)
+  @Field(() => Profile, { nullable: true })
+  @ManyToOne(() => Profile, (profile) => profile.likes, {
+    eager: true
+  })
   owner: Profile;
 
+  @Field(() => Post, { nullable: true })
   @ManyToOne(() => Post, (post) => post.likes)
   post: Post;
 

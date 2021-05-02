@@ -13,7 +13,8 @@ import {
   Text,
   Button,
   Avatar,
-  Badge
+  Badge,
+  Spinner
 } from '@chakra-ui/react';
 import { IoEllipsisHorizontal } from 'react-icons/io5';
 import { LinkableAvatar } from '../shared/LinkableAvatar';
@@ -29,7 +30,9 @@ import {
   GetTopPostsAdminDocument,
   GetTopPostsAdminQuery,
   useRemoveMutation,
-  useReaddMutation
+  useReaddMutation,
+  useLikeMutation,
+  useUnlikeMutation
 } from '../../generated/graphql';
 
 interface PostProps {
@@ -47,18 +50,36 @@ export const Post: React.FC<PostProps> = ({
 }) => {
   const [makeInvisible, { loading: loadingInvisible }] = useInvisibleMutation();
   const [makeVisible, { loading: loadingVisible }] = useVisibleMutation();
+  const [like] = useLikeMutation();
+  const [unlike] = useUnlikeMutation();
   const [removePost, { loading: loadingRemove }] = useRemoveMutation();
   const [readdPost, { loading: loadingReadd }] = useReaddMutation();
-  // const [edit, { loading: editLoading }] = useEditProfileMutation();
   const [liked, setLiked] = useState(false);
   const [oppacity, setOppacity] = useState(0);
   const [open, setOpen] = useState(false);
   const [contentModal, setContentModal] = useState(false);
+  const [likes, setLikes] = useState(0);
 
-  const likes = post.likes.length;
+  useEffect(() => {
+    setLikes(post.likes.length);
+    if (profileId !== -1) {
+      const likedByCurrentUser = post.likes.some(
+        (like) => like.owner.id === profileId
+      );
+      setLiked(likedByCurrentUser);
+    }
+  }, []);
 
-  const onLike = () => {
+  const onLike = async () => {
     setLiked(!liked);
+    setLikes(likes + 1);
+    await like({ variables: { postId: parseFloat(post.id) } });
+  };
+
+  const onUnlike = async () => {
+    setLiked(!liked);
+    setLikes(likes - 1);
+    await unlike({ variables: { postId: parseFloat(post.id) } });
   };
 
   const openModal = () => {
@@ -73,7 +94,15 @@ export const Post: React.FC<PostProps> = ({
     setContentModal(!contentModal);
   };
 
-  const onDoubleLike = () => {
+  const onDoubleLike = async () => {
+    if (liked) {
+      await unlike({ variables: { postId: parseFloat(post.id) } });
+      setLikes(likes - 1);
+    } else {
+      await like({ variables: { postId: parseFloat(post.id) } });
+      setLikes(likes + 1);
+    }
+
     setLiked(!liked);
     if (!liked) {
       setOppacity(1);
@@ -82,46 +111,6 @@ export const Post: React.FC<PostProps> = ({
       }, 600);
     }
   };
-
-  // onClick={async () => {
-  //   await unsubscribe({
-  //     variables: { userId: data.getUser.user.id },
-  // update: (store, { data }) => {
-  //   const old = store.readQuery<GetActiveFollowersQuery>({
-  //     query: GetActiveFollowersDocument,
-  //     variables: {
-  //       userId: data.unSubscribe.followingId
-  //     }
-  //   });
-  //   if (!data || !old) {
-  //     return null;
-  //   }
-  //   store.writeQuery<GetActiveFollowersQuery>({
-  //     query: GetActiveFollowersDocument,
-  //     data: {
-  //       __typename: 'Query',
-  //       getActiveFollowers: old.getActiveFollowers.filter(
-  //         (user) => user.id !== data.unSubscribe.id
-  //       )
-  //     },
-  //     variables: {
-  //       userId: data.unSubscribe.followingId
-  //     }
-  //   });
-  //   store.writeQuery<ExistingSubscriptionQuery>({
-  //     query: ExistingSubscriptionDocument,
-  //     data: {
-  //       __typename: 'Query',
-  //       existingSubscription: false
-  //     },
-  //     variables: {
-  //       userId: data.unSubscribe.followingId
-  //     }
-  //   });
-  //     }
-  //   });
-  //   openSubscriptionModal(false);
-  // }}
 
   const makeInvisibleOnClick = async () => {
     await makeInvisible({
@@ -299,7 +288,7 @@ export const Post: React.FC<PostProps> = ({
                 <PostButton
                   isDisabled={false}
                   loggedIn={loggedIn}
-                  onClick={onLike}
+                  onClick={onUnlike}
                   icon={<Icon as={AiFillFire} h={6} w={6} color='orange' />}
                 />
               ) : (
@@ -310,6 +299,7 @@ export const Post: React.FC<PostProps> = ({
                   icon={<Icon as={AiOutlineFire} h={6} w={6} />}
                 />
               )}
+
               <Text fontSize='xs' color={loggedIn ? 'gray.700' : 'gray.400'}>
                 <b>{likes}</b>
               </Text>

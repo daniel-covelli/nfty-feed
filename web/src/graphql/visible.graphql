@@ -20,6 +20,9 @@ mutation Visible($postId: Float!) {
       removed
       likes {
         id
+        owner {
+          id
+        }
       }
     }
   }

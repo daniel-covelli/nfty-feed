@@ -46,6 +46,7 @@ export class Profile extends BaseEntity {
   @Column()
   bio?: string;
 
+  @Field(() => User)
   @OneToOne(() => User, (user) => user.profile)
   user: User;
 

@@ -1,5 +1,5 @@
-query GetTopPosts {
-  getTopPosts {
+mutation Unlike($postId: Float!) {
+  unlike(postId: $postId) {
     id
     owner {
       id
