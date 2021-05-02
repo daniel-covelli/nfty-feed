@@ -5,13 +5,22 @@ import {
   Arg,
   UseMiddleware,
   ObjectType,
-  Field
+  Field,
+  Ctx
 } from 'type-graphql';
 
 import { Post } from '../entity/Post';
 import { isAuth } from '../isAuth';
-import { validUrl, PostStatus, VisStatus, GlobalStatus } from '../enums';
+import {
+  validUrl,
+  PostStatus,
+  VisStatus,
+  GlobalStatus,
+  AdminStatus
+} from '../enums';
 import { Profile } from '../entity/Profile';
+import { MyContext } from 'src/migration/MyContext';
+import { User } from '../entity/User';
 const cloudinary = require('cloudinary');
 
 @ObjectType()
@@ -32,10 +41,156 @@ export class PostResolver {
     return posts;
   }
 
+  @Mutation(() => PostResponse)
+  @UseMiddleware(isAuth)
+  async invisible(
+    @Ctx() { payload }: MyContext,
+    @Arg('postId') postId: number
+  ) {
+    const user = await User.findOne(payload!.userId);
+
+    if (!user || user.admin === AdminStatus.NORMY) {
+      return {
+        res: false,
+        message: 'Invalid credentials...',
+        post: null
+      };
+    }
+
+    const post = await Post.findOne({ id: postId });
+
+    if (!post) {
+      return {
+        res: false,
+        message: 'Unable to find post...',
+        post: null
+      };
+    }
+
+    post.visibility = VisStatus.HIDDEN;
+    await Post.save(post);
+
+    return {
+      res: true,
+      message: `Post ${postId} has been made invisible...`,
+      post: post
+    };
+  }
+
+  @Mutation(() => PostResponse)
+  @UseMiddleware(isAuth)
+  async visible(@Ctx() { payload }: MyContext, @Arg('postId') postId: number) {
+    const user = await User.findOne(payload!.userId);
+
+    if (!user || user.admin === AdminStatus.NORMY) {
+      return {
+        res: false,
+        message: 'Invalid credentials...',
+        post: null
+      };
+    }
+
+    const post = await Post.findOne({ id: postId });
+
+    if (!post) {
+      return {
+        res: false,
+        message: 'Unable to find post...',
+        post: null
+      };
+    }
+
+    post.visibility = VisStatus.VISIBLE;
+    await Post.save(post);
+
+    return {
+      res: true,
+      message: `Post ${postId} has been made visible...`,
+      post: post
+    };
+  }
+
+  @Mutation(() => PostResponse)
+  @UseMiddleware(isAuth)
+  async remove(@Ctx() { payload }: MyContext, @Arg('postId') postId: number) {
+    const user = await User.findOne(payload!.userId);
+
+    if (!user || user.admin === AdminStatus.NORMY) {
+      return {
+        res: false,
+        message: 'Invalid credentials...',
+        post: null
+      };
+    }
+
+    const post = await Post.findOne({ id: postId });
+
+    if (!post) {
+      return {
+        res: false,
+        message: 'Unable to find post...',
+        post: null
+      };
+    }
+
+    post.removed = GlobalStatus.REMOVED;
+    await Post.save(post);
+
+    return {
+      res: true,
+      message: `Post ${postId} has been made invisible...`,
+      post: post
+    };
+  }
+
+  @Mutation(() => PostResponse)
+  @UseMiddleware(isAuth)
+  async readd(@Ctx() { payload }: MyContext, @Arg('postId') postId: number) {
+    const user = await User.findOne(payload!.userId);
+
+    if (!user || user.admin === AdminStatus.NORMY) {
+      return {
+        res: false,
+        message: 'Invalid credentials...',
+        post: null
+      };
+    }
+
+    const post = await Post.findOne({ id: postId });
+
+    if (!post) {
+      return {
+        res: false,
+        message: 'Unable to find post...',
+        post: null
+      };
+    }
+
+    post.removed = GlobalStatus.VISIBLE;
+    await Post.save(post);
+
+    return {
+      res: true,
+      message: `Post ${postId} has been made invisible...`,
+      post: post
+    };
+  }
+
   @Query(() => [Post])
   async getTopPosts() {
     const posts = await Post.find({
       where: { visibility: VisStatus.VISIBLE, removed: GlobalStatus.VISIBLE },
+      order: {
+        createdAt: 'DESC'
+      },
+      take: 10
+    });
+    return posts;
+  }
+
+  @Query(() => [Post])
+  async getTopPostsAdmin() {
+    const posts = await Post.find({
       order: {
         createdAt: 'DESC'
       },

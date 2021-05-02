@@ -1,0 +1,26 @@
+mutation Remove($postId: Float!) {
+  remove(postId: $postId) {
+    res
+    message
+    post {
+      id
+      owner {
+        id
+        username
+        profileImageId
+        first
+        last
+      }
+      media
+      title
+      artist
+      link
+      type
+      visibility
+      removed
+      likes {
+        id
+      }
+    }
+  }
+}

@@ -53,6 +53,10 @@ export type Mutation = {
   editProfile: EditResponse;
   subscribe: Subscription;
   unSubscribe: Subscription;
+  invisible: PostResponse;
+  visible: PostResponse;
+  remove: PostResponse;
+  readd: PostResponse;
   createPost: PostResponse;
 };
 
@@ -103,6 +107,26 @@ export type MutationSubscribeArgs = {
 
 export type MutationUnSubscribeArgs = {
   userId: Scalars['Float'];
+};
+
+
+export type MutationInvisibleArgs = {
+  postId: Scalars['Float'];
+};
+
+
+export type MutationVisibleArgs = {
+  postId: Scalars['Float'];
+};
+
+
+export type MutationRemoveArgs = {
+  postId: Scalars['Float'];
+};
+
+
+export type MutationReaddArgs = {
+  postId: Scalars['Float'];
 };
 
 
@@ -163,6 +187,7 @@ export type Query = {
   existingSubscription: Scalars['Boolean'];
   posts: Array<Post>;
   getTopPosts: Array<Post>;
+  getTopPostsAdmin: Array<Post>;
 };
 
 
@@ -316,6 +341,24 @@ export type GetTopPostsQuery = (
   )> }
 );
 
+export type GetTopPostsAdminQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetTopPostsAdminQuery = (
+  { __typename?: 'Query' }
+  & { getTopPostsAdmin: Array<(
+    { __typename?: 'Post' }
+    & Pick<Post, 'id' | 'media' | 'artist' | 'link' | 'type' | 'title' | 'visibility' | 'removed'>
+    & { owner: (
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'id' | 'username' | 'profileImageId'>
+    ), likes: Array<(
+      { __typename?: 'Like' }
+      & Pick<Like, 'id'>
+    )> }
+  )> }
+);
+
 export type GetUserQueryVariables = Exact<{
   path: Scalars['String'];
 }>;
@@ -343,6 +386,30 @@ export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
 export type HelloQuery = (
   { __typename?: 'Query' }
   & Pick<Query, 'hello'>
+);
+
+export type InvisibleMutationVariables = Exact<{
+  postId: Scalars['Float'];
+}>;
+
+
+export type InvisibleMutation = (
+  { __typename?: 'Mutation' }
+  & { invisible: (
+    { __typename?: 'PostResponse' }
+    & Pick<PostResponse, 'res' | 'message'>
+    & { post?: Maybe<(
+      { __typename?: 'Post' }
+      & Pick<Post, 'id' | 'media' | 'title' | 'artist' | 'link' | 'type' | 'visibility' | 'removed'>
+      & { owner: (
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id' | 'username' | 'profileImageId' | 'first' | 'last'>
+      ), likes: Array<(
+        { __typename?: 'Like' }
+        & Pick<Like, 'id'>
+      )> }
+    )> }
+  ) }
 );
 
 export type LoginMutationVariables = Exact<{
@@ -390,6 +457,30 @@ export type MeQuery = (
   )> }
 );
 
+export type ReaddMutationVariables = Exact<{
+  postId: Scalars['Float'];
+}>;
+
+
+export type ReaddMutation = (
+  { __typename?: 'Mutation' }
+  & { readd: (
+    { __typename?: 'PostResponse' }
+    & Pick<PostResponse, 'res' | 'message'>
+    & { post?: Maybe<(
+      { __typename?: 'Post' }
+      & Pick<Post, 'id' | 'media' | 'title' | 'artist' | 'link' | 'type' | 'visibility' | 'removed'>
+      & { owner: (
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id' | 'username' | 'profileImageId' | 'first' | 'last'>
+      ), likes: Array<(
+        { __typename?: 'Like' }
+        & Pick<Like, 'id'>
+      )> }
+    )> }
+  ) }
+);
+
 export type RegisterMutationVariables = Exact<{
   email: Scalars['String'];
   password: Scalars['String'];
@@ -414,6 +505,30 @@ export type RegisterMutation = (
       & { profile?: Maybe<(
         { __typename?: 'Profile' }
         & Pick<Profile, 'first' | 'last' | 'username' | 'profileImageId'>
+      )> }
+    )> }
+  ) }
+);
+
+export type RemoveMutationVariables = Exact<{
+  postId: Scalars['Float'];
+}>;
+
+
+export type RemoveMutation = (
+  { __typename?: 'Mutation' }
+  & { remove: (
+    { __typename?: 'PostResponse' }
+    & Pick<PostResponse, 'res' | 'message'>
+    & { post?: Maybe<(
+      { __typename?: 'Post' }
+      & Pick<Post, 'id' | 'media' | 'title' | 'artist' | 'link' | 'type' | 'visibility' | 'removed'>
+      & { owner: (
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id' | 'username' | 'profileImageId' | 'first' | 'last'>
+      ), likes: Array<(
+        { __typename?: 'Like' }
+        & Pick<Like, 'id'>
       )> }
     )> }
   ) }
@@ -458,6 +573,30 @@ export type UsersQuery = (
       & Pick<Profile, 'first' | 'last' | 'username' | 'profileImageId' | 'ogProfileImageId'>
     )> }
   )> }
+);
+
+export type VisibleMutationVariables = Exact<{
+  postId: Scalars['Float'];
+}>;
+
+
+export type VisibleMutation = (
+  { __typename?: 'Mutation' }
+  & { visible: (
+    { __typename?: 'PostResponse' }
+    & Pick<PostResponse, 'res' | 'message'>
+    & { post?: Maybe<(
+      { __typename?: 'Post' }
+      & Pick<Post, 'id' | 'media' | 'title' | 'artist' | 'link' | 'type' | 'visibility' | 'removed'>
+      & { owner: (
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id' | 'username' | 'profileImageId' | 'first' | 'last'>
+      ), likes: Array<(
+        { __typename?: 'Like' }
+        & Pick<Like, 'id'>
+      )> }
+    )> }
+  ) }
 );
 
 
@@ -747,6 +886,55 @@ export function useGetTopPostsLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetTopPostsQueryHookResult = ReturnType<typeof useGetTopPostsQuery>;
 export type GetTopPostsLazyQueryHookResult = ReturnType<typeof useGetTopPostsLazyQuery>;
 export type GetTopPostsQueryResult = Apollo.QueryResult<GetTopPostsQuery, GetTopPostsQueryVariables>;
+export const GetTopPostsAdminDocument = gql`
+    query GetTopPostsAdmin {
+  getTopPostsAdmin {
+    id
+    owner {
+      id
+      username
+      profileImageId
+    }
+    media
+    artist
+    link
+    type
+    title
+    visibility
+    removed
+    likes {
+      id
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetTopPostsAdminQuery__
+ *
+ * To run a query within a React component, call `useGetTopPostsAdminQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTopPostsAdminQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTopPostsAdminQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetTopPostsAdminQuery(baseOptions?: Apollo.QueryHookOptions<GetTopPostsAdminQuery, GetTopPostsAdminQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTopPostsAdminQuery, GetTopPostsAdminQueryVariables>(GetTopPostsAdminDocument, options);
+      }
+export function useGetTopPostsAdminLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTopPostsAdminQuery, GetTopPostsAdminQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTopPostsAdminQuery, GetTopPostsAdminQueryVariables>(GetTopPostsAdminDocument, options);
+        }
+export type GetTopPostsAdminQueryHookResult = ReturnType<typeof useGetTopPostsAdminQuery>;
+export type GetTopPostsAdminLazyQueryHookResult = ReturnType<typeof useGetTopPostsAdminLazyQuery>;
+export type GetTopPostsAdminQueryResult = Apollo.QueryResult<GetTopPostsAdminQuery, GetTopPostsAdminQueryVariables>;
 export const GetUserDocument = gql`
     query GetUser($path: String!) {
   getUser(path: $path) {
@@ -828,6 +1016,60 @@ export function useHelloLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Hell
 export type HelloQueryHookResult = ReturnType<typeof useHelloQuery>;
 export type HelloLazyQueryHookResult = ReturnType<typeof useHelloLazyQuery>;
 export type HelloQueryResult = Apollo.QueryResult<HelloQuery, HelloQueryVariables>;
+export const InvisibleDocument = gql`
+    mutation Invisible($postId: Float!) {
+  invisible(postId: $postId) {
+    res
+    message
+    post {
+      id
+      owner {
+        id
+        username
+        profileImageId
+        first
+        last
+      }
+      media
+      title
+      artist
+      link
+      type
+      visibility
+      removed
+      likes {
+        id
+      }
+    }
+  }
+}
+    `;
+export type InvisibleMutationFn = Apollo.MutationFunction<InvisibleMutation, InvisibleMutationVariables>;
+
+/**
+ * __useInvisibleMutation__
+ *
+ * To run a mutation, you first call `useInvisibleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInvisibleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [invisibleMutation, { data, loading, error }] = useInvisibleMutation({
+ *   variables: {
+ *      postId: // value for 'postId'
+ *   },
+ * });
+ */
+export function useInvisibleMutation(baseOptions?: Apollo.MutationHookOptions<InvisibleMutation, InvisibleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<InvisibleMutation, InvisibleMutationVariables>(InvisibleDocument, options);
+      }
+export type InvisibleMutationHookResult = ReturnType<typeof useInvisibleMutation>;
+export type InvisibleMutationResult = Apollo.MutationResult<InvisibleMutation>;
+export type InvisibleMutationOptions = Apollo.BaseMutationOptions<InvisibleMutation, InvisibleMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   login(email: $email, password: $password) {
@@ -947,6 +1189,60 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const ReaddDocument = gql`
+    mutation Readd($postId: Float!) {
+  readd(postId: $postId) {
+    res
+    message
+    post {
+      id
+      owner {
+        id
+        username
+        profileImageId
+        first
+        last
+      }
+      media
+      title
+      artist
+      link
+      type
+      visibility
+      removed
+      likes {
+        id
+      }
+    }
+  }
+}
+    `;
+export type ReaddMutationFn = Apollo.MutationFunction<ReaddMutation, ReaddMutationVariables>;
+
+/**
+ * __useReaddMutation__
+ *
+ * To run a mutation, you first call `useReaddMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useReaddMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [readdMutation, { data, loading, error }] = useReaddMutation({
+ *   variables: {
+ *      postId: // value for 'postId'
+ *   },
+ * });
+ */
+export function useReaddMutation(baseOptions?: Apollo.MutationHookOptions<ReaddMutation, ReaddMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ReaddMutation, ReaddMutationVariables>(ReaddDocument, options);
+      }
+export type ReaddMutationHookResult = ReturnType<typeof useReaddMutation>;
+export type ReaddMutationResult = Apollo.MutationResult<ReaddMutation>;
+export type ReaddMutationOptions = Apollo.BaseMutationOptions<ReaddMutation, ReaddMutationVariables>;
 export const RegisterDocument = gql`
     mutation Register($email: String!, $password: String!, $username: String!, $phone: String!, $first: String!, $last: String!, $bio: String!, $profileImage: String!, $ogProfileImage: String!) {
   register(
@@ -1009,6 +1305,60 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const RemoveDocument = gql`
+    mutation Remove($postId: Float!) {
+  remove(postId: $postId) {
+    res
+    message
+    post {
+      id
+      owner {
+        id
+        username
+        profileImageId
+        first
+        last
+      }
+      media
+      title
+      artist
+      link
+      type
+      visibility
+      removed
+      likes {
+        id
+      }
+    }
+  }
+}
+    `;
+export type RemoveMutationFn = Apollo.MutationFunction<RemoveMutation, RemoveMutationVariables>;
+
+/**
+ * __useRemoveMutation__
+ *
+ * To run a mutation, you first call `useRemoveMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeMutation, { data, loading, error }] = useRemoveMutation({
+ *   variables: {
+ *      postId: // value for 'postId'
+ *   },
+ * });
+ */
+export function useRemoveMutation(baseOptions?: Apollo.MutationHookOptions<RemoveMutation, RemoveMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveMutation, RemoveMutationVariables>(RemoveDocument, options);
+      }
+export type RemoveMutationHookResult = ReturnType<typeof useRemoveMutation>;
+export type RemoveMutationResult = Apollo.MutationResult<RemoveMutation>;
+export type RemoveMutationOptions = Apollo.BaseMutationOptions<RemoveMutation, RemoveMutationVariables>;
 export const SubscribeDocument = gql`
     mutation Subscribe($userIdWhoIsBeingFollowed: Float!) {
   subscribe(userIdWhoIsBeingFollowed: $userIdWhoIsBeingFollowed) {
@@ -1123,3 +1473,57 @@ export function useUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<User
 export type UsersQueryHookResult = ReturnType<typeof useUsersQuery>;
 export type UsersLazyQueryHookResult = ReturnType<typeof useUsersLazyQuery>;
 export type UsersQueryResult = Apollo.QueryResult<UsersQuery, UsersQueryVariables>;
+export const VisibleDocument = gql`
+    mutation Visible($postId: Float!) {
+  visible(postId: $postId) {
+    res
+    message
+    post {
+      id
+      owner {
+        id
+        username
+        profileImageId
+        first
+        last
+      }
+      media
+      title
+      artist
+      link
+      type
+      visibility
+      removed
+      likes {
+        id
+      }
+    }
+  }
+}
+    `;
+export type VisibleMutationFn = Apollo.MutationFunction<VisibleMutation, VisibleMutationVariables>;
+
+/**
+ * __useVisibleMutation__
+ *
+ * To run a mutation, you first call `useVisibleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useVisibleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [visibleMutation, { data, loading, error }] = useVisibleMutation({
+ *   variables: {
+ *      postId: // value for 'postId'
+ *   },
+ * });
+ */
+export function useVisibleMutation(baseOptions?: Apollo.MutationHookOptions<VisibleMutation, VisibleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<VisibleMutation, VisibleMutationVariables>(VisibleDocument, options);
+      }
+export type VisibleMutationHookResult = ReturnType<typeof useVisibleMutation>;
+export type VisibleMutationResult = Apollo.MutationResult<VisibleMutation>;
+export type VisibleMutationOptions = Apollo.BaseMutationOptions<VisibleMutation, VisibleMutationVariables>;

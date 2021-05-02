@@ -1,0 +1,20 @@
+query GetTopPostsAdmin {
+  getTopPostsAdmin {
+    id
+    owner {
+      id
+      username
+      profileImageId
+    }
+    media
+    artist
+    link
+    type
+    title
+    visibility
+    removed
+    likes {
+      id
+    }
+  }
+}

@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   useUsersQuery,
   useGetTopPostsQuery,
-  useMeQuery
+  useMeQuery,
+  useGetTopPostsAdminLazyQuery,
+  useGetTopPostsLazyQuery
 } from '../generated/graphql';
 import {
   Text,
@@ -28,7 +30,14 @@ interface HomeProps {}
 
 export const Home: React.FC<HomeProps> = () => {
   const { data, loading } = useUsersQuery();
-  const { data: posts, loading: postsLoading } = useGetTopPostsQuery();
+  const [
+    getTopPosts,
+    { data: postsNotAdmin, loading: postsLoading }
+  ] = useGetTopPostsLazyQuery();
+  const [
+    getTopPostsAdmin,
+    { data: postsAdmin, loading: postsLoadingAdmin }
+  ] = useGetTopPostsAdminLazyQuery();
   const { data: me, loading: meLoading } = useMeQuery();
 
   const [isSmall] = useMediaQuery('(max-width: 670px)');
@@ -42,13 +51,35 @@ export const Home: React.FC<HomeProps> = () => {
     admin = me.me.admin === 1;
   }
 
+  useEffect(() => {
+    if (me && me.me) {
+      {
+        me.me.admin ? getTopPostsAdmin() : getTopPosts();
+      }
+    } else {
+      getTopPosts();
+    }
+  }, [me]);
+
+  let posts: any;
+  if (postsNotAdmin && postsNotAdmin.getTopPosts) {
+    posts = postsNotAdmin.getTopPosts;
+  }
+  if (postsAdmin && postsAdmin.getTopPostsAdmin) {
+    posts = postsAdmin.getTopPostsAdmin;
+  }
+
   return (
     <>
-      <Text>users:</Text>
-      {!loading && !postsLoading && posts && me ? (
+      {!loading &&
+      !postsLoading &&
+      !meLoading &&
+      !postsLoadingAdmin &&
+      posts &&
+      me ? (
         <>
           <Box w='100%' maxW='600px'>
-            {posts.getTopPosts.map((post) => (
+            {posts.map((post) => (
               <Post
                 key={post.id}
                 post={post}

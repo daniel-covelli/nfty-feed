@@ -34,7 +34,7 @@ export const NavBar: React.FC<NavBarProps> = () => {
       bg={['white', 'white', 'white', 'white']}
       color={['primary.500', 'primary.500', 'primary.700', 'primary.700']}>
       <Logo
-        paddingLeft='calc((100vw - 1024px) / 2)'
+        paddingLeft='calc(50vw - 507px)'
         color={['primary.500', 'primary.500', 'primary.500', 'primary.500']}
       />
       <MenuToggle toggle={toggle} isOpen={isOpen} />
@@ -42,7 +42,7 @@ export const NavBar: React.FC<NavBarProps> = () => {
         setIsOpen={setIsOpen}
         isOpen={isOpen}
         toggle={toggle}
-        paddingRight='calc((100vw - 1024px) / 2)'
+        paddingRight='calc(50vw - 507px)'
       />
     </Flex>
   );
