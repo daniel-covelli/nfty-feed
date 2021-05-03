@@ -28,6 +28,10 @@ export class User extends BaseEntity {
   tokenVersion: number;
 
   @Field()
+  @Column('int', { default: 2 })
+  invitations: number;
+
+  @Field()
   @Column('int', { default: AdminStatus.NORMY })
   admin: AdminStatus;
 
