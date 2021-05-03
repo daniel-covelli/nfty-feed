@@ -27,6 +27,7 @@ import { ClickableAvatar, Size } from '../shared/ClickableAvatar';
 import { AtSignIcon } from '@chakra-ui/icons';
 import { IoIosHome } from 'react-icons/io';
 import { IoAdd, IoNotifications } from 'react-icons/io5';
+import { PostCreate } from '../post/PostCreate';
 
 interface MenuLinksProps {
   isOpen: boolean;
@@ -44,6 +45,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
   const { data, loading } = useMeQuery();
   const [logout, { client }] = useLogoutMutation();
   const [popoverOpen, setPopoverOpen] = useState(false);
+  const [postOpen, setPostOpen] = useState(false);
   const [isTabletOrMobile] = useMediaQuery('(max-width: 767px)');
 
   let body: any = null;
@@ -69,6 +71,10 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
     setPopoverOpen(false);
   };
 
+  const onCreate = () => {
+    setPostOpen(true);
+  };
+
   return (
     <Box
       paddingRight={paddingRight}
@@ -86,6 +92,19 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
             <>
               <Link
                 as={ReactLink}
+                to={`/`}
+                w='100%'
+                onClick={onCreate}
+                _focus={{
+                  boxShadow: 'none'
+                }}
+                _hover={{ textDecoration: 'none' }}>
+                <Button variant='outline' w='100%' colorScheme='pink' size='md'>
+                  <Text display='block'>Create post</Text>
+                </Button>
+              </Link>
+              <Link
+                as={ReactLink}
                 to={`/at/${data.me.profile.username}`}
                 onClick={toggle}
                 w='100%'
@@ -96,7 +115,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
                 <Button variant='outline' w='100%' size='md'>
                   <HStack>
                     <Avatar
-                      size='2xs'
+                      size='xs'
                       name={`${data.me.profile.first} ${data.me.profile.last}`}
                       src={data.me.profile.profileImageId}
                     />
@@ -118,6 +137,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
                   <Text display='block'>Home</Text>
                 </Button>
               </Link>
+
               <Button
                 w='100%'
                 colorScheme='red'
@@ -139,8 +159,8 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
               ) : null}
               <IconButton
                 borderRadius='20px'
-                aria-label='create a post'
-                icon={<Icon as={IoAdd} fontSize='20px' />}
+                aria-label='notifications'
+                icon={<Icon as={IoNotifications} fontSize='20px' />}
                 colorScheme='pink'
                 variant='outline'
                 size='sm'
@@ -152,14 +172,14 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
               <IconButton
                 borderRadius='20px'
                 aria-label='create a post'
-                icon={<Icon as={IoNotifications} fontSize='20px' />}
+                icon={<Icon as={IoAdd} fontSize='20px' />}
                 colorScheme='pink'
                 variant='outline'
                 size='sm'
+                onClick={onCreate}
                 _focus={{
                   boxShadow: 'none'
                 }}
-                isDisabled
               />
               <Popover
                 onClose={onClose}
@@ -328,6 +348,13 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
           </>
         )}
       </Stack>
+      <PostCreate
+        profileId={data && data.me ? data.me.profile.id : null}
+        admin={data && data.me ? data.me.admin : null}
+        isOpen={postOpen}
+        mobile={isTabletOrMobile}
+        setIsOpen={setPostOpen}
+      />
     </Box>
   );
 };

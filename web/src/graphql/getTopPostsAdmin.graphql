@@ -5,6 +5,8 @@ query GetTopPostsAdmin {
       id
       username
       profileImageId
+      first
+      last
     }
     media
     artist

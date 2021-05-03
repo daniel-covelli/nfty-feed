@@ -1,0 +1,43 @@
+mutation CreatePost(
+  $profileId: Float!
+  $media: String!
+  $artist: String!
+  $title: String!
+  $link: String!
+  $type: Float!
+) {
+  createPost(
+    profileId: $profileId
+    media: $media
+    artist: $artist
+    link: $link
+    title: $title
+    type: $type
+  ) {
+    res
+    message
+    post {
+      id
+      owner {
+        id
+        username
+        profileImageId
+        first
+        last
+      }
+      media
+      artist
+      link
+      type
+      title
+      visibility
+      removed
+      likes {
+        id
+        owner {
+          id
+        }
+      }
+    }
+  }
+}

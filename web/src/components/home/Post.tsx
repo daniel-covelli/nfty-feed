@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   VStack,
@@ -14,7 +14,8 @@ import {
   Button,
   Avatar,
   Badge,
-  Spinner
+  Spinner,
+  Skeleton
 } from '@chakra-ui/react';
 import { IoEllipsisHorizontal } from 'react-icons/io5';
 import { LinkableAvatar } from '../shared/LinkableAvatar';
@@ -27,13 +28,12 @@ import { PostButton } from './PostButton';
 import {
   useInvisibleMutation,
   useVisibleMutation,
-  GetTopPostsAdminDocument,
-  GetTopPostsAdminQuery,
   useRemoveMutation,
   useReaddMutation,
   useLikeMutation,
   useUnlikeMutation
 } from '../../generated/graphql';
+import { LoadingPost } from './LoadingPost';
 
 interface PostProps {
   post: any;
@@ -138,71 +138,77 @@ export const Post: React.FC<PostProps> = ({
 
   return (
     <Box key={post.id} mb='60px' border='1px' borderColor='gray.200'>
-      <Text>
-        Post: {post.id} Visibility: {post.visibility} Removed: {post.removed}
-      </Text>
       <VStack spacing='5px'>
-        <Flex w='100%' px='5px' pt='5px'>
-          <Box>
-            {admin ? (
-              <HStack>
-                {post.visibility === 1 ? (
-                  <Button
-                    size='sm'
-                    isLoading={loadingInvisible}
-                    onClick={makeInvisibleOnClick}>
-                    make invisible
-                  </Button>
-                ) : (
-                  <Button
-                    size='sm'
-                    isLoading={loadingVisible}
-                    onClick={makeVisibleOnClick}>
-                    make visible
-                  </Button>
-                )}
-                {post.removed === 1 ? (
-                  <Button
-                    size='sm'
-                    isLoading={loadingRemove}
-                    onClick={removeOnClick}>
-                    remove post
-                  </Button>
-                ) : (
-                  <Button
-                    size='sm'
-                    isLoading={loadingReadd}
-                    onClick={readdOnClick}>
-                    readd post
-                  </Button>
-                )}
+        {admin || profileId === post.owner.id ? (
+          <Flex w='100%' px='5px' pt='5px'>
+            <Box>
+              {admin ? (
+                <>
+                  <Text>
+                    Post: {post.id} Visibility: {post.visibility} Removed:{' '}
+                    {post.removed}
+                  </Text>
+                  <HStack>
+                    {post.visibility === 1 ? (
+                      <Button
+                        size='sm'
+                        isLoading={loadingInvisible}
+                        onClick={makeInvisibleOnClick}>
+                        make invisible
+                      </Button>
+                    ) : (
+                      <Button
+                        size='sm'
+                        isLoading={loadingVisible}
+                        onClick={makeVisibleOnClick}>
+                        make visible
+                      </Button>
+                    )}
+                    {post.removed === 1 ? (
+                      <Button
+                        size='sm'
+                        isLoading={loadingRemove}
+                        onClick={removeOnClick}>
+                        remove post
+                      </Button>
+                    ) : (
+                      <Button
+                        size='sm'
+                        isLoading={loadingReadd}
+                        onClick={readdOnClick}>
+                        readd post
+                      </Button>
+                    )}
 
-                {post.visibility === 0 ? (
-                  <Badge colorScheme='red'>Invisible</Badge>
-                ) : null}
-                {post.removed === 0 ? (
-                  <Badge colorScheme='red'>Removed</Badge>
-                ) : null}
-              </HStack>
-            ) : null}
-          </Box>
-          <Spacer />
-          <Box>
-            {profileId === post.owner.id ? (
-              <IconButton
-                borderRadius='20px'
-                aria-label='edit'
-                icon={<Icon as={IoEllipsisHorizontal} fontSize='20px' />}
-                size='sm'
-                _focus={{
-                  boxShadow: 'none'
-                }}
-              />
-            ) : null}
-          </Box>
-        </Flex>
+                    {post.visibility === 0 ? (
+                      <Badge colorScheme='red'>Invisible</Badge>
+                    ) : null}
+                    {post.removed === 0 ? (
+                      <Badge colorScheme='red'>Removed</Badge>
+                    ) : null}
+                  </HStack>
+                </>
+              ) : null}
+            </Box>
+            <Spacer />
+            <Box pt='24px'>
+              {profileId === post.owner.id ? (
+                <IconButton
+                  isDisabled
+                  borderRadius='20px'
+                  aria-label='edit'
+                  icon={<Icon as={IoEllipsisHorizontal} fontSize='20px' />}
+                  size='sm'
+                  _focus={{
+                    boxShadow: 'none'
+                  }}
+                />
+              ) : null}
+            </Box>
+          </Flex>
+        ) : null}
 
-        <Box>
+        <Box w='100%'>
           <LinkOverlay
             onDoubleClick={loggedIn ? onDoubleLike : null}
             key={post.id}
@@ -210,13 +216,25 @@ export const Post: React.FC<PostProps> = ({
             <Center>
               <Icon
                 as={AiFillFire}
-                fontSize='60px'
+                fontSize='80px'
                 color='gray.200'
                 position='absolute'
                 transition='0.3s'
                 opacity={oppacity}
               />
-              <Image src={post.media} />
+              <Image
+                src={post.media}
+                fallback={
+                  <div
+                    style={{
+                      height: '400px',
+                      width: '598px',
+                      maxWidth: '100%',
+                      backgroundColor: '#EDF2F7'
+                    }}
+                  />
+                }
+              />
             </Center>
           </LinkOverlay>
         </Box>
@@ -259,29 +277,29 @@ export const Post: React.FC<PostProps> = ({
 
           <HStack spacing={4}>
             {/* <Box pb='18px'>
-              <PostButton
-                isDisabled={true}
-                loggedIn={loggedIn}
-                onClick={null}
-                icon={<Icon as={AiOutlineLink} h={6} w={6} />}
-              />
-            </Box> */}
+            <PostButton
+              isDisabled={true}
+              loggedIn={loggedIn}
+              onClick={null}
+              icon={<Icon as={AiOutlineLink} h={6} w={6} />}
+            />
+          </Box> */}
             {/* <Box pb='18px'>
-              <PostButton
-                isDisabled={true}
-                loggedIn={loggedIn}
-                onClick={openModal}
-                icon={<Icon as={AiOutlineInfoCircle} h={6} w={6} />}
-              />
-            </Box> */}
+            <PostButton
+              isDisabled={true}
+              loggedIn={loggedIn}
+              onClick={openModal}
+              icon={<Icon as={AiOutlineInfoCircle} h={6} w={6} />}
+            />
+          </Box> */}
             {/* <Box pb='18px'>
-              <PostButton
-                isDisabled={false}
-                loggedIn={loggedIn}
-                onClick={contentModalToggle}
-                icon={<Icon as={AiOutlineExpand} h={6} w={6} />}
-              />
-            </Box> */}
+            <PostButton
+              isDisabled={false}
+              loggedIn={loggedIn}
+              onClick={contentModalToggle}
+              icon={<Icon as={AiOutlineExpand} h={6} w={6} />}
+            />
+          </Box> */}
 
             <VStack spacing={0}>
               {liked ? (

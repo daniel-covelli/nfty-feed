@@ -30,7 +30,7 @@ export class Post extends BaseEntity {
   @Column()
   media: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true })
   artist: string;
 
@@ -38,7 +38,7 @@ export class Post extends BaseEntity {
   @Column({ nullable: true })
   title: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true })
   link: string;
 

@@ -292,7 +292,7 @@ export class PostResolver {
     @Arg('media') media: string,
     @Arg('artist', { nullable: true }) artist: string,
     @Arg('link', { nullable: true }) link: string,
-    @Arg('title', { nullable: true }) title: string,
+    @Arg('title') title: string,
     @Arg('type', { nullable: true }) type: PostStatus
   ) {
     if (link) {

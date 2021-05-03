@@ -67,7 +67,6 @@ export const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
             style={{
               borderWidth: '2px',
               borderColor: `${cropData ? 'lightGrey' : 'grey'}`,
-              borderStyle: `${cropData ? 'solid' : 'dashed'}`,
               borderRadius: '100px',
               outlineColor: 'transparent'
             }}
@@ -79,7 +78,7 @@ export const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
                 backgroundImage: `url(${cropData ? cropData : null})`,
                 backgroundPosition: 'center',
                 backgroundSize: 'cover',
-                backgroundColor: '#f0f0f0',
+                backgroundColor: '#F7FAFC',
                 height: '120px',
                 width: '120px',
                 borderRadius: '100px',
@@ -94,9 +93,7 @@ export const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
                 imageLoading ? (
                   <Spinner size='sm' />
                 ) : (
-                  <Link>
-                    <b>add image</b>
-                  </Link>
+                  <Link>Add image</Link>
                 )
               ) : null}
             </Box>

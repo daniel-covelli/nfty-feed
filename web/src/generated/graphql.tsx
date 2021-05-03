@@ -145,7 +145,7 @@ export type MutationReaddArgs = {
 
 export type MutationCreatePostArgs = {
   type?: Maybe<Scalars['Float']>;
-  title?: Maybe<Scalars['String']>;
+  title: Scalars['String'];
   link?: Maybe<Scalars['String']>;
   artist?: Maybe<Scalars['String']>;
   media: Scalars['String'];
@@ -276,6 +276,39 @@ export type CheckEmailMutation = (
   ) }
 );
 
+export type CreatePostMutationVariables = Exact<{
+  profileId: Scalars['Float'];
+  media: Scalars['String'];
+  artist: Scalars['String'];
+  title: Scalars['String'];
+  link: Scalars['String'];
+  type: Scalars['Float'];
+}>;
+
+
+export type CreatePostMutation = (
+  { __typename?: 'Mutation' }
+  & { createPost: (
+    { __typename?: 'PostResponse' }
+    & Pick<PostResponse, 'res' | 'message'>
+    & { post?: Maybe<(
+      { __typename?: 'Post' }
+      & Pick<Post, 'id' | 'media' | 'artist' | 'link' | 'type' | 'title' | 'visibility' | 'removed'>
+      & { owner: (
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id' | 'username' | 'profileImageId' | 'first' | 'last'>
+      ), likes: Array<(
+        { __typename?: 'Like' }
+        & Pick<Like, 'id'>
+        & { owner?: Maybe<(
+          { __typename?: 'Profile' }
+          & Pick<Profile, 'id'>
+        )> }
+      )> }
+    )> }
+  ) }
+);
+
 export type EditProfileMutationVariables = Exact<{
   username: Scalars['String'];
   first: Scalars['String'];
@@ -370,7 +403,7 @@ export type GetTopPostsAdminQuery = (
     & Pick<Post, 'id' | 'media' | 'artist' | 'link' | 'type' | 'title' | 'visibility' | 'removed'>
     & { owner: (
       { __typename?: 'Profile' }
-      & Pick<Profile, 'id' | 'username' | 'profileImageId'>
+      & Pick<Profile, 'id' | 'username' | 'profileImageId' | 'first' | 'last'>
     ), likes: Array<(
       { __typename?: 'Like' }
       & Pick<Like, 'id'>
@@ -745,6 +778,75 @@ export function useCheckEmailMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CheckEmailMutationHookResult = ReturnType<typeof useCheckEmailMutation>;
 export type CheckEmailMutationResult = Apollo.MutationResult<CheckEmailMutation>;
 export type CheckEmailMutationOptions = Apollo.BaseMutationOptions<CheckEmailMutation, CheckEmailMutationVariables>;
+export const CreatePostDocument = gql`
+    mutation CreatePost($profileId: Float!, $media: String!, $artist: String!, $title: String!, $link: String!, $type: Float!) {
+  createPost(
+    profileId: $profileId
+    media: $media
+    artist: $artist
+    link: $link
+    title: $title
+    type: $type
+  ) {
+    res
+    message
+    post {
+      id
+      owner {
+        id
+        username
+        profileImageId
+        first
+        last
+      }
+      media
+      artist
+      link
+      type
+      title
+      visibility
+      removed
+      likes {
+        id
+        owner {
+          id
+        }
+      }
+    }
+  }
+}
+    `;
+export type CreatePostMutationFn = Apollo.MutationFunction<CreatePostMutation, CreatePostMutationVariables>;
+
+/**
+ * __useCreatePostMutation__
+ *
+ * To run a mutation, you first call `useCreatePostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreatePostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createPostMutation, { data, loading, error }] = useCreatePostMutation({
+ *   variables: {
+ *      profileId: // value for 'profileId'
+ *      media: // value for 'media'
+ *      artist: // value for 'artist'
+ *      title: // value for 'title'
+ *      link: // value for 'link'
+ *      type: // value for 'type'
+ *   },
+ * });
+ */
+export function useCreatePostMutation(baseOptions?: Apollo.MutationHookOptions<CreatePostMutation, CreatePostMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreatePostMutation, CreatePostMutationVariables>(CreatePostDocument, options);
+      }
+export type CreatePostMutationHookResult = ReturnType<typeof useCreatePostMutation>;
+export type CreatePostMutationResult = Apollo.MutationResult<CreatePostMutation>;
+export type CreatePostMutationOptions = Apollo.BaseMutationOptions<CreatePostMutation, CreatePostMutationVariables>;
 export const EditProfileDocument = gql`
     mutation EditProfile($username: String!, $first: String!, $last: String!, $bio: String!, $profileImage: String!, $ogProfileImage: String!) {
   editProfile(
@@ -976,6 +1078,8 @@ export const GetTopPostsAdminDocument = gql`
       id
       username
       profileImageId
+      first
+      last
     }
     media
     artist
