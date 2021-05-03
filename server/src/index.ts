@@ -23,6 +23,8 @@ import { Post } from './entity/Post';
 import { Like } from './entity/Like';
 import { PostResolver } from './resolvers/PostResolver';
 import { LikeResolver } from './resolvers/LikeResolver';
+import { InvitationResolver } from './resolvers/InvitationResolver';
+import { Invitation } from './entity/Invitation';
 
 // server set up
 (async () => {
@@ -77,7 +79,7 @@ import { LikeResolver } from './resolvers/LikeResolver';
       ? createConnection({
           ...connectionOptions,
           url: process.env.DATABASE_URL,
-          entities: [User, Profile, Sub, Post, Like],
+          entities: [User, Profile, Sub, Post, Like, Invitation],
           name: 'default'
         })
       : createConnection({ ...connectionOptions, name: 'default' });
@@ -92,7 +94,8 @@ import { LikeResolver } from './resolvers/LikeResolver';
         ProfileResolver,
         SubscriptionResolver,
         PostResolver,
-        LikeResolver
+        LikeResolver,
+        InvitationResolver
       ]
     }),
     context: ({ req, res }) => ({ req, res }),

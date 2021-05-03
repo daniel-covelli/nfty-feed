@@ -15,15 +15,19 @@ export class Invitation extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field(() => Int)
+  @Field()
+  @Column()
+  ownerId: number;
+
+  @Field()
   @Column()
   number: number;
 
-  @Field(() => Int)
+  @Field()
   @Column()
   verificationCode: number;
 
-  @Field(() => Int)
+  @Field()
   @Column()
   active: Status;
 
