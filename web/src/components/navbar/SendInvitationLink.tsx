@@ -13,7 +13,7 @@ export const SendInvitationLink: React.FC<SendInvitationLinkProps> = ({
 }) => {
   return (
     <Box postion='relative'>
-      {invitations > 0 ? (
+      {0 > 0 ? (
         <Box
           zIndex={10}
           position='absolute'
@@ -33,8 +33,8 @@ export const SendInvitationLink: React.FC<SendInvitationLinkProps> = ({
           </Text>
         </Box>
       ) : null}
-
       <IconButton
+        isDisabled
         borderRadius='20px'
         aria-label='notifications'
         icon={<EmailIcon fontSize='20px' />}

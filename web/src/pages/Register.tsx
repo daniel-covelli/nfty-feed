@@ -265,7 +265,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
             <SlideFade in={isRegisterOpen}>
               <Box pb='20px'>
                 <Text fontSize='lg'>
-                  <b>Credentials</b>
+                  <b>Register</b>
                 </Text>
               </Box>
               <Box>
@@ -359,12 +359,9 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
             </SlideFade>
           ) : (
             <>
-              <Box pb='20px'>
+              <Box>
                 <Text fontSize='lg'>
                   <b>Register </b>
-                </Text>
-                <Text fontSize='sm' maxW='200px'>
-                  Verify your invitation
                 </Text>
               </Box>
               <Box>

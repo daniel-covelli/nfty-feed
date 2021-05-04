@@ -32,17 +32,20 @@ The project is deployed to Heroku (backend) and Netlify (frontend) with GQL/Apol
 - [x] profile image uploading
 - [ ] add url to profile
 - [x] following/unfollowing
-- [ ] posts
+- [x] posts
 - [ ] page not found
 - [x] cropping
 - [x] edit profile photo
 - [x] profile photo modal
 - [x] navbar update
+- [x] invitations
+- [ ] mobile bottom nav
 
 #### Known Technical Debt
 
 - [ ] dropzone/cropper components
 - [ ] register/editprofile resolver logic
+- [ ] register component
 
 #### Archive
 

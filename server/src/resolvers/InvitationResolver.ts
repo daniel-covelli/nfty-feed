@@ -179,13 +179,11 @@ export class InvitationResolver {
       if (sid && authToken && twilioNumber) {
         const client = new Twilio(sid, authToken);
 
-        client.messages
-          .create({
-            body: `Your NftyFeed verification code is: ${verificationCode} https://nftyfeed.com/register`,
-            from: `${twilioNumber}`,
-            to: `+1${number}`
-          })
-          .then((message) => console.log(message));
+        client.messages.create({
+          body: `Your NftyFeed verification code is: ${verificationCode} https://nftyfeed.com/register`,
+          from: `${twilioNumber}`,
+          to: `+1${number}`
+        });
       } else {
         throw new Error('environment variables not loaded');
       }
