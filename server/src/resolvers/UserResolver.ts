@@ -18,8 +18,12 @@ import { sendRefreshToken } from '../sendRefreshToken';
 import { getConnection } from 'typeorm';
 import { verify } from 'jsonwebtoken';
 import { Profile } from '../entity/Profile';
+import { Invitation } from '../entity/Invitation';
+import { Status } from '../enums';
 
 const cloudinary = require('cloudinary');
+
+const INVITATIONS = 2;
 
 @ObjectType()
 class RegisterResponse {
@@ -184,6 +188,7 @@ export class UserResolver {
     @Arg('first') first: string,
     @Arg('last') last: string,
     @Arg('bio') bio: string,
+    @Arg('verificationCode') verificationCode: string,
     @Arg('profileImage') profileImage: string,
     @Arg('ogProfileImage') ogProfileImage: string
   ) {
@@ -290,6 +295,18 @@ export class UserResolver {
       };
     }
 
+    const invitation = await Invitation.findOne({
+      where: { active: Status.ACTIVE, number: phone, verificationCode }
+    });
+
+    if (!invitation) {
+      return {
+        res: false,
+        message: 'Please enter valid phone number, ex. 1234567890',
+        user: null
+      };
+    }
+
     let profileImageResult: any;
     let originalProfileImageResult: any;
     if (profileImage && ogProfileImage) {
@@ -349,9 +366,13 @@ export class UserResolver {
 
       user = new User();
       user.email = email;
+      user.invitations = INVITATIONS;
       user.password = hashedPassword;
       user.profile = profile;
       await User.save(user);
+
+      invitation.active = Status.INACTIVE;
+      await Invitation.save(invitation);
     } catch (err) {
       console.log(err);
       return {

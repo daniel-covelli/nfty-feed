@@ -30,6 +30,24 @@ export type GenericResponse = {
   message: Scalars['String'];
 };
 
+export type Invitation = {
+  __typename?: 'Invitation';
+  id: Scalars['Int'];
+  ownerId: Scalars['Float'];
+  number: Scalars['String'];
+  verificationCode: Scalars['Float'];
+  active: Scalars['Float'];
+  createdAt: Scalars['DateTime'];
+};
+
+export type InvitationResponse = {
+  __typename?: 'InvitationResponse';
+  res: Scalars['Boolean'];
+  message: Scalars['String'];
+  invitation?: Maybe<Invitation>;
+  user?: Maybe<User>;
+};
+
 export type Like = {
   __typename?: 'Like';
   id: Scalars['Int'];
@@ -61,6 +79,8 @@ export type Mutation = {
   remove: PostResponse;
   readd: PostResponse;
   createPost: PostResponse;
+  checkInvitation: VerificationResponse;
+  sendInvitation: InvitationResponse;
 };
 
 
@@ -78,6 +98,7 @@ export type MutationCheckEmailArgs = {
 export type MutationRegisterArgs = {
   ogProfileImage: Scalars['String'];
   profileImage: Scalars['String'];
+  verificationCode: Scalars['String'];
   bio: Scalars['String'];
   last: Scalars['String'];
   first: Scalars['String'];
@@ -152,14 +173,25 @@ export type MutationCreatePostArgs = {
   profileId: Scalars['Float'];
 };
 
+
+export type MutationCheckInvitationArgs = {
+  verificationCode: Scalars['String'];
+  number: Scalars['String'];
+};
+
+
+export type MutationSendInvitationArgs = {
+  number: Scalars['String'];
+};
+
 export type Post = {
   __typename?: 'Post';
   id: Scalars['Int'];
   owner: Profile;
   media: Scalars['String'];
-  artist: Scalars['String'];
+  artist?: Maybe<Scalars['String']>;
   title?: Maybe<Scalars['String']>;
-  link: Scalars['String'];
+  link?: Maybe<Scalars['String']>;
   type: Scalars['Float'];
   visibility: Scalars['Float'];
   removed: Scalars['Float'];
@@ -203,6 +235,7 @@ export type Query = {
   getTopPosts: Array<Post>;
   getTopPostsAdmin: Array<Post>;
   likes: Array<Like>;
+  invitations: Array<Invitation>;
 };
 
 
@@ -245,6 +278,7 @@ export type User = {
   __typename?: 'User';
   id: Scalars['Int'];
   email?: Maybe<Scalars['String']>;
+  invitations: Scalars['Float'];
   admin: Scalars['Float'];
   profile?: Maybe<Profile>;
 };
@@ -253,6 +287,12 @@ export type UserResponse = {
   __typename?: 'UserResponse';
   me: Scalars['Boolean'];
   user: User;
+};
+
+export type VerificationResponse = {
+  __typename?: 'VerificationResponse';
+  res: Scalars['Boolean'];
+  message: Scalars['String'];
 };
 
 export type ByeQueryVariables = Exact<{ [key: string]: never; }>;
@@ -273,6 +313,20 @@ export type CheckEmailMutation = (
   & { checkEmail: (
     { __typename?: 'GenericResponse' }
     & Pick<GenericResponse, 'res' | 'message'>
+  ) }
+);
+
+export type CheckInvitationMutationVariables = Exact<{
+  number: Scalars['String'];
+  verificationCode: Scalars['String'];
+}>;
+
+
+export type CheckInvitationMutation = (
+  { __typename?: 'Mutation' }
+  & { checkInvitation: (
+    { __typename?: 'VerificationResponse' }
+    & Pick<VerificationResponse, 'res' | 'message'>
   ) }
 );
 
@@ -509,7 +563,7 @@ export type LoginMutation = (
     & Pick<LoginResponse, 'accessToken'>
     & { user: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'email' | 'admin'>
+      & Pick<User, 'id' | 'email' | 'admin' | 'invitations'>
       & { profile?: Maybe<(
         { __typename?: 'Profile' }
         & Pick<Profile, 'id' | 'username' | 'first' | 'last' | 'profileImageId'>
@@ -533,7 +587,7 @@ export type MeQuery = (
   { __typename?: 'Query' }
   & { me?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'email' | 'admin'>
+    & Pick<User, 'id' | 'email' | 'admin' | 'invitations'>
     & { profile?: Maybe<(
       { __typename?: 'Profile' }
       & Pick<Profile, 'id' | 'first' | 'last' | 'username' | 'profileImageId'>
@@ -570,6 +624,7 @@ export type RegisterMutationVariables = Exact<{
   password: Scalars['String'];
   username: Scalars['String'];
   phone: Scalars['String'];
+  verificationCode: Scalars['String'];
   first: Scalars['String'];
   last: Scalars['String'];
   bio: Scalars['String'];
@@ -613,6 +668,30 @@ export type RemoveMutation = (
       ), likes: Array<(
         { __typename?: 'Like' }
         & Pick<Like, 'id'>
+      )> }
+    )> }
+  ) }
+);
+
+export type SendInvitationMutationVariables = Exact<{
+  number: Scalars['String'];
+}>;
+
+
+export type SendInvitationMutation = (
+  { __typename?: 'Mutation' }
+  & { sendInvitation: (
+    { __typename?: 'InvitationResponse' }
+    & Pick<InvitationResponse, 'res' | 'message'>
+    & { invitation?: Maybe<(
+      { __typename?: 'Invitation' }
+      & Pick<Invitation, 'id' | 'ownerId' | 'number' | 'verificationCode' | 'active' | 'createdAt'>
+    )>, user?: Maybe<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'email' | 'admin' | 'invitations'>
+      & { profile?: Maybe<(
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id' | 'first' | 'last' | 'username' | 'profileImageId'>
       )> }
     )> }
   ) }
@@ -778,6 +857,41 @@ export function useCheckEmailMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CheckEmailMutationHookResult = ReturnType<typeof useCheckEmailMutation>;
 export type CheckEmailMutationResult = Apollo.MutationResult<CheckEmailMutation>;
 export type CheckEmailMutationOptions = Apollo.BaseMutationOptions<CheckEmailMutation, CheckEmailMutationVariables>;
+export const CheckInvitationDocument = gql`
+    mutation CheckInvitation($number: String!, $verificationCode: String!) {
+  checkInvitation(number: $number, verificationCode: $verificationCode) {
+    res
+    message
+  }
+}
+    `;
+export type CheckInvitationMutationFn = Apollo.MutationFunction<CheckInvitationMutation, CheckInvitationMutationVariables>;
+
+/**
+ * __useCheckInvitationMutation__
+ *
+ * To run a mutation, you first call `useCheckInvitationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCheckInvitationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [checkInvitationMutation, { data, loading, error }] = useCheckInvitationMutation({
+ *   variables: {
+ *      number: // value for 'number'
+ *      verificationCode: // value for 'verificationCode'
+ *   },
+ * });
+ */
+export function useCheckInvitationMutation(baseOptions?: Apollo.MutationHookOptions<CheckInvitationMutation, CheckInvitationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CheckInvitationMutation, CheckInvitationMutationVariables>(CheckInvitationDocument, options);
+      }
+export type CheckInvitationMutationHookResult = ReturnType<typeof useCheckInvitationMutation>;
+export type CheckInvitationMutationResult = Apollo.MutationResult<CheckInvitationMutation>;
+export type CheckInvitationMutationOptions = Apollo.BaseMutationOptions<CheckInvitationMutation, CheckInvitationMutationVariables>;
 export const CreatePostDocument = gql`
     mutation CreatePost($profileId: Float!, $media: String!, $artist: String!, $title: String!, $link: String!, $type: Float!) {
   createPost(
@@ -1323,6 +1437,7 @@ export const LoginDocument = gql`
       id
       email
       admin
+      invitations
       profile {
         id
         username
@@ -1397,6 +1512,7 @@ export const MeDocument = gql`
     id
     email
     admin
+    invitations
     profile {
       id
       first
@@ -1489,7 +1605,7 @@ export type ReaddMutationHookResult = ReturnType<typeof useReaddMutation>;
 export type ReaddMutationResult = Apollo.MutationResult<ReaddMutation>;
 export type ReaddMutationOptions = Apollo.BaseMutationOptions<ReaddMutation, ReaddMutationVariables>;
 export const RegisterDocument = gql`
-    mutation Register($email: String!, $password: String!, $username: String!, $phone: String!, $first: String!, $last: String!, $bio: String!, $profileImage: String!, $ogProfileImage: String!) {
+    mutation Register($email: String!, $password: String!, $username: String!, $phone: String!, $verificationCode: String!, $first: String!, $last: String!, $bio: String!, $profileImage: String!, $ogProfileImage: String!) {
   register(
     email: $email
     password: $password
@@ -1497,6 +1613,7 @@ export const RegisterDocument = gql`
     phone: $phone
     first: $first
     last: $last
+    verificationCode: $verificationCode
     bio: $bio
     profileImage: $profileImage
     ogProfileImage: $ogProfileImage
@@ -1535,6 +1652,7 @@ export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, Regis
  *      password: // value for 'password'
  *      username: // value for 'username'
  *      phone: // value for 'phone'
+ *      verificationCode: // value for 'verificationCode'
  *      first: // value for 'first'
  *      last: // value for 'last'
  *      bio: // value for 'bio'
@@ -1604,6 +1722,61 @@ export function useRemoveMutation(baseOptions?: Apollo.MutationHookOptions<Remov
 export type RemoveMutationHookResult = ReturnType<typeof useRemoveMutation>;
 export type RemoveMutationResult = Apollo.MutationResult<RemoveMutation>;
 export type RemoveMutationOptions = Apollo.BaseMutationOptions<RemoveMutation, RemoveMutationVariables>;
+export const SendInvitationDocument = gql`
+    mutation SendInvitation($number: String!) {
+  sendInvitation(number: $number) {
+    res
+    message
+    invitation {
+      id
+      ownerId
+      number
+      verificationCode
+      active
+      createdAt
+    }
+    user {
+      id
+      email
+      admin
+      invitations
+      profile {
+        id
+        first
+        last
+        username
+        profileImageId
+      }
+    }
+  }
+}
+    `;
+export type SendInvitationMutationFn = Apollo.MutationFunction<SendInvitationMutation, SendInvitationMutationVariables>;
+
+/**
+ * __useSendInvitationMutation__
+ *
+ * To run a mutation, you first call `useSendInvitationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendInvitationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendInvitationMutation, { data, loading, error }] = useSendInvitationMutation({
+ *   variables: {
+ *      number: // value for 'number'
+ *   },
+ * });
+ */
+export function useSendInvitationMutation(baseOptions?: Apollo.MutationHookOptions<SendInvitationMutation, SendInvitationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SendInvitationMutation, SendInvitationMutationVariables>(SendInvitationDocument, options);
+      }
+export type SendInvitationMutationHookResult = ReturnType<typeof useSendInvitationMutation>;
+export type SendInvitationMutationResult = Apollo.MutationResult<SendInvitationMutation>;
+export type SendInvitationMutationOptions = Apollo.BaseMutationOptions<SendInvitationMutation, SendInvitationMutationVariables>;
 export const SubscribeDocument = gql`
     mutation Subscribe($userIdWhoIsBeingFollowed: Float!) {
   subscribe(userIdWhoIsBeingFollowed: $userIdWhoIsBeingFollowed) {

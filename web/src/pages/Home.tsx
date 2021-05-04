@@ -107,7 +107,7 @@ export const Home: React.FC<HomeProps> = () => {
                       overflow='scroll'
                       style={{ overscrollBehaviorY: 'contain' }}>
                       {data.users.map((x) => (
-                        <HStack pb='10px'>
+                        <HStack pb='10px' key={x.id}>
                           <Link
                             as={ReactLink}
                             _focus={{

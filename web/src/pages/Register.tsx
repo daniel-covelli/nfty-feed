@@ -7,7 +7,8 @@ import {
   MeDocument,
   useCheckEmailMutation,
   UsersQuery,
-  UsersDocument
+  UsersDocument,
+  useCheckInvitationMutation
 } from '../generated/graphql';
 import { RouteComponentProps } from 'react-router-dom';
 import { Link as ReactLink } from 'react-router-dom';
@@ -36,8 +37,10 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
   const { data: me } = useMeQuery();
   const [originalData, setOriginalData] = useState('');
   const [cropData, setCropData] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
   const [image, setImage] = useState([]);
   const [open, setOpen] = useState(false);
 
@@ -48,14 +51,14 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
   if (me && me.me) {
     history.push('/');
   }
-
+  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [register, { error }] = useRegisterMutation();
   const [login] = useLoginMutation();
+  const [
+    checkInvitation,
+    { loading: checkInvitationLoading }
+  ] = useCheckInvitationMutation();
   const toast = useToast();
-
-  useEffect(() => {
-    console.log('ORIGINAL DATA', originalData);
-  }, [originalData]);
 
   const onCropperModalClose = () => {
     setOriginalData('');
@@ -85,22 +88,21 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                 <Formik
                   initialValues={{
                     username: '',
-                    phone: '',
                     first: '',
                     last: '',
                     bio: ''
                   }}
-                  onSubmit={async ({ username, phone, first, last, bio }) => {
+                  onSubmit={async ({ username, first, last, bio }) => {
                     setRegistrationLoading(true);
-
                     const { data } = await register({
                       variables: {
                         email: loginEmail,
                         password: loginPassword,
                         profileImage: `${cropData ? cropData : ''}`,
                         ogProfileImage: `${cropData ? originalData : ''}`,
+                        phone: phoneNumber,
+                        verificationCode,
                         username,
-                        phone,
                         first,
                         last,
                         bio
@@ -199,7 +201,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                         )}
                       </Field>
                     </Box>
-                    <Box pb='10px'>
+                    {/* <Box pb='10px'>
                       <Field id='phone' name='phone'>
                         {({ field }) => (
                           <FormControl>
@@ -214,7 +216,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                           </FormControl>
                         )}
                       </Field>
-                    </Box>
+                    </Box> */}
                     <Box pb='10px'>
                       <Field id='first' name='first'>
                         {({ field }) => (
@@ -259,11 +261,11 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                 </Formik>
               </Box>
             </SlideFade>
-          ) : (
-            <>
-              <Box>
+          ) : isRegisterOpen ? (
+            <SlideFade in={isRegisterOpen}>
+              <Box pb='20px'>
                 <Text fontSize='lg'>
-                  <b>Register</b>
+                  <b>Credentials</b>
                 </Text>
               </Box>
               <Box>
@@ -319,6 +321,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                       <Field id='email' name='email'>
                         {({ field }) => (
                           <FormControl>
+                            <Text fontSize='xs'>Email</Text>
                             <Input {...field} id='email' placeholder='email' />
                           </FormControl>
                         )}
@@ -328,6 +331,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                       <Field id='password' name='password'>
                         {({ field }) => (
                           <FormControl>
+                            <Text fontSize='xs'>Password</Text>
                             <Input
                               w='250px'
                               {...field}
@@ -347,6 +351,82 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                         variant='outline'
                         size='sm'>
                         continue
+                      </Button>
+                    </Box>
+                  </Form>
+                </Formik>
+              </Box>
+            </SlideFade>
+          ) : (
+            <>
+              <Box pb='20px'>
+                <Text fontSize='lg'>
+                  <b>Register </b>
+                </Text>
+                <Text fontSize='sm' maxW='200px'>
+                  Verify your invitation
+                </Text>
+              </Box>
+              <Box>
+                <Formik
+                  initialValues={{ number: '', verificationCode: '' }}
+                  onSubmit={async ({ number, verificationCode }) => {
+                    const { data } = await checkInvitation({
+                      variables: { number, verificationCode }
+                    });
+                    if (!data.checkInvitation.res) {
+                      toast({
+                        title: data.checkInvitation.message,
+                        duration: 3000,
+                        status: 'error',
+                        position: 'top',
+                        variant: 'subtle',
+                        isClosable: true
+                      });
+                    } else {
+                      setPhoneNumber(number);
+                      setVerificationCode(verificationCode);
+                      setIsRegisterOpen(true);
+                    }
+                  }}>
+                  <Form>
+                    <Box pb='10px'>
+                      <Field id='number' name='number'>
+                        {({ field }) => (
+                          <FormControl>
+                            <Text fontSize='xs'>Phone number</Text>
+                            <Input
+                              {...field}
+                              id='number'
+                              placeholder='number'
+                            />
+                          </FormControl>
+                        )}
+                      </Field>
+                    </Box>
+                    <Box pb='10px'>
+                      <Field id='verificationCode' name='verificationCode'>
+                        {({ field }) => (
+                          <FormControl>
+                            <Text fontSize='xs'>Verification code</Text>
+                            <Input
+                              w='250px'
+                              {...field}
+                              id='verificationCode'
+                              placeholder='code'
+                            />
+                          </FormControl>
+                        )}
+                      </Field>
+                    </Box>
+                    <Box pb='10px'>
+                      <Button
+                        isLoading={checkInvitationLoading}
+                        type='submit'
+                        colorScheme='pink'
+                        variant='outline'
+                        size='sm'>
+                        Verify
                       </Button>
                     </Box>
                     <Text fontSize='sm'>

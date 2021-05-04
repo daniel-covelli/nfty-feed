@@ -3,6 +3,7 @@ mutation Register(
   $password: String!
   $username: String!
   $phone: String!
+  $verificationCode: String!
   $first: String!
   $last: String!
   $bio: String!
@@ -16,6 +17,7 @@ mutation Register(
     phone: $phone
     first: $first
     last: $last
+    verificationCode: $verificationCode
     bio: $bio
     profileImage: $profileImage
     ogProfileImage: $ogProfileImage

@@ -33,7 +33,6 @@ import {
   useLikeMutation,
   useUnlikeMutation
 } from '../../generated/graphql';
-import { LoadingPost } from './LoadingPost';
 
 interface PostProps {
   post: any;

@@ -1,0 +1,6 @@
+mutation CheckInvitation($number: String!, $verificationCode: String!) {
+  checkInvitation(number: $number, verificationCode: $verificationCode) {
+    res
+    message
+  }
+}

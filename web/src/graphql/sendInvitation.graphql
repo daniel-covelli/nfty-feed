@@ -1,0 +1,27 @@
+mutation SendInvitation($number: String!) {
+  sendInvitation(number: $number) {
+    res
+    message
+    invitation {
+      id
+      ownerId
+      number
+      verificationCode
+      active
+      createdAt
+    }
+    user {
+      id
+      email
+      admin
+      invitations
+      profile {
+        id
+        first
+        last
+        username
+        profileImageId
+      }
+    }
+  }
+}

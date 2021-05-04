@@ -21,7 +21,7 @@ export class Invitation extends BaseEntity {
 
   @Field()
   @Column()
-  number: number;
+  number: string;
 
   @Field()
   @Column()

@@ -24,10 +24,12 @@ import { setAccessToken } from '../../accessToken';
 import { Link as ReactLink } from 'react-router-dom';
 import { useMeQuery, useLogoutMutation } from '../../generated/graphql';
 import { ClickableAvatar, Size } from '../shared/ClickableAvatar';
-import { AtSignIcon } from '@chakra-ui/icons';
+import { AtSignIcon, EmailIcon } from '@chakra-ui/icons';
 import { IoIosHome } from 'react-icons/io';
 import { IoAdd, IoNotifications } from 'react-icons/io5';
 import { PostCreate } from '../post/PostCreate';
+import { SendInvitationLink } from './SendInvitationLink';
+import { InvitationModal } from '../invitation/InvitationModal';
 
 interface MenuLinksProps {
   isOpen: boolean;
@@ -46,6 +48,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
   const [logout, { client }] = useLogoutMutation();
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [postOpen, setPostOpen] = useState(false);
+  const [invitationOpen, setInvitationOpen] = useState(false);
   const [isTabletOrMobile] = useMediaQuery('(max-width: 767px)');
 
   let body: any = null;
@@ -73,6 +76,11 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
 
   const onCreate = () => {
     setPostOpen(true);
+  };
+
+  const onInvitationClick = () => {
+    setInvitationOpen(true);
+    console.log('INVITATION MODAL');
   };
 
   return (
@@ -162,12 +170,16 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
                 aria-label='notifications'
                 icon={<Icon as={IoNotifications} fontSize='20px' />}
                 colorScheme='pink'
-                variant='outline'
+                variant='ghost'
                 size='sm'
                 _focus={{
                   boxShadow: 'none'
                 }}
                 isDisabled
+              />
+              <SendInvitationLink
+                invitations={data.me.invitations}
+                onClick={onInvitationClick}
               />
               <IconButton
                 borderRadius='20px'
@@ -354,6 +366,11 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
         isOpen={postOpen}
         mobile={isTabletOrMobile}
         setIsOpen={setPostOpen}
+      />
+      <InvitationModal
+        isOpen={invitationOpen}
+        setOpen={setInvitationOpen}
+        invitations={data && data.me ? data.me.invitations : null}
       />
     </Box>
   );
