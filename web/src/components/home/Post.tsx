@@ -307,7 +307,7 @@ export const Post: React.FC<PostProps> = ({
                   loggedIn={loggedIn}
                   onClick={onUnlike}
                   icon={
-                    <Box zIndex={12} pt='3px'>
+                    <Box zIndex={12} mt='3px'>
                       <svg viewBox='0 0 1024 1024' height='22px' width='22px'>
                         <defs>
                           <linearGradient
