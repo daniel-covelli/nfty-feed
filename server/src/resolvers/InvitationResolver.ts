@@ -29,6 +29,16 @@ class InvitationResponse {
 }
 
 @ObjectType()
+class AdminInvitationResponse {
+  @Field()
+  res: Boolean;
+  @Field()
+  message: String;
+  @Field(() => Invitation, { nullable: true })
+  invitation: Invitation;
+}
+
+@ObjectType()
 class VerificationResponse {
   @Field()
   res: Boolean;
@@ -107,6 +117,62 @@ export class InvitationResolver {
     return { res: true, message: 'Success' };
   }
 
+  @Mutation(() => AdminInvitationResponse)
+  @UseMiddleware(isAuth)
+  async sendAdminInvitation(
+    @Ctx() { payload }: MyContext,
+    @Arg('number') number: string,
+    @Arg('code') code: string
+  ) {
+    if (!number) {
+      return { res: false, message: 'Please enter number', invitation: null };
+    }
+
+    if (!code) {
+      return { res: false, message: 'Please enter code', invitation: null };
+    }
+
+    const valid = number.match(/^[0-9]{10}$/);
+
+    if (!valid) {
+      return {
+        res: false,
+        message: 'Please enter valid phone number, ex. 1234567890',
+        invitation: null
+      };
+    }
+
+    const validCode = code.match(/^\d+$/);
+
+    if (!validCode) {
+      return {
+        res: false,
+        message: 'Please enter valid code, only number',
+        invitation: null
+      };
+    }
+
+    const user = await User.findOne(payload?.userId);
+
+    if (!user) {
+      return { res: false, message: 'Could not find user', invitation: null };
+    }
+
+    if (!user.admin) {
+      return { res: false, message: 'User is not an admin', invitation: null };
+    }
+
+    const invitation = new Invitation();
+    invitation.ownerId = Number(payload?.userId);
+    invitation.number = number;
+    invitation.verificationCode = Number(code);
+    invitation.active = Status.ACTIVE;
+
+    await Invitation.save(invitation);
+
+    return { res: true, message: 'Success!!', invitation: invitation };
+  }
+
   @Mutation(() => InvitationResponse)
   @UseMiddleware(isAuth)
   async sendInvitation(
@@ -180,7 +246,7 @@ export class InvitationResolver {
         const client = new Twilio(sid, authToken);
 
         client.messages.create({
-          body: `Your NftyFeed invitation code is: ${verificationCode} https://nftyfeed.com/register`,
+          body: `Your NftyFeed invitation code is: ${verificationCode}`,
           from: `${twilioNumber}`,
           to: `+1${number}`
         });

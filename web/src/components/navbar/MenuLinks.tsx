@@ -30,6 +30,7 @@ import { IoAdd, IoNotifications } from 'react-icons/io5';
 import { PostCreate } from '../post/PostCreate';
 import { SendInvitationLink } from './SendInvitationLink';
 import { InvitationModal } from '../invitation/InvitationModal';
+import { AdminInvitationModal } from '../invitation/AdminInvitationModal';
 
 interface MenuLinksProps {
   isOpen: boolean;
@@ -49,6 +50,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [postOpen, setPostOpen] = useState(false);
   const [invitationOpen, setInvitationOpen] = useState(false);
+  const [adminInvitationOpen, setAdminInvitaitonOpen] = useState(false);
   const [isTabletOrMobile] = useMediaQuery('(max-width: 767px)');
 
   let body: any = null;
@@ -81,6 +83,10 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
   const onInvitationClick = () => {
     setInvitationOpen(true);
     console.log('INVITATION MODAL');
+  };
+
+  const adminOpenInvitation = () => {
+    setAdminInvitaitonOpen(true);
   };
 
   return (
@@ -161,9 +167,19 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
           ) : (
             <>
               {data.me.admin ? (
-                <Tag size='lg' variant='outline' colorScheme='red'>
-                  Admin
-                </Tag>
+                <>
+                  <Tag size='lg' variant='outline' colorScheme='red'>
+                    Admin
+                  </Tag>
+                  <Button
+                    size='sm'
+                    onClick={adminOpenInvitation}
+                    _focus={{
+                      boxShadow: 'none'
+                    }}>
+                    Add invitation
+                  </Button>
+                </>
               ) : null}
               <IconButton
                 borderRadius='20px'
@@ -372,6 +388,12 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
         setOpen={setInvitationOpen}
         invitations={data && data.me ? data.me.invitations : null}
       />
+      {data && data.me && data.me.admin ? (
+        <AdminInvitationModal
+          isOpen={adminInvitationOpen}
+          setOpen={setAdminInvitaitonOpen}
+        />
+      ) : null}
     </Box>
   );
 };

@@ -16,6 +16,13 @@ export type Scalars = {
   DateTime: any;
 };
 
+export type AdminInvitationResponse = {
+  __typename?: 'AdminInvitationResponse';
+  res: Scalars['Boolean'];
+  message: Scalars['String'];
+  invitation?: Maybe<Invitation>;
+};
+
 
 export type EditResponse = {
   __typename?: 'EditResponse';
@@ -80,6 +87,7 @@ export type Mutation = {
   readd: PostResponse;
   createPost: PostResponse;
   checkInvitation: VerificationResponse;
+  sendAdminInvitation: AdminInvitationResponse;
   sendInvitation: InvitationResponse;
 };
 
@@ -176,6 +184,12 @@ export type MutationCreatePostArgs = {
 
 export type MutationCheckInvitationArgs = {
   verificationCode: Scalars['String'];
+  number: Scalars['String'];
+};
+
+
+export type MutationSendAdminInvitationArgs = {
+  code: Scalars['String'];
   number: Scalars['String'];
 };
 
@@ -669,6 +683,24 @@ export type RemoveMutation = (
         { __typename?: 'Like' }
         & Pick<Like, 'id'>
       )> }
+    )> }
+  ) }
+);
+
+export type SendAdminInvitationMutationVariables = Exact<{
+  number: Scalars['String'];
+  code: Scalars['String'];
+}>;
+
+
+export type SendAdminInvitationMutation = (
+  { __typename?: 'Mutation' }
+  & { sendAdminInvitation: (
+    { __typename?: 'AdminInvitationResponse' }
+    & Pick<AdminInvitationResponse, 'res' | 'message'>
+    & { invitation?: Maybe<(
+      { __typename?: 'Invitation' }
+      & Pick<Invitation, 'id' | 'ownerId' | 'number' | 'verificationCode' | 'active' | 'createdAt'>
     )> }
   ) }
 );
@@ -1725,6 +1757,49 @@ export function useRemoveMutation(baseOptions?: Apollo.MutationHookOptions<Remov
 export type RemoveMutationHookResult = ReturnType<typeof useRemoveMutation>;
 export type RemoveMutationResult = Apollo.MutationResult<RemoveMutation>;
 export type RemoveMutationOptions = Apollo.BaseMutationOptions<RemoveMutation, RemoveMutationVariables>;
+export const SendAdminInvitationDocument = gql`
+    mutation SendAdminInvitation($number: String!, $code: String!) {
+  sendAdminInvitation(number: $number, code: $code) {
+    res
+    message
+    invitation {
+      id
+      ownerId
+      number
+      verificationCode
+      active
+      createdAt
+    }
+  }
+}
+    `;
+export type SendAdminInvitationMutationFn = Apollo.MutationFunction<SendAdminInvitationMutation, SendAdminInvitationMutationVariables>;
+
+/**
+ * __useSendAdminInvitationMutation__
+ *
+ * To run a mutation, you first call `useSendAdminInvitationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendAdminInvitationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendAdminInvitationMutation, { data, loading, error }] = useSendAdminInvitationMutation({
+ *   variables: {
+ *      number: // value for 'number'
+ *      code: // value for 'code'
+ *   },
+ * });
+ */
+export function useSendAdminInvitationMutation(baseOptions?: Apollo.MutationHookOptions<SendAdminInvitationMutation, SendAdminInvitationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SendAdminInvitationMutation, SendAdminInvitationMutationVariables>(SendAdminInvitationDocument, options);
+      }
+export type SendAdminInvitationMutationHookResult = ReturnType<typeof useSendAdminInvitationMutation>;
+export type SendAdminInvitationMutationResult = Apollo.MutationResult<SendAdminInvitationMutation>;
+export type SendAdminInvitationMutationOptions = Apollo.BaseMutationOptions<SendAdminInvitationMutation, SendAdminInvitationMutationVariables>;
 export const SendInvitationDocument = gql`
     mutation SendInvitation($number: String!) {
   sendInvitation(number: $number) {

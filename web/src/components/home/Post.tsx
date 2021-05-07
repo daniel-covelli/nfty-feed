@@ -339,7 +339,7 @@ export const Post: React.FC<PostProps> = ({
                   }
                 />
               ) : (
-                <Box mt='6px' mb='6px'>
+                <Box mt='6px' mb='7px'>
                   <PostButton
                     isDisabled={false}
                     loggedIn={loggedIn}

@@ -1,0 +1,14 @@
+mutation SendAdminInvitation($number: String!, $code: String!) {
+  sendAdminInvitation(number: $number, code: $code) {
+    res
+    message
+    invitation {
+      id
+      ownerId
+      number
+      verificationCode
+      active
+      createdAt
+    }
+  }
+}

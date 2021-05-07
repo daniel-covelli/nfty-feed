@@ -25,7 +25,12 @@ import {
   SimpleGrid,
   SlideFade,
   useDisclosure,
-  Textarea
+  Textarea,
+  Alert,
+  AlertTitle,
+  AlertIcon,
+  AlertDescription,
+  CloseButton
 } from '@chakra-ui/react';
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { setAccessToken } from '../accessToken';
@@ -35,6 +40,7 @@ import { DropzoneComponent } from '../components/register/DropzoneComponent';
 export const Register: React.FC<RouteComponentProps> = ({ history }) => {
   const { isOpen, onToggle } = useDisclosure();
   const { data: me } = useMeQuery();
+  const [alertVisible, setAlertVisible] = useState(true);
   const [originalData, setOriginalData] = useState('');
   const [cropData, setCropData] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -102,10 +108,10 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                         ogProfileImage: `${cropData ? originalData : ''}`,
                         phone: phoneNumber,
                         verificationCode,
-                        username,
-                        first,
-                        last,
-                        bio
+                        username: `${username ? username : ''}`,
+                        first: `${first ? first : ''}`,
+                        last: `${last ? last : ''}`,
+                        bio: `${bio ? bio : ''}`
                       },
                       update: (store, { data }) => {
                         const old = store.readQuery<UsersQuery>({
@@ -187,7 +193,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                       />
                     </Center>
                     <Box pb='10px'>
-                      <Field id='username' name='username'>
+                      <Field id='username' name='username' key={'username'}>
                         {({ field }) => (
                           <FormControl>
                             <Text fontSize='xs'>Username</Text>
@@ -263,11 +269,12 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
             </SlideFade>
           ) : isRegisterOpen ? (
             <SlideFade in={isRegisterOpen}>
-              <Box pb='20px'>
-                <Text fontSize='lg'>
+              <Box>
+                <Text fontSize='lg' pb='10px'>
                   <b>Register</b>
                 </Text>
               </Box>
+
               <Box>
                 <Formik
                   initialValues={{ email: '', password: '' }}
@@ -353,6 +360,25 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                         continue
                       </Button>
                     </Box>
+
+                    <Alert
+                      status='success'
+                      w='250px'
+                      opacity={alertVisible ? 1 : 0}
+                      transition={'0.3s'}>
+                      <AlertIcon />
+                      <Box flex='1'>
+                        <AlertTitle fontSize='sm'>
+                          Congrats, you're in!
+                        </AlertTitle>
+                        <CloseButton
+                          onClick={() => setAlertVisible(false)}
+                          position='absolute'
+                          right='8px'
+                          top='8px'
+                        />
+                      </Box>
+                    </Alert>
                   </Form>
                 </Formik>
               </Box>
