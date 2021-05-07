@@ -405,7 +405,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                       <Field id='verificationCode' name='verificationCode'>
                         {({ field }) => (
                           <FormControl>
-                            <Text fontSize='xs'>Verification code</Text>
+                            <Text fontSize='xs'>Invitation code</Text>
                             <Input
                               w='250px'
                               {...field}

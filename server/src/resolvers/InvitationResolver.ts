@@ -180,7 +180,7 @@ export class InvitationResolver {
         const client = new Twilio(sid, authToken);
 
         client.messages.create({
-          body: `Your NftyFeed verification code is: ${verificationCode} https://nftyfeed.com/register`,
+          body: `Your NftyFeed invitation code is: ${verificationCode} https://nftyfeed.com/register`,
           from: `${twilioNumber}`,
           to: `+1${number}`
         });

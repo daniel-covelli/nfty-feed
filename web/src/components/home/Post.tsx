@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
+import Moment from 'react-moment';
 import {
   Box,
   VStack,
@@ -15,7 +16,9 @@ import {
   Avatar,
   Badge,
   Spinner,
-  Skeleton
+  Skeleton,
+  Link,
+  Divider
 } from '@chakra-ui/react';
 import { IoEllipsisHorizontal } from 'react-icons/io5';
 import { LinkableAvatar } from '../shared/LinkableAvatar';
@@ -25,6 +28,7 @@ import { AiFillFire, AiOutlineFire } from 'react-icons/ai';
 import { PostModal } from './PostModal';
 import { ContentModal } from './ContentModal';
 import { PostButton } from './PostButton';
+
 import {
   useInvisibleMutation,
   useVisibleMutation,
@@ -237,10 +241,9 @@ export const Post: React.FC<PostProps> = ({
             </Center>
           </LinkOverlay>
         </Box>
-
         <Flex w='100%' pt='3px' px='5px' pb='5px'>
-          <Box>
-            <HStack pt='4px'>
+          <VStack spacing={0} align='start'>
+            <HStack pt='2px'>
               {loggedIn ? (
                 <LinkableAvatar
                   profilePhoto={post.owner.profileImageId}
@@ -259,6 +262,7 @@ export const Post: React.FC<PostProps> = ({
               {loggedIn ? (
                 <Box pb='3px'>
                   <LinkableText
+                    color={'black'}
                     text={post.owner.username}
                     route={loggedIn ? `/at/${post.owner.username}` : '/'}
                     size={Size.SM}
@@ -271,11 +275,21 @@ export const Post: React.FC<PostProps> = ({
                 </Text>
               )}
             </HStack>
-          </Box>
-          <Spacer />
+            <Text
+              pt='4px'
+              fontSize='10px'
+              color='gray.500'
+              textTransform='uppercase'>
+              <b>
+                <Moment fromNow date={post.createdAt} />
+              </b>
+            </Text>
+          </VStack>
 
-          <HStack spacing={4}>
-            {/* <Box pb='18px'>
+          <Spacer />
+          <VStack spacing={0} align='flex-end'>
+            <HStack spacing={4}>
+              {/* <Box pb='18px'>
             <PostButton
               isDisabled={true}
               loggedIn={loggedIn}
@@ -283,7 +297,7 @@ export const Post: React.FC<PostProps> = ({
               icon={<Icon as={AiOutlineLink} h={6} w={6} />}
             />
           </Box> */}
-            {/* <Box pb='18px'>
+              {/* <Box pb='18px'>
             <PostButton
               isDisabled={true}
               loggedIn={loggedIn}
@@ -291,7 +305,7 @@ export const Post: React.FC<PostProps> = ({
               icon={<Icon as={AiOutlineInfoCircle} h={6} w={6} />}
             />
           </Box> */}
-            {/* <Box pb='18px'>
+              {/* <Box pb='18px'>
             <PostButton
               isDisabled={false}
               loggedIn={loggedIn}
@@ -300,15 +314,14 @@ export const Post: React.FC<PostProps> = ({
             />
           </Box> */}
 
-            <VStack spacing={0}>
               {liked ? (
                 <PostButton
                   isDisabled={false}
                   loggedIn={loggedIn}
                   onClick={onUnlike}
                   icon={
-                    <Box zIndex={12} mt='3px'>
-                      <svg viewBox='0 0 1024 1024' height='22px' width='22px'>
+                    <Box zIndex={12} my='7px'>
+                      <svg viewBox='0 0 1024 1024' height='24px' width='24px'>
                         <defs>
                           <linearGradient
                             id='gradient'
@@ -326,21 +339,35 @@ export const Post: React.FC<PostProps> = ({
                   }
                 />
               ) : (
-                <PostButton
-                  isDisabled={false}
-                  loggedIn={loggedIn}
-                  onClick={onLike}
-                  icon={<Icon as={AiOutlineFire} h='22px' w='22px' />}
-                />
+                <Box mt='6px' mb='6px'>
+                  <PostButton
+                    isDisabled={false}
+                    loggedIn={loggedIn}
+                    onClick={onLike}
+                    icon={<Icon as={AiOutlineFire} h='24px' w='24px' />}
+                  />
+                </Box>
               )}
 
-              <Text fontSize='xs' color={loggedIn ? 'gray.700' : 'gray.400'}>
-                <b>{likes}</b>
-              </Text>
-            </VStack>
-          </HStack>
+              {/* <Text fontSize='xs' color={loggedIn ? 'gray.700' : 'gray.400'}>
+                  <b>{likes}</b>
+                </Text> */}
+            </HStack>
+            <Text fontSize='10px' color={loggedIn ? 'black' : 'gray.400'}>
+              <b>
+                {likes}{' '}
+                <Link
+                  onClick={
+                    loggedIn ? () => console.log('likes clicked') : null
+                  }>
+                  like{likes > 1 || likes === 0 ? 's' : null}
+                </Link>
+              </b>
+            </Text>
+          </VStack>
         </Flex>
       </VStack>
+
       <PostModal open={open} onClose={closeModal} post={post} />
       <ContentModal
         isOpen={contentModal}

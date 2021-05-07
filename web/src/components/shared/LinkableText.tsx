@@ -7,6 +7,7 @@ interface LinkableTextProps {
   route: string;
   size: Size;
   bold: boolean;
+  color: string;
   text: string;
 }
 
@@ -14,7 +15,8 @@ export const LinkableText: React.FC<LinkableTextProps> = ({
   route,
   size,
   bold,
-  text
+  text,
+  color
 }) => {
   return (
     <Link
@@ -22,9 +24,10 @@ export const LinkableText: React.FC<LinkableTextProps> = ({
       to={route}
       _focus={{
         boxShadow: 'none'
-      }}
-      _hover={{ textDecoration: 'none' }}>
-      <Text size={size}>{bold ? <b>{text}</b> : { text }}</Text>
+      }}>
+      <Text color={color} size={size}>
+        {bold ? <b>{text}</b> : { text }}
+      </Text>
     </Link>
   );
 };

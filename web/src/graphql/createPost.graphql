@@ -26,10 +26,10 @@ mutation CreatePost(
         last
       }
       media
+      title
       artist
       link
       type
-      title
       visibility
       removed
       likes {
@@ -38,6 +38,7 @@ mutation CreatePost(
           id
         }
       }
+      createdAt
     }
   }
 }

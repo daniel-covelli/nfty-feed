@@ -21,5 +21,6 @@ query GetTopPosts {
         id
       }
     }
+    createdAt
   }
 }

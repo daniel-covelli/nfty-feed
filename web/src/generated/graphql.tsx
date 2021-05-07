@@ -347,7 +347,7 @@ export type CreatePostMutation = (
     & Pick<PostResponse, 'res' | 'message'>
     & { post?: Maybe<(
       { __typename?: 'Post' }
-      & Pick<Post, 'id' | 'media' | 'artist' | 'link' | 'type' | 'title' | 'visibility' | 'removed'>
+      & Pick<Post, 'id' | 'media' | 'title' | 'artist' | 'link' | 'type' | 'visibility' | 'removed' | 'createdAt'>
       & { owner: (
         { __typename?: 'Profile' }
         & Pick<Profile, 'id' | 'username' | 'profileImageId' | 'first' | 'last'>
@@ -432,7 +432,7 @@ export type GetTopPostsQuery = (
   { __typename?: 'Query' }
   & { getTopPosts: Array<(
     { __typename?: 'Post' }
-    & Pick<Post, 'id' | 'media' | 'title' | 'artist' | 'link' | 'type' | 'visibility' | 'removed'>
+    & Pick<Post, 'id' | 'media' | 'title' | 'artist' | 'link' | 'type' | 'visibility' | 'removed' | 'createdAt'>
     & { owner: (
       { __typename?: 'Profile' }
       & Pick<Profile, 'id' | 'username' | 'profileImageId' | 'first' | 'last'>
@@ -454,7 +454,7 @@ export type GetTopPostsAdminQuery = (
   { __typename?: 'Query' }
   & { getTopPostsAdmin: Array<(
     { __typename?: 'Post' }
-    & Pick<Post, 'id' | 'media' | 'artist' | 'link' | 'type' | 'title' | 'visibility' | 'removed'>
+    & Pick<Post, 'id' | 'media' | 'title' | 'artist' | 'link' | 'type' | 'visibility' | 'removed' | 'createdAt'>
     & { owner: (
       { __typename?: 'Profile' }
       & Pick<Profile, 'id' | 'username' | 'profileImageId' | 'first' | 'last'>
@@ -914,10 +914,10 @@ export const CreatePostDocument = gql`
         last
       }
       media
+      title
       artist
       link
       type
-      title
       visibility
       removed
       likes {
@@ -926,6 +926,7 @@ export const CreatePostDocument = gql`
           id
         }
       }
+      createdAt
     }
   }
 }
@@ -1154,6 +1155,7 @@ export const GetTopPostsDocument = gql`
         id
       }
     }
+    createdAt
   }
 }
     `;
@@ -1196,10 +1198,10 @@ export const GetTopPostsAdminDocument = gql`
       last
     }
     media
+    title
     artist
     link
     type
-    title
     visibility
     removed
     likes {
@@ -1208,6 +1210,7 @@ export const GetTopPostsAdminDocument = gql`
         id
       }
     }
+    createdAt
   }
 }
     `;
