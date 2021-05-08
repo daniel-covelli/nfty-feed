@@ -152,57 +152,56 @@ export const Post: React.FC<PostProps> = ({
       <VStack spacing='5px'>
         {admin || profileId === post.owner.id ? (
           <Flex w='100%' px='5px' pt='5px'>
-            <Box>
-              {admin ? (
-                <>
-                  <Text>
-                    Post: {post.id} Visibility: {post.visibility} Removed:{' '}
-                    {post.removed}
-                  </Text>
-                  <HStack>
-                    {post.visibility === 1 ? (
-                      <Button
-                        size='sm'
-                        isLoading={loadingInvisible}
-                        onClick={makeInvisibleOnClick}>
-                        make invisible
-                      </Button>
-                    ) : (
-                      <Button
-                        size='sm'
-                        isLoading={loadingVisible}
-                        onClick={makeVisibleOnClick}>
-                        make visible
-                      </Button>
-                    )}
-                    {post.removed === 1 ? (
-                      <Button
-                        size='sm'
-                        isLoading={loadingRemove}
-                        onClick={removeOnClick}>
-                        remove post
-                      </Button>
-                    ) : (
-                      <Button
-                        size='sm'
-                        isLoading={loadingReadd}
-                        onClick={readdOnClick}>
-                        readd post
-                      </Button>
-                    )}
+            {admin ? (
+              <Box>
+                <Text>
+                  Post: {post.id} Visibility: {post.visibility} Removed:{' '}
+                  {post.removed}
+                </Text>
+                <HStack>
+                  {post.visibility === 1 ? (
+                    <Button
+                      size='sm'
+                      isLoading={loadingInvisible}
+                      onClick={makeInvisibleOnClick}>
+                      make invisible
+                    </Button>
+                  ) : (
+                    <Button
+                      size='sm'
+                      isLoading={loadingVisible}
+                      onClick={makeVisibleOnClick}>
+                      make visible
+                    </Button>
+                  )}
+                  {post.removed === 1 ? (
+                    <Button
+                      size='sm'
+                      isLoading={loadingRemove}
+                      onClick={removeOnClick}>
+                      remove post
+                    </Button>
+                  ) : (
+                    <Button
+                      size='sm'
+                      isLoading={loadingReadd}
+                      onClick={readdOnClick}>
+                      readd post
+                    </Button>
+                  )}
 
-                    {post.visibility === 0 ? (
-                      <Badge colorScheme='red'>Invisible</Badge>
-                    ) : null}
-                    {post.removed === 0 ? (
-                      <Badge colorScheme='red'>Removed</Badge>
-                    ) : null}
-                  </HStack>
-                </>
-              ) : null}
-            </Box>
+                  {post.visibility === 0 ? (
+                    <Badge colorScheme='red'>Invisible</Badge>
+                  ) : null}
+                  {post.removed === 0 ? (
+                    <Badge colorScheme='red'>Removed</Badge>
+                  ) : null}
+                </HStack>
+              </Box>
+            ) : null}
+
             <Spacer />
-            <Box pt='24px'>
+            <Box pt={admin ? '24px' : '0px'}>
               {profileId === post.owner.id ? (
                 <IconButton
                   isDisabled
