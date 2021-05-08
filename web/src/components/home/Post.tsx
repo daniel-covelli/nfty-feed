@@ -17,8 +17,7 @@ import {
   Badge,
   Spinner,
   Skeleton,
-  Link,
-  Divider
+  Link
 } from '@chakra-ui/react';
 import { IoEllipsisHorizontal } from 'react-icons/io5';
 import { LinkableAvatar } from '../shared/LinkableAvatar';
@@ -36,7 +35,6 @@ import {
   useReaddMutation,
   useLikeMutation,
   useUnlikeMutation,
-  useLikedByCurrentProfileLazyQuery,
   useLikedByCurrentProfileQuery
 } from '../../generated/graphql';
 
@@ -91,10 +89,6 @@ export const Post: React.FC<PostProps> = ({
     setLiked(!liked);
     setLikes(likes - 1);
     await unlike({ variables: { postId: parseFloat(post.id) } });
-  };
-
-  const openModal = () => {
-    setOpen(true);
   };
 
   const closeModal = () => {

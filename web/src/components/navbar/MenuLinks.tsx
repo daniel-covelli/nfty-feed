@@ -24,7 +24,7 @@ import { setAccessToken } from '../../accessToken';
 import { Link as ReactLink } from 'react-router-dom';
 import { useMeQuery, useLogoutMutation } from '../../generated/graphql';
 import { ClickableAvatar, Size } from '../shared/ClickableAvatar';
-import { AtSignIcon, EmailIcon } from '@chakra-ui/icons';
+import { AtSignIcon } from '@chakra-ui/icons';
 import { IoIosHome } from 'react-icons/io';
 import { IoAdd, IoNotifications } from 'react-icons/io5';
 import { PostCreate } from '../post/PostCreate';

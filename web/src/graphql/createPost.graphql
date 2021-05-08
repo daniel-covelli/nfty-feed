@@ -32,12 +32,7 @@ mutation CreatePost(
       type
       visibility
       removed
-      likes {
-        id
-        owner {
-          id
-        }
-      }
+      numberOfLikes
       createdAt
     }
   }

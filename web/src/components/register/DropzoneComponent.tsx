@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Dropzone from 'react-dropzone';
-import { Box, IconButton, Spinner, Link, useToast } from '@chakra-ui/react';
-import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
+import { Box, Spinner, Link, useToast } from '@chakra-ui/react';
+
 import { DisplayButtons } from '../shared/DisplayButtons';
 
 interface DropzoneComponentProps {

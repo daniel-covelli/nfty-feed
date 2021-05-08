@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, createRef } from 'react';
+import React, { useRef } from 'react';
 import Dropzone from 'react-dropzone';
 import { Box, Text, useToast } from '@chakra-ui/react';
 

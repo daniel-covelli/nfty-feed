@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   useRegisterMutation,
   useLoginMutation,
@@ -29,7 +29,6 @@ import {
   Alert,
   AlertTitle,
   AlertIcon,
-  AlertDescription,
   CloseButton
 } from '@chakra-ui/react';
 import { ArrowForwardIcon } from '@chakra-ui/icons';

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { Box, Button } from '@chakra-ui/react';
 import Cropper from 'react-cropper';
 import 'cropperjs/dist/cropper.css';

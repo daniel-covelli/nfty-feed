@@ -27,7 +27,7 @@ export const AdminInvitationModal: React.FC<AdminInvitationModalProps> = ({
   isOpen,
   setOpen
 }) => {
-  const [sendAdminInvitation, { loading }] = useSendAdminInvitationMutation();
+  const [sendAdminInvitation] = useSendAdminInvitationMutation();
   const onClose = () => {
     setOpen(false);
   };

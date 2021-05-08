@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   useUsersQuery,
-  useGetTopPostsQuery,
   useMeQuery,
   useGetTopPostsAdminLazyQuery,
   useGetTopPostsLazyQuery
@@ -35,7 +34,7 @@ export const Home: React.FC<HomeProps> = () => {
   ] = useGetTopPostsAdminLazyQuery();
   const { data: me, loading: meLoading } = useMeQuery();
 
-  const [isSmall] = useMediaQuery('(max-width: 670px)');
+  // const [isSmall] = useMediaQuery('(max-width: 670px)');
   const [isNotDesktop] = useMediaQuery('(max-width: 1024px)');
 
   let admin: boolean = false;
@@ -49,9 +48,7 @@ export const Home: React.FC<HomeProps> = () => {
 
   useEffect(() => {
     if (me && me.me) {
-      {
-        me.me.admin ? getTopPostsAdmin() : getTopPosts();
-      }
+      me.me.admin ? getTopPostsAdmin() : getTopPosts();
     } else {
       getTopPosts();
     }

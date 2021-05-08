@@ -20,7 +20,6 @@ import {
   VStack,
   Spacer,
   Center,
-  LinkOverlay,
   ButtonGroup,
   IconButton,
   Modal,
@@ -33,8 +32,7 @@ import {
   FormControl,
   Input,
   Textarea,
-  useToast,
-  LinkBox
+  useToast
 } from '@chakra-ui/react';
 import {
   useGetUserQuery,

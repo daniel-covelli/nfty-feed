@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { Box, Text, IconButton, Tooltip } from '@chakra-ui/react';
+import React from 'react';
+import { Box, Text, IconButton } from '@chakra-ui/react';
 import { EmailIcon } from '@chakra-ui/icons';
 
 interface SendInvitationLinkProps {
@@ -11,9 +11,10 @@ export const SendInvitationLink: React.FC<SendInvitationLinkProps> = ({
   invitations,
   onClick
 }) => {
+  const invites = 0;
   return (
     <Box postion='relative'>
-      {0 > 0 ? (
+      {invites > 0 ? (
         <Box
           zIndex={10}
           position='absolute'

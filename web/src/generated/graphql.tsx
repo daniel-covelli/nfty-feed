@@ -304,6 +304,7 @@ export type User = {
   invitations: Scalars['Float'];
   admin: Scalars['Float'];
   profile?: Maybe<Profile>;
+  createdAt: Scalars['DateTime'];
 };
 
 export type UserResponse = {
@@ -370,18 +371,11 @@ export type CreatePostMutation = (
     & Pick<PostResponse, 'res' | 'message'>
     & { post?: Maybe<(
       { __typename?: 'Post' }
-      & Pick<Post, 'id' | 'media' | 'title' | 'artist' | 'link' | 'type' | 'visibility' | 'removed' | 'createdAt'>
+      & Pick<Post, 'id' | 'media' | 'title' | 'artist' | 'link' | 'type' | 'visibility' | 'removed' | 'numberOfLikes' | 'createdAt'>
       & { owner: (
         { __typename?: 'Profile' }
         & Pick<Profile, 'id' | 'username' | 'profileImageId' | 'first' | 'last'>
-      ), likes: Array<(
-        { __typename?: 'Like' }
-        & Pick<Like, 'id'>
-        & { owner?: Maybe<(
-          { __typename?: 'Profile' }
-          & Pick<Profile, 'id'>
-        )> }
-      )> }
+      ) }
     )> }
   ) }
 );
@@ -958,12 +952,7 @@ export const CreatePostDocument = gql`
       type
       visibility
       removed
-      likes {
-        id
-        owner {
-          id
-        }
-      }
+      numberOfLikes
       createdAt
     }
   }

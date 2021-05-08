@@ -7,7 +7,6 @@ import {
   ModalHeader,
   ModalBody,
   Text,
-  ModalFooter,
   Button,
   Center,
   VStack,
@@ -18,11 +17,7 @@ import {
   useToast
 } from '@chakra-ui/react';
 import { Formik, Form, Field } from 'formik';
-import {
-  useSendInvitationMutation,
-  MeQuery,
-  MeDocument
-} from '../../generated/graphql';
+import { useSendInvitationMutation } from '../../generated/graphql';
 
 interface InvitationModalProps {
   isOpen: boolean;
