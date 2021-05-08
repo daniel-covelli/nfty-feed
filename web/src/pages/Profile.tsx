@@ -3,7 +3,7 @@ import {
   Text,
   Box,
   SkeletonCircle,
-  SkeletonText,
+  Skeleton,
   Link,
   HStack,
   Container,
@@ -115,8 +115,10 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
   if (loading) {
     return (
       <Box padding='6'>
-        <SkeletonCircle size='10' />
-        <SkeletonText mt='4' noOfLines={4} spacing='4' />
+        <HStack spacing={'30px'}>
+          <SkeletonCircle size='100px' />
+          <Skeleton w='calc(100% - 100px - 30px)' h='100px' />
+        </HStack>
       </Box>
     );
   }
