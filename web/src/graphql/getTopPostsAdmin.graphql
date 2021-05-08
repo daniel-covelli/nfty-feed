@@ -15,12 +15,7 @@ query GetTopPostsAdmin {
     type
     visibility
     removed
-    likes {
-      id
-      owner {
-        id
-      }
-    }
+    numberOfLikes
     createdAt
   }
 }

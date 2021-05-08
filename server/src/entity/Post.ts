@@ -54,10 +54,12 @@ export class Post extends BaseEntity {
   @Column('int', { default: GlobalStatus.VISIBLE })
   removed: GlobalStatus;
 
+  @Field()
+  @Column('int', { default: 0 })
+  numberOfLikes: number;
+
   @Field(() => [Like])
-  @OneToMany(() => Like, (like) => like.post, {
-    eager: true
-  })
+  @OneToMany(() => Like, (like) => like.post)
   likes: Like[];
 
   @Field()

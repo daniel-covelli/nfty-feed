@@ -35,7 +35,9 @@ import {
   useRemoveMutation,
   useReaddMutation,
   useLikeMutation,
-  useUnlikeMutation
+  useUnlikeMutation,
+  useLikedByCurrentProfileLazyQuery,
+  useLikedByCurrentProfileQuery
 } from '../../generated/graphql';
 
 interface PostProps {
@@ -57,21 +59,27 @@ export const Post: React.FC<PostProps> = ({
   const [unlike] = useUnlikeMutation();
   const [removePost, { loading: loadingRemove }] = useRemoveMutation();
   const [readdPost, { loading: loadingReadd }] = useReaddMutation();
-  const [liked, setLiked] = useState(false);
+  const {
+    data: likedByUser,
+    loading: likedLoading
+  } = useLikedByCurrentProfileQuery({
+    variables: { profileId: profileId, postId: post.id }
+  });
+  const [liked, setLiked] = useState<boolean>(false);
   const [oppacity, setOppacity] = useState(0);
   const [open, setOpen] = useState(false);
   const [contentModal, setContentModal] = useState(false);
   const [likes, setLikes] = useState(0);
 
   useEffect(() => {
-    setLikes(post.likes.length);
-    if (profileId !== -1) {
-      const likedByCurrentUser = post.likes.some(
-        (like) => like.owner.id === profileId
-      );
-      setLiked(likedByCurrentUser);
-    }
+    setLikes(post.numberOfLikes);
   }, []);
+
+  useEffect(() => {
+    if (likedByUser) {
+      setLiked(likedByUser.likedByCurrentProfile);
+    }
+  }, [likedByUser]);
 
   const onLike = async () => {
     setLiked(!liked);
@@ -313,8 +321,11 @@ export const Post: React.FC<PostProps> = ({
               icon={<Icon as={AiOutlineExpand} h={6} w={6} />}
             />
           </Box> */}
-
-              {liked ? (
+              {likedLoading ? (
+                <Box mt='8px' mb='6px'>
+                  <Spinner color='gray.400' size='xs' />
+                </Box>
+              ) : liked ? (
                 <PostButton
                   isDisabled={false}
                   loggedIn={loggedIn}
@@ -326,8 +337,8 @@ export const Post: React.FC<PostProps> = ({
                           <linearGradient
                             id='gradient'
                             gradientTransform='rotate(90)'>
-                            <stop offset='5%' stop-color='red' />
-                            <stop offset='80%' stop-color='orange' />
+                            <stop offset='5%' stopColor='red' />
+                            <stop offset='80%' stopColor='orange' />
                           </linearGradient>
                         </defs>
                         <path
@@ -338,6 +349,8 @@ export const Post: React.FC<PostProps> = ({
                     </Box>
                   }
                 />
+              ) : likedLoading ? (
+                <Skeleton width='20px' heigh='5px' />
               ) : (
                 <Box mt='6px' mb='6px'>
                   <PostButton

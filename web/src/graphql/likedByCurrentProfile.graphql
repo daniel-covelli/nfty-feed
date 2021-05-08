@@ -1,0 +1,3 @@
+query LikedByCurrentProfile($profileId: Float!, $postId: Float!) {
+  likedByCurrentProfile(profileId: $profileId, postId: $postId)
+}

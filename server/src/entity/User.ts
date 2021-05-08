@@ -4,7 +4,8 @@ import {
   Column,
   BaseEntity,
   OneToOne,
-  JoinColumn
+  JoinColumn,
+  CreateDateColumn
 } from 'typeorm';
 import { ObjectType, Field, Int } from 'type-graphql';
 import { Profile } from './Profile';
@@ -43,4 +44,8 @@ export class User extends BaseEntity {
   })
   @JoinColumn()
   profile?: Profile;
+
+  @Field()
+  @CreateDateColumn()
+  createdAt: Date;
 }

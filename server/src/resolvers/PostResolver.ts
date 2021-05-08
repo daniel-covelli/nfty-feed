@@ -57,7 +57,7 @@ export class PostResolver {
       throw new Error(`Unable to find profile`);
     }
 
-    const post = await Post.findOne({ id: postId });
+    const post = await Post.findOne(postId, { relations: ['likes'] });
 
     if (!post) {
       throw new Error(`Unable to find post`);
@@ -78,6 +78,7 @@ export class PostResolver {
     await Like.save(like);
 
     post.likes = [...post.likes, like];
+    post.numberOfLikes = post.likes.length;
 
     await Post.save(post);
 
@@ -100,7 +101,7 @@ export class PostResolver {
       throw new Error(`Unable to find profile`);
     }
 
-    const post = await Post.findOne({ id: postId });
+    const post = await Post.findOne(postId, { relations: ['likes'] });
 
     if (!post) {
       throw new Error(`Unable to find post`);
@@ -117,6 +118,8 @@ export class PostResolver {
     const index = post.likes.findIndex((like) => like.id === existingLike.id);
 
     post.likes.splice(index, 1);
+
+    post.numberOfLikes = post.numberOfLikes - 1;
 
     await Post.save(post);
 

@@ -86,6 +86,7 @@ export type Mutation = {
   remove: PostResponse;
   readd: PostResponse;
   createPost: PostResponse;
+  setAllLikes: Array<Post>;
   checkInvitation: VerificationResponse;
   sendAdminInvitation: AdminInvitationResponse;
   sendInvitation: InvitationResponse;
@@ -209,6 +210,7 @@ export type Post = {
   type: Scalars['Float'];
   visibility: Scalars['Float'];
   removed: Scalars['Float'];
+  numberOfLikes: Scalars['Float'];
   likes: Array<Like>;
   createdAt: Scalars['DateTime'];
 };
@@ -249,6 +251,7 @@ export type Query = {
   getTopPosts: Array<Post>;
   getTopPostsAdmin: Array<Post>;
   likes: Array<Like>;
+  likedByCurrentProfile: Scalars['Boolean'];
   invitations: Array<Invitation>;
 };
 
@@ -270,6 +273,12 @@ export type QueryGetActiveFollowingArgs = {
 
 export type QueryExistingSubscriptionArgs = {
   userId: Scalars['Float'];
+};
+
+
+export type QueryLikedByCurrentProfileArgs = {
+  postId: Scalars['Float'];
+  profileId: Scalars['Float'];
 };
 
 export type RegisterResponse = {
@@ -446,18 +455,11 @@ export type GetTopPostsQuery = (
   { __typename?: 'Query' }
   & { getTopPosts: Array<(
     { __typename?: 'Post' }
-    & Pick<Post, 'id' | 'media' | 'title' | 'artist' | 'link' | 'type' | 'visibility' | 'removed' | 'createdAt'>
+    & Pick<Post, 'id' | 'media' | 'title' | 'artist' | 'link' | 'type' | 'visibility' | 'removed' | 'numberOfLikes' | 'createdAt'>
     & { owner: (
       { __typename?: 'Profile' }
       & Pick<Profile, 'id' | 'username' | 'profileImageId' | 'first' | 'last'>
-    ), likes: Array<(
-      { __typename?: 'Like' }
-      & Pick<Like, 'id'>
-      & { owner?: Maybe<(
-        { __typename?: 'Profile' }
-        & Pick<Profile, 'id'>
-      )> }
-    )> }
+    ) }
   )> }
 );
 
@@ -468,18 +470,11 @@ export type GetTopPostsAdminQuery = (
   { __typename?: 'Query' }
   & { getTopPostsAdmin: Array<(
     { __typename?: 'Post' }
-    & Pick<Post, 'id' | 'media' | 'title' | 'artist' | 'link' | 'type' | 'visibility' | 'removed' | 'createdAt'>
+    & Pick<Post, 'id' | 'media' | 'title' | 'artist' | 'link' | 'type' | 'visibility' | 'removed' | 'numberOfLikes' | 'createdAt'>
     & { owner: (
       { __typename?: 'Profile' }
       & Pick<Profile, 'id' | 'username' | 'profileImageId' | 'first' | 'last'>
-    ), likes: Array<(
-      { __typename?: 'Like' }
-      & Pick<Like, 'id'>
-      & { owner?: Maybe<(
-        { __typename?: 'Profile' }
-        & Pick<Profile, 'id'>
-      )> }
-    )> }
+    ) }
   )> }
 );
 
@@ -562,6 +557,17 @@ export type LikeMutation = (
       )> }
     )> }
   ) }
+);
+
+export type LikedByCurrentProfileQueryVariables = Exact<{
+  profileId: Scalars['Float'];
+  postId: Scalars['Float'];
+}>;
+
+
+export type LikedByCurrentProfileQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'likedByCurrentProfile'>
 );
 
 export type LoginMutationVariables = Exact<{
@@ -1181,12 +1187,7 @@ export const GetTopPostsDocument = gql`
     type
     visibility
     removed
-    likes {
-      id
-      owner {
-        id
-      }
-    }
+    numberOfLikes
     createdAt
   }
 }
@@ -1236,12 +1237,7 @@ export const GetTopPostsAdminDocument = gql`
     type
     visibility
     removed
-    likes {
-      id
-      owner {
-        id
-      }
-    }
+    numberOfLikes
     createdAt
   }
 }
@@ -1464,6 +1460,40 @@ export function useLikeMutation(baseOptions?: Apollo.MutationHookOptions<LikeMut
 export type LikeMutationHookResult = ReturnType<typeof useLikeMutation>;
 export type LikeMutationResult = Apollo.MutationResult<LikeMutation>;
 export type LikeMutationOptions = Apollo.BaseMutationOptions<LikeMutation, LikeMutationVariables>;
+export const LikedByCurrentProfileDocument = gql`
+    query LikedByCurrentProfile($profileId: Float!, $postId: Float!) {
+  likedByCurrentProfile(profileId: $profileId, postId: $postId)
+}
+    `;
+
+/**
+ * __useLikedByCurrentProfileQuery__
+ *
+ * To run a query within a React component, call `useLikedByCurrentProfileQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLikedByCurrentProfileQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLikedByCurrentProfileQuery({
+ *   variables: {
+ *      profileId: // value for 'profileId'
+ *      postId: // value for 'postId'
+ *   },
+ * });
+ */
+export function useLikedByCurrentProfileQuery(baseOptions: Apollo.QueryHookOptions<LikedByCurrentProfileQuery, LikedByCurrentProfileQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<LikedByCurrentProfileQuery, LikedByCurrentProfileQueryVariables>(LikedByCurrentProfileDocument, options);
+      }
+export function useLikedByCurrentProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LikedByCurrentProfileQuery, LikedByCurrentProfileQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<LikedByCurrentProfileQuery, LikedByCurrentProfileQueryVariables>(LikedByCurrentProfileDocument, options);
+        }
+export type LikedByCurrentProfileQueryHookResult = ReturnType<typeof useLikedByCurrentProfileQuery>;
+export type LikedByCurrentProfileLazyQueryHookResult = ReturnType<typeof useLikedByCurrentProfileLazyQuery>;
+export type LikedByCurrentProfileQueryResult = Apollo.QueryResult<LikedByCurrentProfileQuery, LikedByCurrentProfileQueryVariables>;
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   login(email: $email, password: $password) {
