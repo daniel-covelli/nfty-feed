@@ -252,6 +252,7 @@ export type Query = {
   getTopPostsAdmin: Array<Post>;
   likes: Array<Like>;
   likedByCurrentProfile: Scalars['Boolean'];
+  getLikes: Array<Like>;
   invitations: Array<Invitation>;
 };
 
@@ -279,6 +280,11 @@ export type QueryExistingSubscriptionArgs = {
 export type QueryLikedByCurrentProfileArgs = {
   postId: Scalars['Float'];
   profileId: Scalars['Float'];
+};
+
+
+export type QueryGetLikesArgs = {
+  postId: Scalars['Float'];
 };
 
 export type RegisterResponse = {
@@ -442,6 +448,23 @@ export type GetActiveFollowingQuery = (
   )> }
 );
 
+export type GetLikesQueryVariables = Exact<{
+  postId: Scalars['Float'];
+}>;
+
+
+export type GetLikesQuery = (
+  { __typename?: 'Query' }
+  & { getLikes: Array<(
+    { __typename?: 'Like' }
+    & Pick<Like, 'id' | 'createdAt'>
+    & { owner?: Maybe<(
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'id' | 'profileImageId' | 'username' | 'first' | 'last'>
+    )> }
+  )> }
+);
+
 export type GetTopPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -544,10 +567,10 @@ export type LikeMutation = (
       & Pick<Profile, 'id' | 'username' | 'profileImageId' | 'first' | 'last'>
     ), likes: Array<(
       { __typename?: 'Like' }
-      & Pick<Like, 'id'>
+      & Pick<Like, 'id' | 'createdAt'>
       & { owner?: Maybe<(
         { __typename?: 'Profile' }
-        & Pick<Profile, 'id'>
+        & Pick<Profile, 'id' | 'profileImageId' | 'username' | 'first' | 'last'>
       )> }
     )> }
   ) }
@@ -757,10 +780,10 @@ export type UnlikeMutation = (
       & Pick<Profile, 'id' | 'username' | 'profileImageId' | 'first' | 'last'>
     ), likes: Array<(
       { __typename?: 'Like' }
-      & Pick<Like, 'id'>
+      & Pick<Like, 'id' | 'createdAt'>
       & { owner?: Maybe<(
         { __typename?: 'Profile' }
-        & Pick<Profile, 'id'>
+        & Pick<Profile, 'id' | 'profileImageId' | 'username' | 'first' | 'last'>
       )> }
     )> }
   ) }
@@ -1158,6 +1181,49 @@ export function useGetActiveFollowingLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type GetActiveFollowingQueryHookResult = ReturnType<typeof useGetActiveFollowingQuery>;
 export type GetActiveFollowingLazyQueryHookResult = ReturnType<typeof useGetActiveFollowingLazyQuery>;
 export type GetActiveFollowingQueryResult = Apollo.QueryResult<GetActiveFollowingQuery, GetActiveFollowingQueryVariables>;
+export const GetLikesDocument = gql`
+    query GetLikes($postId: Float!) {
+  getLikes(postId: $postId) {
+    id
+    owner {
+      id
+      profileImageId
+      username
+      first
+      last
+    }
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useGetLikesQuery__
+ *
+ * To run a query within a React component, call `useGetLikesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLikesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetLikesQuery({
+ *   variables: {
+ *      postId: // value for 'postId'
+ *   },
+ * });
+ */
+export function useGetLikesQuery(baseOptions: Apollo.QueryHookOptions<GetLikesQuery, GetLikesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetLikesQuery, GetLikesQueryVariables>(GetLikesDocument, options);
+      }
+export function useGetLikesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLikesQuery, GetLikesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetLikesQuery, GetLikesQueryVariables>(GetLikesDocument, options);
+        }
+export type GetLikesQueryHookResult = ReturnType<typeof useGetLikesQuery>;
+export type GetLikesLazyQueryHookResult = ReturnType<typeof useGetLikesLazyQuery>;
+export type GetLikesQueryResult = Apollo.QueryResult<GetLikesQuery, GetLikesQueryVariables>;
 export const GetTopPostsDocument = gql`
     query GetTopPosts {
   getTopPosts {
@@ -1418,7 +1484,12 @@ export const LikeDocument = gql`
       id
       owner {
         id
+        profileImageId
+        username
+        first
+        last
       }
+      createdAt
     }
   }
 }
@@ -1932,7 +2003,12 @@ export const UnlikeDocument = gql`
       id
       owner {
         id
+        profileImageId
+        username
+        first
+        last
       }
+      createdAt
     }
   }
 }

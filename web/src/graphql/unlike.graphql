@@ -19,7 +19,12 @@ mutation Unlike($postId: Float!) {
       id
       owner {
         id
+        profileImageId
+        username
+        first
+        last
       }
+      createdAt
     }
   }
 }

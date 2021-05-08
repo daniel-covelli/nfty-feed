@@ -1,6 +1,7 @@
-import { Resolver, Query, Arg, Mutation } from 'type-graphql';
+import { Resolver, Query, Arg, Mutation, UseMiddleware } from 'type-graphql';
 import { Like } from '../entity/Like';
 import { Post } from '../entity/Post';
+import { isAuth } from '../isAuth';
 
 @Resolver()
 export class LikeResolver {
@@ -31,6 +32,31 @@ export class LikeResolver {
     );
 
     return likedByCurrentProfile;
+  }
+
+  @Query(() => [Like])
+  @UseMiddleware(isAuth)
+  async getLikes(@Arg('postId') postId: number) {
+    const post = await Post.findOne(postId, { relations: ['likes'] });
+
+    if (!post) {
+      throw new Error('No post found');
+    }
+
+    // const likes = await getRepository(Post)
+    //   .createQueryBuilder('post')
+    //   .leftJoinAndSelect('post.likes', 'likes')
+    //   .leftJoinAndSelect('likes.owner', 'owner')
+    //   .where('post.id = :id', { id: postId })
+    //   .getMany();
+
+    // console.log('LIKES', likes);
+
+    const orderedLikes = post.likes.sort(
+      (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+    );
+
+    return orderedLikes;
   }
 
   @Mutation(() => [Post])

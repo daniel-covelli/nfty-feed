@@ -1,0 +1,13 @@
+query GetLikes($postId: Float!) {
+  getLikes(postId: $postId) {
+    id
+    owner {
+      id
+      profileImageId
+      username
+      first
+      last
+    }
+    createdAt
+  }
+}

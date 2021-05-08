@@ -37,6 +37,7 @@ import {
   useUnlikeMutation,
   useLikedByCurrentProfileQuery
 } from '../../generated/graphql';
+import { PostLikesModal } from '../post/PostLikesModal';
 
 interface PostProps {
   post: any;
@@ -66,6 +67,7 @@ export const Post: React.FC<PostProps> = ({
   const [liked, setLiked] = useState<boolean>(false);
   const [oppacity, setOppacity] = useState(0);
   const [open, setOpen] = useState(false);
+  const [likesModal, setLikesModal] = useState(false);
   const [contentModal, setContentModal] = useState(false);
   const [likes, setLikes] = useState(0);
 
@@ -139,6 +141,10 @@ export const Post: React.FC<PostProps> = ({
     await readdPost({
       variables: { postId: parseFloat(post.id) }
     });
+  };
+
+  const openLikesModal = () => {
+    setLikesModal(true);
   };
 
   return (
@@ -363,10 +369,7 @@ export const Post: React.FC<PostProps> = ({
             <Text fontSize='10px' color={loggedIn ? 'black' : 'gray.400'}>
               <b>
                 {likes}{' '}
-                <Link
-                  onClick={
-                    loggedIn ? () => console.log('likes clicked') : null
-                  }>
+                <Link onClick={loggedIn ? openLikesModal : null}>
                   like{likes > 1 || likes === 0 ? 's' : null}
                 </Link>
               </b>
@@ -374,7 +377,11 @@ export const Post: React.FC<PostProps> = ({
           </VStack>
         </Flex>
       </VStack>
-
+      <PostLikesModal
+        isOpen={likesModal}
+        setOpen={setLikesModal}
+        postId={post.id}
+      />
       <PostModal open={open} onClose={closeModal} post={post} />
       <ContentModal
         isOpen={contentModal}
