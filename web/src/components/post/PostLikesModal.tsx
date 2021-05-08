@@ -55,9 +55,11 @@ export const PostLikesModal: React.FC<PostLikesModalProps> = ({
         />
         <Divider />
         {loading ? (
-          <Center>
-            <Spinner />
-          </Center>
+          <Box height='400px' maxH='90vh'>
+            <Center>
+              <Spinner color='gray.500' />
+            </Center>
+          </Box>
         ) : (
           <Box
             px='10px'
@@ -76,7 +78,7 @@ export const PostLikesModal: React.FC<PostLikesModalProps> = ({
                 </Center>
               ) : (
                 likes.getLikes.map((like) => (
-                  <HStack spacing={3} pb='5px'>
+                  <HStack spacing={3} pb='5px' key={like.id}>
                     <LinkableAvatar
                       profilePhoto={like.owner.profileImageId}
                       first={like.owner.first}
