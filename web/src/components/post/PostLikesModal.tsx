@@ -66,8 +66,16 @@ export const PostLikesModal: React.FC<PostLikesModalProps> = ({
             height='400px'
             maxH='90vh'
             overflow='scroll'>
-            {likes
-              ? likes.getLikes.map((like) => (
+            {likes ? (
+              likes.getLikes.length === 0 ? (
+                <Center>
+                  <VStack pt='30px'>
+                    <Text color='gray.500'>No likes on this post yet</Text>
+                    <Text color='gray.500'>¯\_₍⸍⸌̣ʷ̣̫⸍̣⸌₎_/¯</Text>
+                  </VStack>
+                </Center>
+              ) : (
+                likes.getLikes.map((like) => (
                   <HStack spacing={3} pb='5px'>
                     <LinkableAvatar
                       profilePhoto={like.owner.profileImageId}
@@ -108,7 +116,8 @@ export const PostLikesModal: React.FC<PostLikesModalProps> = ({
                     </Box>
                   </HStack>
                 ))
-              : null}
+              )
+            ) : null}
           </Box>
         )}
       </ModalContent>

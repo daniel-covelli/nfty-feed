@@ -210,7 +210,7 @@ export const PostCreate: React.FC<PostCreateProps> = ({
                       }
                     }
                   });
-
+                  console.log('IN POST CREATE');
                   if (!data.createPost.res) {
                     toast({
                       title: data.createPost.message,
@@ -228,8 +228,9 @@ export const PostCreate: React.FC<PostCreateProps> = ({
                       variant: 'subtle',
                       isClosable: true
                     });
+                    close();
                   }
-                  close();
+
                   setLoading(false);
                 }}>
                 <Center>

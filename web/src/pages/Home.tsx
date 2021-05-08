@@ -139,15 +139,17 @@ export const Home: React.FC<HomeProps> = () => {
           ) : (
             <Center>
               <Box w='100%' maxW='600px'>
-                {posts.map((post) => (
-                  <Post
-                    key={post.id}
-                    post={post}
-                    admin={admin}
-                    loggedIn={loggedIn}
-                    profileId={me.me ? me.me.profile.id : -1}
-                  />
-                ))}
+                {posts.map((post) =>
+                  post ? (
+                    <Post
+                      key={post.id}
+                      post={post}
+                      admin={admin}
+                      loggedIn={loggedIn}
+                      profileId={me.me ? me.me.profile.id : -1}
+                    />
+                  ) : null
+                )}
               </Box>
             </Center>
           )}
