@@ -278,24 +278,27 @@ export class PostResolver {
   }
 
   @Query(() => [Post])
-  async getTopPosts() {
+  async getTopPosts(@Arg('page') page: number) {
     const posts = await Post.find({
       where: { visibility: VisStatus.VISIBLE, removed: GlobalStatus.VISIBLE },
       order: {
         createdAt: 'DESC'
       },
-      take: 10,
+      take: 4,
+      skip: 4 * (page - 1),
       relations: ['owner']
     });
     return posts;
   }
 
   @Query(() => [Post])
-  async getTopPostsAdmin() {
+  async getTopPostsAdmin(@Arg('page') page: number) {
     const posts = await Post.find({
       order: {
         createdAt: 'DESC'
       },
+      take: 4,
+      skip: 4 * (page - 1),
       relations: ['likes', 'likes.owner']
     });
     return posts;

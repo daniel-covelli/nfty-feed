@@ -283,6 +283,16 @@ export type QueryGetUsersPostsArgs = {
 };
 
 
+export type QueryGetTopPostsArgs = {
+  page: Scalars['Float'];
+};
+
+
+export type QueryGetTopPostsAdminArgs = {
+  page: Scalars['Float'];
+};
+
+
 export type QueryLikedByCurrentProfileArgs = {
   postId: Scalars['Float'];
   profileId: Scalars['Float'];
@@ -471,7 +481,9 @@ export type GetLikesQuery = (
   )> }
 );
 
-export type GetTopPostsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetTopPostsQueryVariables = Exact<{
+  page: Scalars['Float'];
+}>;
 
 
 export type GetTopPostsQuery = (
@@ -486,7 +498,9 @@ export type GetTopPostsQuery = (
   )> }
 );
 
-export type GetTopPostsAdminQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetTopPostsAdminQueryVariables = Exact<{
+  page: Scalars['Float'];
+}>;
 
 
 export type GetTopPostsAdminQuery = (
@@ -1228,8 +1242,8 @@ export type GetLikesQueryHookResult = ReturnType<typeof useGetLikesQuery>;
 export type GetLikesLazyQueryHookResult = ReturnType<typeof useGetLikesLazyQuery>;
 export type GetLikesQueryResult = Apollo.QueryResult<GetLikesQuery, GetLikesQueryVariables>;
 export const GetTopPostsDocument = gql`
-    query GetTopPosts {
-  getTopPosts {
+    query GetTopPosts($page: Float!) {
+  getTopPosts(page: $page) {
     id
     owner {
       id
@@ -1263,10 +1277,11 @@ export const GetTopPostsDocument = gql`
  * @example
  * const { data, loading, error } = useGetTopPostsQuery({
  *   variables: {
+ *      page: // value for 'page'
  *   },
  * });
  */
-export function useGetTopPostsQuery(baseOptions?: Apollo.QueryHookOptions<GetTopPostsQuery, GetTopPostsQueryVariables>) {
+export function useGetTopPostsQuery(baseOptions: Apollo.QueryHookOptions<GetTopPostsQuery, GetTopPostsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetTopPostsQuery, GetTopPostsQueryVariables>(GetTopPostsDocument, options);
       }
@@ -1278,8 +1293,8 @@ export type GetTopPostsQueryHookResult = ReturnType<typeof useGetTopPostsQuery>;
 export type GetTopPostsLazyQueryHookResult = ReturnType<typeof useGetTopPostsLazyQuery>;
 export type GetTopPostsQueryResult = Apollo.QueryResult<GetTopPostsQuery, GetTopPostsQueryVariables>;
 export const GetTopPostsAdminDocument = gql`
-    query GetTopPostsAdmin {
-  getTopPostsAdmin {
+    query GetTopPostsAdmin($page: Float!) {
+  getTopPostsAdmin(page: $page) {
     id
     owner {
       id
@@ -1313,10 +1328,11 @@ export const GetTopPostsAdminDocument = gql`
  * @example
  * const { data, loading, error } = useGetTopPostsAdminQuery({
  *   variables: {
+ *      page: // value for 'page'
  *   },
  * });
  */
-export function useGetTopPostsAdminQuery(baseOptions?: Apollo.QueryHookOptions<GetTopPostsAdminQuery, GetTopPostsAdminQueryVariables>) {
+export function useGetTopPostsAdminQuery(baseOptions: Apollo.QueryHookOptions<GetTopPostsAdminQuery, GetTopPostsAdminQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetTopPostsAdminQuery, GetTopPostsAdminQueryVariables>(GetTopPostsAdminDocument, options);
       }

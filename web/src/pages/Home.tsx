@@ -48,9 +48,13 @@ export const Home: React.FC<HomeProps> = () => {
 
   useEffect(() => {
     if (me && me.me) {
-      me.me.admin ? getTopPostsAdmin() : getTopPosts();
+      me.me.admin
+        ? getTopPostsAdmin({ variables: { page: 1 } })
+        : getTopPosts({ variables: { page: 1 } });
     } else {
-      getTopPosts();
+      if (me) {
+        getTopPosts({ variables: { page: 1 } });
+      }
     }
   }, [me]);
 
@@ -160,121 +164,3 @@ export const Home: React.FC<HomeProps> = () => {
     </>
   );
 };
-
-// {post.type === 1 ? (
-//   <Icon as={IoSync} color='gray.500' h={5} w={5} />
-// ) : (
-//   <Icon as={IoFingerPrint} color='gray.500' h={5} w={5} />
-// )}
-
-// {!isSmall ? (
-//   <Table size='sm'>
-//     <Thead>
-//       <Tr>
-//         <Th>Avatar</Th>
-//         <Th>Id</Th>
-//         <Th>Username</Th>
-//         <Th>Email</Th>
-//       </Tr>
-//     </Thead>
-//     <Tbody>
-//       {data.users.map((x) => (
-//         <Tr key={x.id}>
-//           <Td>
-//             <Link
-//               as={ReactLink}
-//               _focus={{
-//                 boxShadow: 'none'
-//               }}
-//               to={`at/${x.profile ? x.profile.username : x.id}`}>
-//               {x.profile ? (
-//                 <Avatar
-//                   name={`${x.profile.first} ${x.profile.last}`}
-//                   size='sm'
-//                   src={
-//                     x.profile.profileImageId
-//                       ? `${x.profile.profileImageId}`
-//                       : ''
-//                   }
-//                 />
-//               ) : (
-//                 <Avatar size='sm' />
-//               )}
-//             </Link>
-//           </Td>
-//           <Td>{x.id}</Td>
-//           <Td>
-//             <Link
-//               as={ReactLink}
-//               _focus={{
-//                 boxShadow: 'none'
-//               }}
-//               to={`at/${x.profile ? x.profile.username : x.id}`}>
-//               <b>
-//                 {x.profile ? (
-//                   <Text>{x.profile.username}</Text>
-//                 ) : (
-//                   'no username'
-//                 )}
-//               </b>
-//             </Link>
-//           </Td>
-//           <Td>{x.email ? x.email : 'no email'}</Td>
-//         </Tr>
-//       ))}
-//     </Tbody>
-//   </Table>
-// ) : (
-//   <Table variant='simple' size='sm'>
-//     <Thead>
-//       <Tr>
-//         <Th>Avatar</Th>
-//         <Th>Email</Th>
-//       </Tr>
-//     </Thead>
-//     <Tbody>
-//       {data.users.map((x) => (
-//         <Tr key={x.id}>
-//           <Td>
-//             <Link
-//               as={ReactLink}
-//               _focus={{
-//                 boxShadow: 'none'
-//               }}
-//               to={`at/${x.profile ? x.profile.username : x.id}`}>
-//               {x.profile ? (
-//                 <Avatar
-//                   name={`${x.profile.first} ${x.profile.last}`}
-//                   size='sm'
-//                   src={
-//                     x.profile.profileImageId
-//                       ? `${x.profile.profileImageId}`
-//                       : ''
-//                   }
-//                 />
-//               ) : (
-//                 <Avatar size='sm' />
-//               )}
-//             </Link>
-//           </Td>
-//           <Td>
-//             <Link
-//               as={ReactLink}
-//               _focus={{
-//                 boxShadow: 'none'
-//               }}
-//               to={`at/${x.profile ? x.profile.username : x.id}`}>
-//               {x.profile ? (
-//                 <b>
-//                   <Text maxW='110px'>{x.email}</Text>
-//                 </b>
-//               ) : (
-//                 'no username'
-//               )}
-//             </Link>
-//           </Td>
-//         </Tr>
-//       ))}
-//     </Tbody>
-//   </Table>
-// )}

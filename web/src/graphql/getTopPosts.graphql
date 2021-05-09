@@ -1,5 +1,5 @@
-query GetTopPosts {
-  getTopPosts {
+query GetTopPosts($page: Float!) {
+  getTopPosts(page: $page) {
     id
     owner {
       id
