@@ -18,12 +18,8 @@ mutation Visible($postId: Float!) {
       type
       visibility
       removed
-      likes {
-        id
-        owner {
-          id
-        }
-      }
+      numberOfLikes
+      createdAt
     }
   }
 }

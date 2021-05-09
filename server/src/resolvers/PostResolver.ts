@@ -128,6 +128,20 @@ export class PostResolver {
     return post;
   }
 
+  @Query(() => [Post])
+  @UseMiddleware(isAuth)
+  async getUsersPosts(@Arg('profileId') profileId: number) {
+    const posts = await Post.find({
+      where: { owner: { id: profileId }, removed: GlobalStatus.VISIBLE }
+    });
+
+    if (!posts) {
+      throw new Error('No posts found');
+    }
+
+    return posts;
+  }
+
   @Mutation(() => PostResponse)
   @UseMiddleware(isAuth)
   async invisible(
@@ -282,7 +296,6 @@ export class PostResolver {
       order: {
         createdAt: 'DESC'
       },
-      take: 10,
       relations: ['likes', 'likes.owner']
     });
     return posts;

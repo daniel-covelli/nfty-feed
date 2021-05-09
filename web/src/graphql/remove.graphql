@@ -18,9 +18,8 @@ mutation Remove($postId: Float!) {
       type
       visibility
       removed
-      likes {
-        id
-      }
+      numberOfLikes
+      createdAt
     }
   }
 }

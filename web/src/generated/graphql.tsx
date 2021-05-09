@@ -248,6 +248,7 @@ export type Query = {
   getActiveFollowing: Array<Subscription>;
   existingSubscription: Scalars['Boolean'];
   posts: Array<Post>;
+  getUsersPosts: Array<Post>;
   getTopPosts: Array<Post>;
   getTopPostsAdmin: Array<Post>;
   likes: Array<Like>;
@@ -274,6 +275,11 @@ export type QueryGetActiveFollowingArgs = {
 
 export type QueryExistingSubscriptionArgs = {
   userId: Scalars['Float'];
+};
+
+
+export type QueryGetUsersPostsArgs = {
+  profileId: Scalars['Float'];
 };
 
 
@@ -516,6 +522,23 @@ export type GetUserQuery = (
   )> }
 );
 
+export type GetUsersPostsQueryVariables = Exact<{
+  profileId: Scalars['Float'];
+}>;
+
+
+export type GetUsersPostsQuery = (
+  { __typename?: 'Query' }
+  & { getUsersPosts: Array<(
+    { __typename?: 'Post' }
+    & Pick<Post, 'id' | 'media' | 'title' | 'artist' | 'link' | 'type' | 'visibility' | 'removed' | 'numberOfLikes' | 'createdAt'>
+    & { owner: (
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'id' | 'username' | 'profileImageId' | 'first' | 'last'>
+    ) }
+  )> }
+);
+
 export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -536,18 +559,11 @@ export type InvisibleMutation = (
     & Pick<PostResponse, 'res' | 'message'>
     & { post?: Maybe<(
       { __typename?: 'Post' }
-      & Pick<Post, 'id' | 'media' | 'title' | 'artist' | 'link' | 'type' | 'visibility' | 'removed'>
+      & Pick<Post, 'id' | 'media' | 'title' | 'artist' | 'link' | 'type' | 'visibility' | 'removed' | 'numberOfLikes' | 'createdAt'>
       & { owner: (
         { __typename?: 'Profile' }
         & Pick<Profile, 'id' | 'username' | 'profileImageId' | 'first' | 'last'>
-      ), likes: Array<(
-        { __typename?: 'Like' }
-        & Pick<Like, 'id'>
-        & { owner?: Maybe<(
-          { __typename?: 'Profile' }
-          & Pick<Profile, 'id'>
-        )> }
-      )> }
+      ) }
     )> }
   ) }
 );
@@ -644,14 +660,11 @@ export type ReaddMutation = (
     & Pick<PostResponse, 'res' | 'message'>
     & { post?: Maybe<(
       { __typename?: 'Post' }
-      & Pick<Post, 'id' | 'media' | 'title' | 'artist' | 'link' | 'type' | 'visibility' | 'removed'>
+      & Pick<Post, 'id' | 'media' | 'title' | 'artist' | 'link' | 'type' | 'visibility' | 'removed' | 'numberOfLikes' | 'createdAt'>
       & { owner: (
         { __typename?: 'Profile' }
         & Pick<Profile, 'id' | 'username' | 'profileImageId' | 'first' | 'last'>
-      ), likes: Array<(
-        { __typename?: 'Like' }
-        & Pick<Like, 'id'>
-      )> }
+      ) }
     )> }
   ) }
 );
@@ -698,14 +711,11 @@ export type RemoveMutation = (
     & Pick<PostResponse, 'res' | 'message'>
     & { post?: Maybe<(
       { __typename?: 'Post' }
-      & Pick<Post, 'id' | 'media' | 'title' | 'artist' | 'link' | 'type' | 'visibility' | 'removed'>
+      & Pick<Post, 'id' | 'media' | 'title' | 'artist' | 'link' | 'type' | 'visibility' | 'removed' | 'numberOfLikes' | 'createdAt'>
       & { owner: (
         { __typename?: 'Profile' }
         & Pick<Profile, 'id' | 'username' | 'profileImageId' | 'first' | 'last'>
-      ), likes: Array<(
-        { __typename?: 'Like' }
-        & Pick<Like, 'id'>
-      )> }
+      ) }
     )> }
   ) }
 );
@@ -829,18 +839,11 @@ export type VisibleMutation = (
     & Pick<PostResponse, 'res' | 'message'>
     & { post?: Maybe<(
       { __typename?: 'Post' }
-      & Pick<Post, 'id' | 'media' | 'title' | 'artist' | 'link' | 'type' | 'visibility' | 'removed'>
+      & Pick<Post, 'id' | 'media' | 'title' | 'artist' | 'link' | 'type' | 'visibility' | 'removed' | 'numberOfLikes' | 'createdAt'>
       & { owner: (
         { __typename?: 'Profile' }
         & Pick<Profile, 'id' | 'username' | 'profileImageId' | 'first' | 'last'>
-      ), likes: Array<(
-        { __typename?: 'Like' }
-        & Pick<Like, 'id'>
-        & { owner?: Maybe<(
-          { __typename?: 'Profile' }
-          & Pick<Profile, 'id'>
-        )> }
-      )> }
+      ) }
     )> }
   ) }
 );
@@ -1373,6 +1376,57 @@ export function useGetUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Ge
 export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
 export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
 export type GetUserQueryResult = Apollo.QueryResult<GetUserQuery, GetUserQueryVariables>;
+export const GetUsersPostsDocument = gql`
+    query GetUsersPosts($profileId: Float!) {
+  getUsersPosts(profileId: $profileId) {
+    id
+    owner {
+      id
+      username
+      profileImageId
+      first
+      last
+    }
+    media
+    title
+    artist
+    link
+    type
+    visibility
+    removed
+    numberOfLikes
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useGetUsersPostsQuery__
+ *
+ * To run a query within a React component, call `useGetUsersPostsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUsersPostsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUsersPostsQuery({
+ *   variables: {
+ *      profileId: // value for 'profileId'
+ *   },
+ * });
+ */
+export function useGetUsersPostsQuery(baseOptions: Apollo.QueryHookOptions<GetUsersPostsQuery, GetUsersPostsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUsersPostsQuery, GetUsersPostsQueryVariables>(GetUsersPostsDocument, options);
+      }
+export function useGetUsersPostsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUsersPostsQuery, GetUsersPostsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUsersPostsQuery, GetUsersPostsQueryVariables>(GetUsersPostsDocument, options);
+        }
+export type GetUsersPostsQueryHookResult = ReturnType<typeof useGetUsersPostsQuery>;
+export type GetUsersPostsLazyQueryHookResult = ReturnType<typeof useGetUsersPostsLazyQuery>;
+export type GetUsersPostsQueryResult = Apollo.QueryResult<GetUsersPostsQuery, GetUsersPostsQueryVariables>;
 export const HelloDocument = gql`
     query Hello {
   hello
@@ -1426,12 +1480,8 @@ export const InvisibleDocument = gql`
       type
       visibility
       removed
-      likes {
-        id
-        owner {
-          id
-        }
-      }
+      numberOfLikes
+      createdAt
     }
   }
 }
@@ -1696,9 +1746,8 @@ export const ReaddDocument = gql`
       type
       visibility
       removed
-      likes {
-        id
-      }
+      numberOfLikes
+      createdAt
     }
   }
 }
@@ -1814,9 +1863,8 @@ export const RemoveDocument = gql`
       type
       visibility
       removed
-      likes {
-        id
-      }
+      numberOfLikes
+      createdAt
     }
   }
 }
@@ -2138,12 +2186,8 @@ export const VisibleDocument = gql`
       type
       visibility
       removed
-      likes {
-        id
-        owner {
-          id
-        }
-      }
+      numberOfLikes
+      createdAt
     }
   }
 }

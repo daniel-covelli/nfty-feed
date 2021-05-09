@@ -32,7 +32,8 @@ import {
   FormControl,
   Input,
   Textarea,
-  useToast
+  useToast,
+  Image
 } from '@chakra-ui/react';
 import {
   useGetUserQuery,
@@ -48,7 +49,8 @@ import {
   useUnSubscribeMutation,
   useEditProfileMutation,
   GetUserDocument,
-  GetUserQuery
+  GetUserQuery,
+  useGetUsersPostsLazyQuery
 } from '../generated/graphql';
 import { Link as ReactLink } from 'react-router-dom';
 import { SettingsIcon } from '@chakra-ui/icons';
@@ -58,6 +60,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
 import { DropzoneComponent } from '../components/profile/DropzoneComponenet';
 import { CropperModal } from '../components/register/CropperModal';
+import { PostsLoading } from '../components/profile/PostsLoading';
 
 export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
   const [settingsModal, openSettingsModal] = useState(false);
@@ -83,7 +86,10 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
   const { data, loading, error } = useGetUserQuery({
     variables: { path: window.location.href }
   });
-
+  const [
+    getPosts,
+    { data: posts, loading: postsLoading }
+  ] = useGetUsersPostsLazyQuery();
   const [getFollowers, { data: followers }] = useGetActiveFollowersLazyQuery();
   const [getFollowing, { data: following }] = useGetActiveFollowingLazyQuery();
   const [
@@ -98,6 +104,7 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
       getExistingSubscription({ variables: { userId: data.getUser.user.id } });
       setCroppedImage(data.getUser.user.profile.profileImageId);
       setOriginalImage(data.getUser.user.profile.ogProfileImageId);
+      getPosts({ variables: { profileId: data.getUser.user.profile.id } });
     }
   }, [data]);
 
@@ -114,12 +121,16 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
 
   if (loading) {
     return (
-      <Box padding='6'>
-        <HStack spacing={'30px'}>
-          <SkeletonCircle size='100px' />
-          <Skeleton w='calc(100% - 100px - 30px)' h='100px' />
-        </HStack>
-      </Box>
+      <>
+        <Box padding='6'>
+          <HStack spacing={'30px'}>
+            <SkeletonCircle size='100px' />
+            <Skeleton w='calc(100% - 100px - 30px)' h='100px' />
+          </HStack>
+        </Box>
+        <hr />
+        <PostsLoading />
+      </>
     );
   }
 
@@ -422,6 +433,46 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
       </Container>
 
       <hr />
+      {/* {posts.map((post) =>
+                  post ? (
+                    <Post
+                      key={post.id}
+                      post={post}
+                      admin={admin}
+                      loggedIn={loggedIn}
+                      profileId={me.me ? me.me.profile.id : -1}
+                    />
+                  ) : null
+                )} */}
+
+      {postsLoading ? (
+        <PostsLoading />
+      ) : posts ? (
+        posts.getUsersPosts.length == 0 ? (
+          <Center>
+            <VStack pt='60px'>
+              <Text color='gray.500'>No post yet</Text>
+              <Text color='gray.500'>¯\_₍⸍⸌̣ʷ̣̫⸍̣⸌₎_/¯</Text>
+            </VStack>
+          </Center>
+        ) : (
+          <Wrap pt='10px' pl='1px'>
+            {posts.getUsersPosts.map((post) =>
+              post ? (
+                <WrapItem key={post.id} maxW='47.5%'>
+                  <Image
+                    src={post.media}
+                    w='190px'
+                    h='190px'
+                    objectFit='cover'
+                  />
+                </WrapItem>
+              ) : null
+            )}
+          </Wrap>
+        )
+      ) : null}
+
       <Modal
         isOpen={settingsModal}
         onClose={() => openSettingsModal(false)}
