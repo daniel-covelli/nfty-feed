@@ -41,6 +41,7 @@ The project is deployed to Heroku (backend) and Netlify (frontend) with GQL/Apol
 - [x] invitations
 - [ ] mobile bottom nav
 - [ ] infinite scroll
+- [ ] make react native app
 
 #### Known Technical Debt
 
