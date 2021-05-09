@@ -451,7 +451,7 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
         posts.getUsersPosts.length == 0 ? (
           <Center>
             <VStack pt='60px'>
-              <Text color='gray.500'>No post yet</Text>
+              <Text color='gray.500'>No posts yet</Text>
               <Text color='gray.500'>¯\_₍⸍⸌̣ʷ̣̫⸍̣⸌₎_/¯</Text>
             </VStack>
           </Center>

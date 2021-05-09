@@ -40,6 +40,7 @@ The project is deployed to Heroku (backend) and Netlify (frontend) with GQL/Apol
 - [x] navbar update
 - [x] invitations
 - [ ] mobile bottom nav
+- [ ] infinite scroll
 
 #### Known Technical Debt
 
