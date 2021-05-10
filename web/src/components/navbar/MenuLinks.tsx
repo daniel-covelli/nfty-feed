@@ -23,7 +23,7 @@ import {
 import { setAccessToken } from '../../accessToken';
 import { Link as ReactLink } from 'react-router-dom';
 import { useMeQuery, useLogoutMutation } from '../../generated/graphql';
-import { ClickableAvatar, Size } from '../shared/ClickableAvatar';
+import { Size } from '../shared/ClickableAvatar';
 import { AtSignIcon } from '@chakra-ui/icons';
 import { IoIosHome } from 'react-icons/io';
 import { IoAdd, IoNotifications } from 'react-icons/io5';
@@ -226,9 +226,8 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
                       borderWidth='2px'
                       padding='2px'
                       borderRadius='50px'>
-                      <ClickableAvatar
-                        onClick={avatarClick}
-                        profilePhoto={data.me.profile.profileImageId}
+                      <Avatar
+                        src={data.me.profile.profileImageId}
                         first={data.me.profile.first}
                         last={data.me.profile.last}
                         size={Size.SM}

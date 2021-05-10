@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
   useUsersQuery,
   useMeQuery,
@@ -23,64 +23,102 @@ import { Post } from '../components/home/Post';
 interface HomeProps {}
 
 export const Home: React.FC<HomeProps> = () => {
+  const [admin, setAdmin] = useState<boolean>(false);
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
+  const [dataToLoad, setDataToLoad] = useState<boolean>(true);
+  const [postsLoading, setPostsLoading] = useState<boolean>(false);
+  const [posts, setPosts] = useState([]);
+  const [page, setPage] = useState<number>(1);
   const { data, loading } = useUsersQuery();
   const [
     getTopPosts,
-    { data: postsNotAdmin, loading: postsLoading }
+    { data: postsNotAdmin, loading: postsLoadingNotAdmin }
   ] = useGetTopPostsLazyQuery();
   const [
     getTopPostsAdmin,
     { data: postsAdmin, loading: postsLoadingAdmin }
   ] = useGetTopPostsAdminLazyQuery();
   const { data: me, loading: meLoading } = useMeQuery();
-
   // const [isSmall] = useMediaQuery('(max-width: 670px)');
   const [isNotDesktop] = useMediaQuery('(max-width: 1024px)');
-
-  let admin: boolean = false;
-  let loggedIn: boolean;
-  if (me) {
-    loggedIn = me.me ? true : false;
-  }
-  if (me && me.me) {
-    admin = me.me.admin === 1;
-  }
+  const loader = useRef(null);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
+    setPostsLoading(true);
     if (me && me.me) {
-      me.me.admin
-        ? getTopPostsAdmin({ variables: { page: 1 } })
-        : getTopPosts({ variables: { page: 1 } });
-    } else {
-      if (me) {
-        getTopPosts({ variables: { page: 1 } });
-      }
+      setLoggedIn(true);
+    }
+    if (me && me.me && me.me.admin) {
+      setAdmin(true);
+      return getTopPostsAdmin({ variables: { page: page } });
+    }
+    if (me) {
+      return getTopPosts({ variables: { page: page } });
     }
   }, [me]);
 
-  let posts: any;
-  if (postsNotAdmin && postsNotAdmin.getTopPosts) {
-    posts = postsNotAdmin.getTopPosts;
-  }
-  if (postsAdmin && postsAdmin.getTopPostsAdmin) {
-    posts = postsAdmin.getTopPostsAdmin;
-  }
+  useEffect(() => {
+    if (postsAdmin && postsAdmin.getTopPostsAdmin) {
+      if (postsAdmin.getTopPostsAdmin.length === 0) {
+        setDataToLoad(false);
+      } else {
+        setPosts((posts) => [...posts, ...postsAdmin.getTopPostsAdmin]);
+      }
+      setPostsLoading(false);
+    }
+  }, [postsAdmin]);
+
+  useEffect(() => {
+    if (postsNotAdmin && postsNotAdmin.getTopPosts) {
+      console.log(postsNotAdmin.getTopPosts);
+      if (postsNotAdmin.getTopPosts.length === 0) {
+        setDataToLoad(false);
+      } else {
+        setPosts((posts) => [...posts, ...postsNotAdmin.getTopPosts]);
+      }
+      setPostsLoading(false);
+    }
+  }, [postsNotAdmin]);
+
+  useEffect(() => {
+    if (page > 1 && dataToLoad) {
+      admin
+        ? getTopPostsAdmin({ variables: { page: page } })
+        : getTopPosts({ variables: { page: page } });
+    }
+  }, [page]);
+
+  const handleObserver = useCallback((entries) => {
+    const target = entries[0];
+    if (target.isIntersecting) {
+      setPage((prev) => prev + 1);
+    }
+  }, []);
+
+  useEffect(() => {
+    const option = {
+      root: null,
+      rootMargin: '20px',
+      threshold: 0
+    };
+    const observer = new IntersectionObserver(handleObserver, option);
+    if (loader.current) observer.observe(loader.current);
+  }, [handleObserver]);
 
   return (
     <>
-      {!loading &&
-      !postsLoading &&
-      !meLoading &&
-      !postsLoadingAdmin &&
-      posts &&
-      me ? (
+      {!loading && !postsLoading && !meLoading && posts && me ? (
         <>
           {!isNotDesktop ? (
             <Flex>
               <Box w='100%' maxW='600px'>
                 {posts.map((post) => (
                   <Post
-                    key={post.id}
+                    key={`${post.id}_${page} `}
                     post={post}
                     admin={admin}
                     loggedIn={loggedIn}
@@ -161,6 +199,7 @@ export const Home: React.FC<HomeProps> = () => {
       ) : (
         <LoadingContent />
       )}
+      <Box ref={loader} />
     </>
   );
 };
