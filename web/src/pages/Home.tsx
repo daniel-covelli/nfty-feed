@@ -205,7 +205,7 @@ export const Home: React.FC<HomeProps> = () => {
       ) : (
         <LoadingContent />
       )}
-      {dataToLoad ? <Box ref={loader} height='400px' /> : null}
+      {dataToLoad ? <Box ref={loader} height='96px' /> : null}
     </>
   );
 };
