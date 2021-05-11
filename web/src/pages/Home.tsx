@@ -13,7 +13,8 @@ import {
   Box,
   Flex,
   Center,
-  HStack
+  HStack,
+  VStack
 } from '@chakra-ui/react';
 import { Link as ReactLink } from 'react-router-dom';
 
@@ -62,24 +63,21 @@ export const Home: React.FC<HomeProps> = () => {
   }, [me]);
 
   useEffect(() => {
-    if (postsAdmin && postsAdmin.getTopPostsAdmin) {
-      if (postsAdmin.getTopPostsAdmin.length === 0) {
+    if (postsAdmin && postsAdmin.getTopPostsAdmin && dataToLoad) {
+      if (postsAdmin.getTopPostsAdmin.length < 4) {
         setDataToLoad(false);
-      } else {
-        setPosts((posts) => [...posts, ...postsAdmin.getTopPostsAdmin]);
       }
+      setPosts((posts) => [...posts, ...postsAdmin.getTopPostsAdmin]);
       setPostsLoading(false);
     }
   }, [postsAdmin]);
 
   useEffect(() => {
     if (postsNotAdmin && postsNotAdmin.getTopPosts) {
-      console.log(postsNotAdmin.getTopPosts);
-      if (postsNotAdmin.getTopPosts.length === 0) {
+      if (postsNotAdmin.getTopPosts.length < 4) {
         setDataToLoad(false);
-      } else {
-        setPosts((posts) => [...posts, ...postsNotAdmin.getTopPosts]);
       }
+      setPosts((posts) => [...posts, ...postsNotAdmin.getTopPosts]);
       setPostsLoading(false);
     }
   }, [postsNotAdmin]);
@@ -94,7 +92,7 @@ export const Home: React.FC<HomeProps> = () => {
 
   const handleObserver = useCallback((entries) => {
     const target = entries[0];
-    if (target.isIntersecting) {
+    if (target.isIntersecting && dataToLoad) {
       setPage((prev) => prev + 1);
     }
   }, []);
@@ -102,7 +100,7 @@ export const Home: React.FC<HomeProps> = () => {
   useEffect(() => {
     const option = {
       root: null,
-      rootMargin: '20px',
+      rootMargin: '400px 0px 0px 0px',
       threshold: 0
     };
     const observer = new IntersectionObserver(handleObserver, option);
@@ -118,13 +116,21 @@ export const Home: React.FC<HomeProps> = () => {
               <Box w='100%' maxW='600px'>
                 {posts.map((post) => (
                   <Post
-                    key={`${post.id}_${page} `}
+                    key={post.id}
                     post={post}
                     admin={admin}
                     loggedIn={loggedIn}
                     profileId={me.me ? me.me.profile.id : -1}
                   />
                 ))}
+                {!dataToLoad ? (
+                  <Center>
+                    <VStack pb='40px'>
+                      <Text color='gray.500'>No more posts</Text>
+                      <Text color='gray.500'>¯\_₍⸍⸌̣ʷ̣̫⸍̣⸌₎_/¯</Text>
+                    </VStack>
+                  </Center>
+                ) : null}
               </Box>
               {!isNotDesktop ? (
                 <Box pl='80px'>
@@ -199,7 +205,7 @@ export const Home: React.FC<HomeProps> = () => {
       ) : (
         <LoadingContent />
       )}
-      <Box ref={loader} />
+      {dataToLoad ? <Box ref={loader} height='400px' /> : null}
     </>
   );
 };
