@@ -34,6 +34,7 @@ export const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
     <Box position='relative'>
       {cropData ? <DisplayButtons onDelete={onDelete} onEdit={onEdit} /> : null}
       <Dropzone
+        accept={'image/*'}
         multiple={false}
         noClick={cropData ? true : false}
         noDrag={cropData ? true : false}

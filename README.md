@@ -34,7 +34,8 @@ The project is deployed to Heroku (backend) and Netlify (frontend) with GQL/Apol
 - [ ] video
 - [ ] zoom
 - [ ] followers/following modal
-- [ ] make invisible bug
+- [x] make invisible bug
+- [x] dropzone only images
 
 #### Known Technical Debt
 

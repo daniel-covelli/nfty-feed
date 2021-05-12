@@ -19,7 +19,6 @@ export const PostDropzone: React.FC<PostDropzoneProps> = ({
   const dropzoneRef = useRef(null);
 
   const onDrop = (f) => {
-    console.log('ON DROP');
     const file = f[0];
     const input = file['name'];
     const lastIndex = input.lastIndexOf('.');
@@ -52,6 +51,7 @@ export const PostDropzone: React.FC<PostDropzoneProps> = ({
   return (
     <Dropzone
       ref={dropzoneRef}
+      accept={'image/*'}
       multiple={false}
       onDrop={(file) => onDrop(file)}>
       {({ getRootProps, getInputProps }) => (

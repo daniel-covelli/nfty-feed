@@ -42,6 +42,7 @@ export const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
       ) : null}
       <Dropzone
         multiple={false}
+        accept={'image/*'}
         noClick={displayImage ? true : false}
         noDrag={displayImage ? true : false}
         onDrop={(files) => {
