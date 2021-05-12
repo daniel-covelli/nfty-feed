@@ -301,7 +301,7 @@ export class PostResolver {
       skip: 4 * (page - 1),
       relations: ['likes', 'likes.owner']
     });
-    return posts;
+    return [...posts];
   }
 
   @Mutation(() => PostResponse)

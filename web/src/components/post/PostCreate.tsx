@@ -178,13 +178,15 @@ export const PostCreate: React.FC<PostCreateProps> = ({
                       link,
                       type
                     },
-                    update: (store, { data }) => {
+                    update: async (store, { data }) => {
                       if (admin === 1) {
                         const old = store.readQuery<GetTopPostsAdminQuery>({
-                          query: GetTopPostsAdminDocument
+                          query: GetTopPostsAdminDocument,
+                          variables: { page: 1 }
                         });
                         store.writeQuery<GetTopPostsAdminQuery>({
                           query: GetTopPostsAdminDocument,
+                          variables: { page: 1 },
                           data: {
                             __typename: 'Query',
                             getTopPostsAdmin: [
@@ -195,7 +197,8 @@ export const PostCreate: React.FC<PostCreateProps> = ({
                         });
                       } else {
                         const old = store.readQuery<GetTopPostsQuery>({
-                          query: GetTopPostsDocument
+                          query: GetTopPostsDocument,
+                          variables: { page: 1 }
                         });
                         store.writeQuery<GetTopPostsQuery>({
                           query: GetTopPostsDocument,
@@ -205,12 +208,13 @@ export const PostCreate: React.FC<PostCreateProps> = ({
                               data.createPost.post,
                               ...old.getTopPosts
                             ]
-                          }
+                          },
+                          variables: { page: 1 }
                         });
                       }
                     }
                   });
-                  console.log('IN POST CREATE');
+
                   if (!data.createPost.res) {
                     toast({
                       title: data.createPost.message,

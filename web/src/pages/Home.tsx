@@ -63,11 +63,15 @@ export const Home: React.FC<HomeProps> = () => {
   }, [me]);
 
   useEffect(() => {
-    if (postsAdmin && postsAdmin.getTopPostsAdmin && dataToLoad) {
+    if (postsAdmin && postsAdmin.getTopPostsAdmin && dataToLoad && me) {
       if (postsAdmin.getTopPostsAdmin.length < 4) {
         setDataToLoad(false);
       }
+      if (postsAdmin.getTopPostsAdmin.length === 5) {
+        return setPosts((posts) => [postsAdmin.getTopPostsAdmin[0], ...posts]);
+      }
       setPosts((posts) => [...posts, ...postsAdmin.getTopPostsAdmin]);
+
       setPostsLoading(false);
     }
   }, [postsAdmin]);
@@ -77,6 +81,10 @@ export const Home: React.FC<HomeProps> = () => {
       if (postsNotAdmin.getTopPosts.length < 4) {
         setDataToLoad(false);
       }
+      if (postsNotAdmin.getTopPosts.length === 5) {
+        setPosts((posts) => [postsNotAdmin.getTopPosts[0], ...posts]);
+      }
+
       setPosts((posts) => [...posts, ...postsNotAdmin.getTopPosts]);
       setPostsLoading(false);
     }
