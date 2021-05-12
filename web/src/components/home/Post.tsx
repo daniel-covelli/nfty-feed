@@ -367,9 +367,8 @@ export const Post: React.FC<PostProps> = ({
             </HStack>
             <Text fontSize='10px' color={loggedIn ? 'black' : 'gray.400'}>
               <b>
-                {likes}{' '}
                 <Link onClick={loggedIn ? openLikesModal : null}>
-                  like{likes > 1 || likes === 0 ? 's' : null}
+                  {likes} like{likes > 1 || likes === 0 ? 's' : null}
                 </Link>
               </b>
             </Text>
