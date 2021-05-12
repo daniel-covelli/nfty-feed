@@ -33,6 +33,7 @@ The project is deployed to Heroku (backend) and Netlify (frontend) with GQL/Apol
 - [ ] react native
 - [ ] video
 - [ ] zoom
+- [ ] post count on profile
 - [ ] followers/following modal
 - [x] make invisible bug
 - [x] dropzone only images

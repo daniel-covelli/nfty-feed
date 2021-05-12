@@ -321,7 +321,8 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                       <Flex>
                         <Box>
                           <Text size='md'>
-                            <b>0</b> posts
+                            <b>{posts ? posts.getUsersPosts.length : 0}</b>{' '}
+                            posts
                           </Text>
                         </Box>
                         <Spacer />

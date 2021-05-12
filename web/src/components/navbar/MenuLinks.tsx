@@ -228,8 +228,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
                       borderRadius='50px'>
                       <Avatar
                         src={data.me.profile.profileImageId}
-                        first={data.me.profile.first}
-                        last={data.me.profile.last}
+                        name={`${data.me.profile.first} ${data.me.profile.last}`}
                         size={Size.SM}
                       />
                     </Box>
