@@ -108,7 +108,7 @@ export const Home: React.FC<HomeProps> = () => {
   useEffect(() => {
     const option = {
       root: null,
-      rootMargin: '400px 0px 0px 0px',
+      rootMargin: '800px',
       threshold: 0
     };
     const observer = new IntersectionObserver(handleObserver, option);
@@ -132,11 +132,8 @@ export const Home: React.FC<HomeProps> = () => {
                   />
                 ))}
                 {!dataToLoad ? (
-                  <Center>
-                    <VStack pb='40px'>
-                      <Text color='gray.500'>No more posts</Text>
-                      <Text color='gray.500'>¯\_₍⸍⸌̣ʷ̣̫⸍̣⸌₎_/¯</Text>
-                    </VStack>
+                  <Center pb='40px'>
+                    <Text color='gray.500'>No more posts</Text>
                   </Center>
                 ) : null}
               </Box>
