@@ -33,6 +33,7 @@ The project is deployed to Heroku (backend) and Netlify (frontend) with GQL/Apol
 - [ ] react native
 - [ ] video
 - [ ] zoom
+- [ ] followers/following modal
 
 #### Known Technical Debt
 
