@@ -35,7 +35,9 @@ import {
   useReaddMutation,
   useLikeMutation,
   useUnlikeMutation,
-  useLikedByCurrentProfileQuery
+  useLikedByCurrentProfileQuery,
+  GetLikesQuery,
+  GetLikesDocument
 } from '../../generated/graphql';
 import { PostLikesModal } from '../post/PostLikesModal';
 
@@ -84,13 +86,37 @@ export const Post: React.FC<PostProps> = ({
   const onLike = async () => {
     setLiked(!liked);
     setLikes(likes + 1);
-    await like({ variables: { postId: parseFloat(post.id) } });
+    await like({
+      variables: { postId: parseFloat(post.id) },
+      update: async (store, { data }) => {
+        store.writeQuery<GetLikesQuery>({
+          query: GetLikesDocument,
+          variables: { postId: parseFloat(post.id) },
+          data: {
+            __typename: 'Query',
+            getLikes: data.like.likes
+          }
+        });
+      }
+    });
   };
 
   const onUnlike = async () => {
     setLiked(!liked);
     setLikes(likes - 1);
-    await unlike({ variables: { postId: parseFloat(post.id) } });
+    await unlike({
+      variables: { postId: parseFloat(post.id) },
+      update: async (store, { data }) => {
+        store.writeQuery<GetLikesQuery>({
+          query: GetLikesDocument,
+          variables: { postId: parseFloat(post.id) },
+          data: {
+            __typename: 'Query',
+            getLikes: data.unlike.likes
+          }
+        });
+      }
+    });
   };
 
   const closeModal = () => {

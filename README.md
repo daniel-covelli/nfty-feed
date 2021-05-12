@@ -24,23 +24,12 @@ The project is deployed to Heroku (backend) and Netlify (frontend) with GQL/Apol
 
 #### Active Scrum
 
-- [x] fix message for routes that don't exist
-- [x] profile menu image instead of text
-- [x] design profile page
 - [ ] fix logout error on reload on mobile
-- [x] implement profile editing
-- [x] profile image uploading
 - [ ] add url to profile
-- [x] following/unfollowing
-- [x] posts
 - [ ] page not found
-- [x] cropping
-- [x] edit profile photo
-- [x] profile photo modal
-- [x] navbar update
-- [x] invitations
 - [ ] mobile bottom nav
 - [x] infinite scroll
+- [x] invitations
 - [ ] react native
 - [ ] video
 - [ ] zoom
@@ -52,6 +41,19 @@ The project is deployed to Heroku (backend) and Netlify (frontend) with GQL/Apol
 - [ ] register component
 
 #### Archive
+
+- [x] update cache on like
+- [x] fix message for routes that don't exist
+- [x] profile menu image instead of text
+- [x] design profile page
+- [x] implement profile editing
+- [x] profile image uploading
+- [x] cropping
+- [x] edit profile photo
+- [x] profile photo modal
+- [x] following/unfollowing
+- [x] posts
+- [x] navbar update
 
 - [x] Setup a GraphQL Server using TypeGraphQL and TypeORM
 - [x] Register a user/add them to DB
