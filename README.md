@@ -34,6 +34,7 @@ The project is deployed to Heroku (backend) and Netlify (frontend) with GQL/Apol
 - [ ] video
 - [ ] zoom
 - [ ] followers/following modal
+- [ ] make invisible bug
 
 #### Known Technical Debt
 

@@ -71,11 +71,9 @@ export const Post: React.FC<PostProps> = ({
   const [open, setOpen] = useState(false);
   const [likesModal, setLikesModal] = useState(false);
   const [contentModal, setContentModal] = useState(false);
-  const [likes, setLikes] = useState(0);
-
-  useEffect(() => {
-    setLikes(post.numberOfLikes);
-  }, []);
+  const [likes, setLikes] = useState(post.numberOfLikes);
+  const [visible, setVisible] = useState(post.visibility === 1);
+  const [present, setPresent] = useState(post.removed === 1);
 
   useEffect(() => {
     if (likedByUser) {
@@ -147,26 +145,34 @@ export const Post: React.FC<PostProps> = ({
 
   const makeInvisibleOnClick = async () => {
     await makeInvisible({
-      variables: { postId: parseFloat(post.id) }
+      variables: { postId: parseFloat(post.id) },
+      fetchPolicy: 'no-cache'
     });
+    setVisible(false);
   };
 
   const makeVisibleOnClick = async () => {
     await makeVisible({
-      variables: { postId: parseFloat(post.id) }
+      variables: { postId: parseFloat(post.id) },
+      fetchPolicy: 'no-cache'
     });
+    setVisible(true);
   };
 
   const removeOnClick = async () => {
     await removePost({
-      variables: { postId: parseFloat(post.id) }
+      variables: { postId: parseFloat(post.id) },
+      fetchPolicy: 'no-cache'
     });
+    setPresent(false);
   };
 
   const readdOnClick = async () => {
     await readdPost({
-      variables: { postId: parseFloat(post.id) }
+      variables: { postId: parseFloat(post.id) },
+      fetchPolicy: 'no-cache'
     });
+    setPresent(true);
   };
 
   const openLikesModal = () => {
@@ -185,43 +191,39 @@ export const Post: React.FC<PostProps> = ({
                   {post.removed}
                 </Text>
                 <HStack>
-                  {post.visibility === 1 ? (
-                    <Button
-                      size='sm'
-                      isLoading={loadingInvisible}
-                      onClick={makeInvisibleOnClick}>
-                      make invisible
-                    </Button>
-                  ) : (
+                  {!visible ? (
                     <Button
                       size='sm'
                       isLoading={loadingVisible}
                       onClick={makeVisibleOnClick}>
                       make visible
                     </Button>
-                  )}
-                  {post.removed === 1 ? (
+                  ) : (
                     <Button
                       size='sm'
-                      isLoading={loadingRemove}
-                      onClick={removeOnClick}>
-                      remove post
+                      isLoading={loadingInvisible}
+                      onClick={makeInvisibleOnClick}>
+                      make invisible
                     </Button>
-                  ) : (
+                  )}
+                  {!present ? (
                     <Button
                       size='sm'
                       isLoading={loadingReadd}
                       onClick={readdOnClick}>
                       readd post
                     </Button>
+                  ) : (
+                    <Button
+                      size='sm'
+                      isLoading={loadingRemove}
+                      onClick={removeOnClick}>
+                      remove post
+                    </Button>
                   )}
 
-                  {post.visibility === 0 ? (
-                    <Badge colorScheme='red'>Invisible</Badge>
-                  ) : null}
-                  {post.removed === 0 ? (
-                    <Badge colorScheme='red'>Removed</Badge>
-                  ) : null}
+                  {!visible ? <Badge colorScheme='red'>Invisible</Badge> : null}
+                  {!present ? <Badge colorScheme='red'>Removed</Badge> : null}
                 </HStack>
               </Box>
             ) : null}
