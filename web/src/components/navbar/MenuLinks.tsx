@@ -219,7 +219,8 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
                     variant='link'
                     _focus={{
                       boxShadow: 'none'
-                    }}>
+                    }}
+                    _hover={{ textDecoration: 'none' }}>
                     <Box
                       borderColor={`${popoverOpen ? '#7928CA' : 'transparent'}`}
                       boxSizing='border-box'

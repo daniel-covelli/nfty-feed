@@ -36,7 +36,7 @@ The project is deployed to Heroku (backend) and Netlify (frontend) with GQL/Apol
 - [ ] react native
 - [ ] video
 - [ ] zoom
-- [ ] remove underline from profile button
+- [x] remove underline from profile button
 - [x] post count on profile
 - [ ] followers/following modal
 
