@@ -72,8 +72,12 @@ export const PostLikesModal: React.FC<PostLikesModalProps> = ({
               likes.getLikes.length === 0 ? (
                 <Center>
                   <VStack pt='30px'>
-                    <Text color='gray.500'>No likes on this post yet</Text>
-                    <Text color='gray.500'>¯\_₍⸍⸌̣ʷ̣̫⸍̣⸌₎_/¯</Text>
+                    <Text color='gray.500' fontSize='sm'>
+                      No likes on this post yet
+                    </Text>
+                    <Text color='gray.500' fontSize='sm'>
+                      ¯\_₍⸍⸌̣ʷ̣̫⸍̣⸌₎_/¯
+                    </Text>
                   </VStack>
                 </Center>
               ) : (
