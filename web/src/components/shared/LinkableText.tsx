@@ -9,6 +9,7 @@ interface LinkableTextProps {
   bold: boolean;
   color: string;
   text: string;
+  onClick?: () => void;
 }
 
 export const LinkableText: React.FC<LinkableTextProps> = ({
@@ -16,10 +17,12 @@ export const LinkableText: React.FC<LinkableTextProps> = ({
   size,
   bold,
   text,
-  color
+  color,
+  onClick
 }) => {
   return (
     <Link
+      onClick={onClick}
       as={ReactLink}
       to={route}
       _focus={{

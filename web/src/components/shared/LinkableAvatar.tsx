@@ -22,6 +22,7 @@ export const LinkableAvatar: React.FC<LinkableAvatarProps> = ({
 }) => {
   return (
     <Link
+      onClick={onClick}
       as={ReactLink}
       to={route}
       _focus={{

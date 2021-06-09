@@ -1,0 +1,14 @@
+query GetFollowersData($userId: Float!) {
+  getFollowersData(userId: $userId) {
+    profile {
+      id
+      username
+      profileImageId
+      first
+      last
+    }
+    following
+    me
+    userId
+  }
+}

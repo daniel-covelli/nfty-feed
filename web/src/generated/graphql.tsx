@@ -31,6 +31,14 @@ export type EditResponse = {
   user?: Maybe<User>;
 };
 
+export type FollowersResponse = {
+  __typename?: 'FollowersResponse';
+  profile: Profile;
+  following: Scalars['Boolean'];
+  me: Scalars['Boolean'];
+  userId: Scalars['Float'];
+};
+
 export type GenericResponse = {
   __typename?: 'GenericResponse';
   res: Scalars['Boolean'];
@@ -243,6 +251,7 @@ export type Query = {
   users: Array<User>;
   me?: Maybe<User>;
   getUser?: Maybe<UserResponse>;
+  getFollowersData: Array<FollowersResponse>;
   subscriptions: Array<Subscription>;
   getActiveFollowers: Array<Subscription>;
   getActiveFollowing: Array<Subscription>;
@@ -260,6 +269,11 @@ export type Query = {
 
 export type QueryGetUserArgs = {
   path: Scalars['String'];
+};
+
+
+export type QueryGetFollowersDataArgs = {
+  userId: Scalars['Float'];
 };
 
 
@@ -461,6 +475,23 @@ export type GetActiveFollowingQuery = (
   & { getActiveFollowing: Array<(
     { __typename?: 'Subscription' }
     & Pick<Subscription, 'id' | 'userId' | 'followingId' | 'active'>
+  )> }
+);
+
+export type GetFollowersDataQueryVariables = Exact<{
+  userId: Scalars['Float'];
+}>;
+
+
+export type GetFollowersDataQuery = (
+  { __typename?: 'Query' }
+  & { getFollowersData: Array<(
+    { __typename?: 'FollowersResponse' }
+    & Pick<FollowersResponse, 'following' | 'me' | 'userId'>
+    & { profile: (
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'id' | 'username' | 'profileImageId' | 'first' | 'last'>
+    ) }
   )> }
 );
 
@@ -1198,6 +1229,50 @@ export function useGetActiveFollowingLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type GetActiveFollowingQueryHookResult = ReturnType<typeof useGetActiveFollowingQuery>;
 export type GetActiveFollowingLazyQueryHookResult = ReturnType<typeof useGetActiveFollowingLazyQuery>;
 export type GetActiveFollowingQueryResult = Apollo.QueryResult<GetActiveFollowingQuery, GetActiveFollowingQueryVariables>;
+export const GetFollowersDataDocument = gql`
+    query GetFollowersData($userId: Float!) {
+  getFollowersData(userId: $userId) {
+    profile {
+      id
+      username
+      profileImageId
+      first
+      last
+    }
+    following
+    me
+    userId
+  }
+}
+    `;
+
+/**
+ * __useGetFollowersDataQuery__
+ *
+ * To run a query within a React component, call `useGetFollowersDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFollowersDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFollowersDataQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useGetFollowersDataQuery(baseOptions: Apollo.QueryHookOptions<GetFollowersDataQuery, GetFollowersDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetFollowersDataQuery, GetFollowersDataQueryVariables>(GetFollowersDataDocument, options);
+      }
+export function useGetFollowersDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFollowersDataQuery, GetFollowersDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetFollowersDataQuery, GetFollowersDataQueryVariables>(GetFollowersDataDocument, options);
+        }
+export type GetFollowersDataQueryHookResult = ReturnType<typeof useGetFollowersDataQuery>;
+export type GetFollowersDataLazyQueryHookResult = ReturnType<typeof useGetFollowersDataLazyQuery>;
+export type GetFollowersDataQueryResult = Apollo.QueryResult<GetFollowersDataQuery, GetFollowersDataQueryVariables>;
 export const GetLikesDocument = gql`
     query GetLikes($postId: Float!) {
   getLikes(postId: $postId) {
