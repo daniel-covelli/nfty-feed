@@ -10,6 +10,11 @@ This project was started off using [Ben Awad](https://github.com/benawad)'s YouT
 
 The project is deployed to Heroku (backend) and Netlify (frontend) with GQL/Apollo as the intermediary API layer.
 
+#### Feature Spotlight
+
+- Infinite Scroll
+- Invitations
+
 #### Technologies
 
 - Typescript
@@ -28,15 +33,12 @@ The project is deployed to Heroku (backend) and Netlify (frontend) with GQL/Apol
 - [ ] add url to profile
 - [ ] page not found
 - [ ] mobile bottom nav
-- [x] infinite scroll
-- [x] invitations
 - [ ] react native
 - [ ] video
 - [ ] zoom
-- [ ] post count on profile
+- [ ] remove underline from profile button
+- [x] post count on profile
 - [ ] followers/following modal
-- [x] make invisible bug
-- [x] dropzone only images
 
 #### Known Technical Debt
 
@@ -46,6 +48,10 @@ The project is deployed to Heroku (backend) and Netlify (frontend) with GQL/Apol
 
 #### Archive
 
+- [x] infinite scroll
+- [x] invitations
+- [x] make invisible bug
+- [x] dropzone only images
 - [x] update cache on like
 - [x] fix message for routes that don't exist
 - [x] profile menu image instead of text
