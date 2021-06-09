@@ -395,7 +395,9 @@ export const Post: React.FC<PostProps> = ({
             </HStack>
             <Text fontSize='10px' color={loggedIn ? 'black' : 'gray.400'}>
               <b>
-                <Link onClick={loggedIn ? openLikesModal : null}>
+                <Link
+                  onClick={loggedIn ? openLikesModal : null}
+                  _hover={{ textDecoration: !loggedIn ? 'none' : 'underline' }}>
                   {likes} like{likes > 1 || likes === 0 ? 's' : null}
                 </Link>
               </b>
