@@ -90,6 +90,7 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
   const { data, loading, error } = useGetUserQuery({
     variables: { path: window.location.href }
   });
+
   const [
     getPosts,
     { data: posts, loading: postsLoading }
@@ -205,32 +206,10 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                 }
               });
 
-              const oldFollowersData = store.readQuery<GetFollowersDataQuery>({
-                query: GetFollowersDataDocument,
-                variables: {
-                  userId: data.subscribe.followingId
-                }
-              });
-
-              // console.log(
-              //   'OLD FOLLOWING DATA',
-              //   oldFollowersData.getFollowersData
-              // );
               if (!data || !old) {
                 return null;
               }
-              // if (oldFollowersData) {
-              //   store.writeQuery<GetFollowersDataQuery>({
-              //     query: GetFollowersDataDocument,
-              //     data: {
-              //       __typename: 'Query',
-              //       getFollowersData: oldFollowersData.getFollowersData.unshift({profile: {...data.user.profile }})
-              //     },
-              //     variables: {
-              //       userId: data.subscribe.followingId
-              //     }
-              //   });
-              // }
+
               store.writeQuery<GetActiveFollowersQuery>({
                 query: GetActiveFollowersDocument,
                 data: {
@@ -582,62 +561,65 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                             userId: data.unSubscribe.followingId
                           }
                         });
-                        const oldFollowers = store.readQuery<
-                          GetFollowersDataQuery
-                        >({
-                          query: GetFollowersDataDocument,
-                          variables: {
-                            userId: data.unSubscribe.followingId
-                          }
-                        });
 
-                        const oldFollowersMe = store.readQuery<
-                          GetFollowersDataQuery
-                        >({
-                          query: GetFollowersDataDocument,
-                          variables: {
-                            userId: data.unSubscribe.userId
-                          }
-                        });
+                        // followers on page
+                        // const oldFollowers = store.readQuery<
+                        //   GetFollowersDataQuery
+                        // >({
+                        //   query: GetFollowersDataDocument,
+                        //   variables: {
+                        //     userId: data.unSubscribe.followingId
+                        //   }
+                        // });
+
+                        // the users followers
+                        // const oldFollowersMe = store.readQuery<
+                        //   GetFollowersDataQuery
+                        // >({
+                        //   query: GetFollowersDataDocument,
+                        //   variables: {
+                        //     userId: data.unSubscribe.userId
+                        //   }
+                        // });
 
                         if (!data || !old) {
                           return null;
                         }
 
-                        if (oldFollowersMe) {
-                          store.writeQuery<GetFollowersDataQuery>({
-                            query: GetFollowersDataDocument,
-                            data: {
-                              __typename: 'Query',
-                              getFollowersData: oldFollowersMe.getFollowersData.map(
-                                (follower) =>
-                                  follower.userId ===
-                                  data.unSubscribe.followingId
-                                    ? { ...follower, following: false }
-                                    : follower
-                              )
-                            },
-                            variables: {
-                              userId: data.unSubscribe.userId
-                            }
-                          });
-                        }
+                        // if (oldFollowersMe) {
+                        //   store.writeQuery<GetFollowersDataQuery>({
+                        //     query: GetFollowersDataDocument,
+                        //     data: {
+                        //       __typename: 'Query',
+                        //       getFollowersData: oldFollowersMe.getFollowersData.map(
+                        //         (follower) =>
+                        //           follower.userId ===
+                        //           data.unSubscribe.followingId
+                        //             ? { ...follower, following: false }
+                        //             : follower
+                        //       )
+                        //     },
+                        //     variables: {
+                        //       userId: data.unSubscribe.userId
+                        //     }
+                        //   });
+                        // }
 
-                        if (oldFollowers) {
-                          store.writeQuery<GetFollowersDataQuery>({
-                            query: GetFollowersDataDocument,
-                            data: {
-                              __typename: 'Query',
-                              getFollowersData: oldFollowers.getFollowersData.filter(
-                                (follower) =>
-                                  follower.userId !== data.unSubscribe.userId
-                              )
-                            },
-                            variables: {
-                              userId: data.unSubscribe.followingId
-                            }
-                          });
-                        }
+                        // if (oldFollowers) {
+                        //   store.writeQuery<GetFollowersDataQuery>({
+                        //     query: GetFollowersDataDocument,
+                        //     data: {
+                        //       __typename: 'Query',
+                        //       getFollowersData: oldFollowers.getFollowersData.filter(
+                        //         (follower) =>
+                        //           follower.userId !== data.unSubscribe.userId
+                        //       )
+                        //     },
+                        //     variables: {
+                        //       userId: data.unSubscribe.followingId
+                        //     }
+                        //   });
+                        // }
 
                         store.writeQuery<GetActiveFollowersQuery>({
                           query: GetActiveFollowersDocument,

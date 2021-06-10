@@ -30,7 +30,8 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
   userId
 }) => {
   const [getData, { data, loading }] = useGetFollowersDataLazyQuery({
-    variables: { userId }
+    variables: { userId },
+    fetchPolicy: 'network-only'
   });
 
   useEffect(() => {
