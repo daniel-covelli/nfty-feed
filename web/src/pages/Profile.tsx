@@ -582,8 +582,7 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                             userId: data.unSubscribe.followingId
                           }
                         });
-
-                        const oldFollowersData = store.readQuery<
+                        const oldFollowers = store.readQuery<
                           GetFollowersDataQuery
                         >({
                           query: GetFollowersDataDocument,
@@ -592,15 +591,44 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                           }
                         });
 
+                        const oldFollowersMe = store.readQuery<
+                          GetFollowersDataQuery
+                        >({
+                          query: GetFollowersDataDocument,
+                          variables: {
+                            userId: data.unSubscribe.userId
+                          }
+                        });
+
                         if (!data || !old) {
                           return null;
                         }
-                        if (oldFollowersData) {
+
+                        if (oldFollowersMe) {
                           store.writeQuery<GetFollowersDataQuery>({
                             query: GetFollowersDataDocument,
                             data: {
                               __typename: 'Query',
-                              getFollowersData: oldFollowersData.getFollowersData.filter(
+                              getFollowersData: oldFollowersMe.getFollowersData.map(
+                                (follower) =>
+                                  follower.userId ===
+                                  data.unSubscribe.followingId
+                                    ? { ...follower, following: false }
+                                    : follower
+                              )
+                            },
+                            variables: {
+                              userId: data.unSubscribe.userId
+                            }
+                          });
+                        }
+
+                        if (oldFollowers) {
+                          store.writeQuery<GetFollowersDataQuery>({
+                            query: GetFollowersDataDocument,
+                            data: {
+                              __typename: 'Query',
+                              getFollowersData: oldFollowers.getFollowersData.filter(
                                 (follower) =>
                                   follower.userId !== data.unSubscribe.userId
                               )
