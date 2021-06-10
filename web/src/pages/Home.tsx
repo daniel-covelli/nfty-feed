@@ -170,7 +170,18 @@ export const Home: React.FC<HomeProps> = () => {
                               <Avatar size='xs' />
                             )}
                           </Link>
-                          <Text fontSize='sm'>{x.email}</Text>
+                          <Link
+                            as={ReactLink}
+                            to={`at/${x.profile ? x.profile.username : x.id}`}>
+                            <Text fontSize='sm'>
+                              {process.env.REACT_APP_ENVIRONMENT ===
+                              'development'
+                                ? x.email
+                                : x.profile
+                                ? x.profile.username
+                                : ''}
+                            </Text>
+                          </Link>
                         </HStack>
                       ))}
                     </Box>

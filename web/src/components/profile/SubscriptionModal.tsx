@@ -46,7 +46,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
     setOpen(false);
   };
 
-  //   console.log('LENGTH', data ? data.getFollowersData : 'null');
+  console.log('LENGTH', data ? data.getFollowersData : 'null');
   return (
     <Modal isOpen={isOpen} onClose={onClose} size='sm'>
       <ModalOverlay />
