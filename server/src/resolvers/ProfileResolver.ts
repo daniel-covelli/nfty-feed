@@ -56,9 +56,6 @@ export class ProfileResolver {
       where: { userId: payload?.userId, active: SubStatus.ACTIVE }
     });
 
-    console.log('FOLLOWERS', followers);
-    console.log('FOLLOWING', following);
-
     const followerIds = followers.map((follower) => follower.userId);
 
     const users = await createQueryBuilder(User, 'user')

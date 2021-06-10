@@ -8,7 +8,6 @@ import {
   Text,
   Box,
   Center,
-  Spinner,
   HStack,
   VStack,
   Divider
@@ -18,6 +17,7 @@ import { LinkableAvatar } from '../shared/LinkableAvatar';
 import { Size } from '../shared/ClickableAvatar';
 import { LinkableText } from '../shared/LinkableText';
 import Moment from 'react-moment';
+import { DataModalLoading } from '../shared/DataModalLoading';
 
 interface PostLikesModalProps {
   isOpen: boolean;
@@ -55,11 +55,7 @@ export const PostLikesModal: React.FC<PostLikesModalProps> = ({
         />
         <Divider />
         {loading ? (
-          <Box height='400px' maxH='90vh'>
-            <Center>
-              <Spinner color='gray.500' />
-            </Center>
-          </Box>
+          <DataModalLoading />
         ) : (
           <Box
             px='10px'

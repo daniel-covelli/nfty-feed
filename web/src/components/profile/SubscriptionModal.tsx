@@ -11,12 +11,16 @@ import {
   Spinner,
   VStack,
   Text,
-  HStack
+  HStack,
+  Skeleton,
+  SkeletonCircle,
+  SkeletonText
 } from '@chakra-ui/react';
 import { LinkableAvatar } from '../shared/LinkableAvatar';
 import { Size } from '../shared/ClickableAvatar';
 import { LinkableText } from '../shared/LinkableText';
 import { useGetFollowersDataLazyQuery } from '../../generated/graphql';
+import { DataModalLoading } from '../shared/DataModalLoading';
 
 interface SubscriptionModalProps {
   isOpen: boolean;
@@ -55,11 +59,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
         />
         <Divider />
         {loading ? (
-          <Box height='400px' maxH='90vh'>
-            <Center py='20px'>
-              <Spinner color='gray.500' />
-            </Center>
-          </Box>
+          <DataModalLoading />
         ) : (
           <Box
             px='10px'
