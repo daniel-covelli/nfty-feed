@@ -172,7 +172,10 @@ export const Home: React.FC<HomeProps> = () => {
                           </Link>
                           <Link
                             as={ReactLink}
-                            to={`at/${x.profile ? x.profile.username : x.id}`}>
+                            to={`at/${x.profile ? x.profile.username : x.id}`}
+                            _focus={{
+                              boxShadow: 'none'
+                            }}>
                             <Text fontSize='sm'>
                               {process.env.REACT_APP_ENVIRONMENT ===
                               'development'

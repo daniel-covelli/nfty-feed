@@ -46,7 +46,6 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
     setOpen(false);
   };
 
-  console.log('LENGTH', data ? data.getFollowersData : 'null');
   return (
     <Modal isOpen={isOpen} onClose={onClose} size='sm'>
       <ModalOverlay />
@@ -73,10 +72,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
                 <Center>
                   <VStack pt='30px'>
                     <Text color='gray.500' fontSize='sm'>
-                      No likes on this post yet
-                    </Text>
-                    <Text color='gray.500' fontSize='sm'>
-                      ¯\_₍⸍⸌̣ʷ̣̫⸍̣⸌₎_/¯
+                      No followers yet
                     </Text>
                   </VStack>
                 </Center>

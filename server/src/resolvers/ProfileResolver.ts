@@ -52,6 +52,9 @@ export class ProfileResolver {
       where: { followingId: userId, active: SubStatus.ACTIVE }
     });
 
+    if (followers.length === 0) {
+      return [];
+    }
     const following = await Subscription.find({
       where: { userId: payload?.userId, active: SubStatus.ACTIVE }
     });
