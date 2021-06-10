@@ -175,7 +175,7 @@ export const Home: React.FC<HomeProps> = () => {
                       ))}
                     </Box>
 
-                    <Text fontSize='xs' pt='20px'>
+                    <Text fontSize='10px' pt='20px'>
                       Created by{' '}
                       <Link
                         color='teal.500'

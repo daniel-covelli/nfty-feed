@@ -430,7 +430,7 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                     <Spacer />
                     <Box>
                       <Text size='sm'>
-                        <Link>
+                        <Link onClick={() => setFollowersModal(true)}>
                           <b>
                             {followers
                               ? followers.getActiveFollowers.length
