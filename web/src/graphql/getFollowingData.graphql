@@ -1,0 +1,12 @@
+query GetFollowingData($userId: Float!) {
+  getFollowingData(userId: $userId) {
+    id
+    profile {
+      id
+      username
+      profileImageId
+      first
+      last
+    }
+  }
+}

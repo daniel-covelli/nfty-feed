@@ -252,6 +252,7 @@ export type Query = {
   me?: Maybe<User>;
   getUser?: Maybe<UserResponse>;
   getFollowersData: Array<FollowersResponse>;
+  getFollowingData: Array<User>;
   subscriptions: Array<Subscription>;
   getActiveFollowers: Array<Subscription>;
   getActiveFollowing: Array<Subscription>;
@@ -273,6 +274,11 @@ export type QueryGetUserArgs = {
 
 
 export type QueryGetFollowersDataArgs = {
+  userId: Scalars['Float'];
+};
+
+
+export type QueryGetFollowingDataArgs = {
   userId: Scalars['Float'];
 };
 
@@ -492,6 +498,23 @@ export type GetFollowersDataQuery = (
       { __typename?: 'Profile' }
       & Pick<Profile, 'id' | 'username' | 'profileImageId' | 'first' | 'last'>
     ) }
+  )> }
+);
+
+export type GetFollowingDataQueryVariables = Exact<{
+  userId: Scalars['Float'];
+}>;
+
+
+export type GetFollowingDataQuery = (
+  { __typename?: 'Query' }
+  & { getFollowingData: Array<(
+    { __typename?: 'User' }
+    & Pick<User, 'id'>
+    & { profile?: Maybe<(
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'id' | 'username' | 'profileImageId' | 'first' | 'last'>
+    )> }
   )> }
 );
 
@@ -1273,6 +1296,48 @@ export function useGetFollowersDataLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type GetFollowersDataQueryHookResult = ReturnType<typeof useGetFollowersDataQuery>;
 export type GetFollowersDataLazyQueryHookResult = ReturnType<typeof useGetFollowersDataLazyQuery>;
 export type GetFollowersDataQueryResult = Apollo.QueryResult<GetFollowersDataQuery, GetFollowersDataQueryVariables>;
+export const GetFollowingDataDocument = gql`
+    query GetFollowingData($userId: Float!) {
+  getFollowingData(userId: $userId) {
+    id
+    profile {
+      id
+      username
+      profileImageId
+      first
+      last
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetFollowingDataQuery__
+ *
+ * To run a query within a React component, call `useGetFollowingDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFollowingDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFollowingDataQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useGetFollowingDataQuery(baseOptions: Apollo.QueryHookOptions<GetFollowingDataQuery, GetFollowingDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetFollowingDataQuery, GetFollowingDataQueryVariables>(GetFollowingDataDocument, options);
+      }
+export function useGetFollowingDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFollowingDataQuery, GetFollowingDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetFollowingDataQuery, GetFollowingDataQueryVariables>(GetFollowingDataDocument, options);
+        }
+export type GetFollowingDataQueryHookResult = ReturnType<typeof useGetFollowingDataQuery>;
+export type GetFollowingDataLazyQueryHookResult = ReturnType<typeof useGetFollowingDataLazyQuery>;
+export type GetFollowingDataQueryResult = Apollo.QueryResult<GetFollowingDataQuery, GetFollowingDataQueryVariables>;
 export const GetLikesDocument = gql`
     query GetLikes($postId: Float!) {
   getLikes(postId: $postId) {

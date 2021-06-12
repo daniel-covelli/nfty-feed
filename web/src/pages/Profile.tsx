@@ -51,8 +51,8 @@ import {
   GetUserDocument,
   GetUserQuery,
   useGetUsersPostsLazyQuery,
-  GetFollowersDataDocument,
-  GetFollowersDataQuery
+  GetFollowingDataQuery,
+  GetFollowingDataDocument
 } from '../generated/graphql';
 import { Link as ReactLink } from 'react-router-dom';
 import { SettingsIcon } from '@chakra-ui/icons';
@@ -63,7 +63,8 @@ import { Formik, Form, Field } from 'formik';
 import { DropzoneComponent } from '../components/profile/DropzoneComponenet';
 import { CropperModal } from '../components/register/CropperModal';
 import { PostsLoading } from '../components/profile/PostsLoading';
-import { SubscriptionModal } from '../components/profile/SubscriptionModal';
+import { FollowersModal } from '../components/profile/FollowersModal';
+import { FollowingModal } from '../components/profile/FollowingModal';
 
 export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
   const [settingsModal, openSettingsModal] = useState(false);
@@ -75,6 +76,7 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
   const [cropperModalOpen, setCropperModalOpen] = useState(false);
   const [profilePhotoModalOpen, setProfilePhotoModalOpen] = useState(false);
   const [followersModal, setFollowersModal] = useState(false);
+  const [followingModal, setFollowingModal] = useState(false);
 
   const [isMobile] = useMediaQuery('(max-width: 520px)');
 
@@ -348,7 +350,7 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                         <Spacer />
                         <Box float='right'>
                           <Text size='md'>
-                            <Link>
+                            <Link onClick={() => setFollowingModal(true)}>
                               <b>
                                 {following
                                   ? following.getActiveFollowing.length
@@ -422,7 +424,7 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                     <Spacer />
                     <Box>
                       <Text size='sm'>
-                        <Link>
+                        <Link onClick={() => setFollowingModal(true)}>
                           <b>
                             {following
                               ? following.getActiveFollowing.length
@@ -561,6 +563,80 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                             userId: data.unSubscribe.followingId
                           }
                         });
+
+                        const oldFollowingData = store.readQuery<
+                          GetFollowingDataQuery
+                        >({
+                          query: GetFollowingDataDocument,
+                          variables: {
+                            userId: data.unSubscribe.userId
+                          }
+                        });
+
+                        const oldFollowing = store.readQuery<
+                          GetActiveFollowersQuery
+                        >({
+                          query: GetActiveFollowersDocument,
+                          variables: {
+                            userId: data.unSubscribe.userId
+                          }
+                        });
+
+                        if (oldFollowingData) {
+                          store.writeQuery<GetFollowingDataQuery>({
+                            query: GetFollowingDataDocument,
+                            data: {
+                              __typename: 'Query',
+                              getFollowingData: oldFollowingData.getFollowingData.filter(
+                                (follower) =>
+                                  follower.id !== data.unSubscribe.followingId
+                              )
+                            },
+                            variables: {
+                              userId: data.unSubscribe.userId
+                            }
+                          });
+                          console.log(
+                            'FILTER',
+                            oldFollowingData.getFollowingData.filter(
+                              (follower) =>
+                                follower.id !== data.unSubscribe.followingId
+                            )
+                          );
+                        }
+
+                        if (oldFollowing) {
+                          console.log('OLD FOLLOWING', oldFollowing);
+                          console.log(
+                            'FILTER',
+                            oldFollowing.getActiveFollowers.filter(
+                              (user) =>
+                                user.userId !== data.unSubscribe.followingId
+                            )
+                          );
+                          store.writeQuery<GetActiveFollowersQuery>({
+                            query: GetActiveFollowersDocument,
+                            data: {
+                              __typename: 'Query',
+                              getActiveFollowers: oldFollowing.getActiveFollowers.map(
+                                (follower) => {
+                                  if (
+                                    follower.userId ===
+                                    data.unSubscribe.followingId
+                                  ) {
+                                    return { ...follower, active: 0 };
+                                  }
+                                  return follower;
+                                }
+                              )
+                            },
+                            variables: {
+                              userId: data.unSubscribe.userId
+                            }
+                          });
+                        }
+
+                        console.log('UNSUB DATA', data.unSubscribe);
 
                         // followers on page
                         // const oldFollowers = store.readQuery<
@@ -847,9 +923,14 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
           </Center>
         </ModalContent>
       </Modal>
-      <SubscriptionModal
+      <FollowersModal
         isOpen={followersModal}
         setOpen={setFollowersModal}
+        userId={data.getUser.user.id}
+      />
+      <FollowingModal
+        isOpen={followingModal}
+        setOpen={setFollowingModal}
         userId={data.getUser.user.id}
       />
     </>

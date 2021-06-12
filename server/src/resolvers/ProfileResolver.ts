@@ -82,6 +82,31 @@ export class ProfileResolver {
     return response;
   }
 
+  @Query(() => [User])
+  @UseMiddleware(isAuth)
+  async getFollowingData(
+    @Ctx() { payload }: MyContext,
+    @Arg('userId') userId: number
+  ) {
+    const followers = await Subscription.find({
+      where: { userId, active: SubStatus.ACTIVE }
+    });
+
+    const followingIds = followers.map((follower) => follower.followingId);
+
+    const users = await createQueryBuilder(User, 'user')
+      .where('user.id IN (:...followers)', { followers: followingIds })
+      .leftJoinAndSelect('user.profile', 'profile')
+      .getMany();
+
+    console.log('PAYLOAD', payload);
+    console.log('USERID', userId);
+    console.log('FOLLOWERS', followers);
+    console.log('FOLLOWERIDS', followingIds);
+    console.log('USERS', users);
+    return users;
+  }
+
   @Mutation(() => EditResponse)
   @UseMiddleware(isAuth)
   async editProfile(

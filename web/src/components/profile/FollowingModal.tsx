@@ -19,23 +19,25 @@ import {
 import { LinkableAvatar } from '../shared/LinkableAvatar';
 import { Size } from '../shared/ClickableAvatar';
 import { LinkableText } from '../shared/LinkableText';
-import { useGetFollowersDataLazyQuery } from '../../generated/graphql';
+import {
+  useGetFollowersDataLazyQuery,
+  useGetFollowingDataLazyQuery
+} from '../../generated/graphql';
 import { DataModalLoading } from '../shared/DataModalLoading';
 
-interface SubscriptionModalProps {
+interface FollowingModalProps {
   isOpen: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   userId: number;
 }
 
-export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
+export const FollowingModal: React.FC<FollowingModalProps> = ({
   isOpen,
   setOpen,
   userId
 }) => {
-  const [getData, { data, loading }] = useGetFollowersDataLazyQuery({
-    variables: { userId },
-    fetchPolicy: 'network-only'
+  const [getData, { data, loading }] = useGetFollowingDataLazyQuery({
+    variables: { userId }
   });
 
   useEffect(() => {
@@ -50,7 +52,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
     <Modal isOpen={isOpen} onClose={onClose} size='sm'>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader fontSize='md'>Followers</ModalHeader>
+        <ModalHeader fontSize='md'>Following</ModalHeader>
         <ModalCloseButton
           _focus={{
             boxShadow: 'none'
@@ -68,7 +70,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
             maxH='90vh'
             overflow='scroll'>
             {data ? (
-              data.getFollowersData.length === 0 ? (
+              data.getFollowingData.length === 0 ? (
                 <Center>
                   <VStack pt='30px'>
                     <Text color='gray.500' fontSize='sm'>
@@ -77,7 +79,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
                   </VStack>
                 </Center>
               ) : (
-                data.getFollowersData.map((follower) => (
+                data.getFollowingData.map((follower) => (
                   <HStack spacing={3} pb='5px' key={follower.profile.id}>
                     <LinkableAvatar
                       onClick={onClose}
@@ -113,13 +115,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
                         fontSize='10px'
                         color='gray.500'
                         textTransform='uppercase'>
-                        <b>
-                          {follower.me
-                            ? 'You'
-                            : follower.following
-                            ? 'following'
-                            : ''}
-                        </b>
+                        <b>following</b>
                       </Text>
                     </Box>
                   </HStack>
