@@ -1,17 +1,8 @@
 {
   "private": true,
   "scripts": {
-    "build:server": "yarn --cwd ./server build ",
-    "build:web": "yarn --cwd ./web build "
-  },
-  "workspaces": {
-    "packages": [
-      "server/*"
-    ],
-    "nohoist": [
-      "**/rimraf",
-      "**/rimraf/**"
-    ]
+    "build:server": "yarn --cwd ./server build",
+    "build:web": "yarn --cwd ./web build"
   },
   "devDependencies": {
     "lerna": "^4.0.0"
