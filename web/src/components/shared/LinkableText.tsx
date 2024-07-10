@@ -29,7 +29,7 @@ export const LinkableText: React.FC<LinkableTextProps> = ({
         boxShadow: 'none'
       }}>
       <Text color={color} size={size} isTruncated>
-        {bold ? <b>{text}</b> : { text }}
+        {bold ? <b>{text}</b> : text}
       </Text>
     </Link>
   );

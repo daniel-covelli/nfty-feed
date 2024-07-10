@@ -56,7 +56,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
   let body: any = null;
 
   if (data && data.me) {
-    body = `${data.me.profile.username}`;
+    body = `${data.me.profile?.username}`;
   }
 
   const avatarClick = () => {
@@ -97,7 +97,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
       flexBasis={{ base: '100%', md: 'auto' }}>
       <Stack
         spacing={4}
-        align='center'
+        align="center"
         justify={['center', 'space-between', 'flex-end', 'flex-end']}
         direction={['column', 'row', 'row', 'row']}
         pt={[4, 4, 0, 0]}>
@@ -107,56 +107,56 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
               <Link
                 as={ReactLink}
                 to={`/`}
-                w='100%'
+                w="100%"
                 onClick={onCreate}
                 _focus={{
                   boxShadow: 'none'
                 }}
                 _hover={{ textDecoration: 'none' }}>
-                <Button variant='outline' w='100%' colorScheme='pink' size='md'>
-                  <Text display='block'>Create post</Text>
+                <Button variant="outline" w="100%" colorScheme="pink" size="md">
+                  <Text display="block">Create post</Text>
                 </Button>
               </Link>
               <Link
                 as={ReactLink}
-                to={`/at/${data.me.profile.username}`}
+                to={`/at/${data.me.profile?.username ?? ''}`}
                 onClick={toggle}
-                w='100%'
+                w="100%"
                 _focus={{
                   boxShadow: 'none'
                 }}
                 _hover={{ textDecoration: 'none' }}>
-                <Button variant='outline' w='100%' size='md'>
+                <Button variant="outline" w="100%" size="md">
                   <HStack>
                     <Avatar
-                      size='xs'
-                      name={`${data.me.profile.first} ${data.me.profile.last}`}
-                      src={data.me.profile.profileImageId}
+                      size="xs"
+                      name={`${data.me.profile?.first} ${data.me.profile?.last}`}
+                      src={data.me.profile?.profileImageId ?? ''}
                     />
 
-                    <Text display='block'>Profile</Text>
+                    <Text display="block">Profile</Text>
                   </HStack>
                 </Button>
               </Link>
               <Link
                 as={ReactLink}
                 to={`/`}
-                w='100%'
+                w="100%"
                 onClick={toggle}
                 _focus={{
                   boxShadow: 'none'
                 }}
                 _hover={{ textDecoration: 'none' }}>
-                <Button variant='outline' w='100%' size='md'>
-                  <Text display='block'>Home</Text>
+                <Button variant="outline" w="100%" size="md">
+                  <Text display="block">Home</Text>
                 </Button>
               </Link>
 
               <Button
-                w='100%'
-                colorScheme='red'
-                size='md'
-                variant='outline'
+                w="100%"
+                colorScheme="red"
+                size="md"
+                variant="outline"
                 _focus={{
                   boxShadow: 'none'
                 }}
@@ -168,11 +168,11 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
             <>
               {data.me.admin ? (
                 <>
-                  <Tag size='lg' variant='outline' colorScheme='red'>
+                  <Tag size="lg" variant="outline" colorScheme="red">
                     Admin
                   </Tag>
                   <Button
-                    size='sm'
+                    size="sm"
                     onClick={adminOpenInvitation}
                     _focus={{
                       boxShadow: 'none'
@@ -182,54 +182,48 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
                 </>
               ) : null}
               <IconButton
-                borderRadius='20px'
-                aria-label='notifications'
-                icon={<Icon as={IoNotifications} fontSize='20px' />}
-                colorScheme='pink'
-                variant='ghost'
-                size='sm'
+                borderRadius="20px"
+                aria-label="notifications"
+                icon={<Icon as={IoNotifications} fontSize="20px" />}
+                colorScheme="pink"
+                variant="ghost"
+                size="sm"
                 _focus={{
                   boxShadow: 'none'
                 }}
                 isDisabled
               />
-              <SendInvitationLink
-                invitations={data.me.invitations}
-                onClick={onInvitationClick}
-              />
+              <SendInvitationLink invitations={data.me.invitations} onClick={onInvitationClick} />
               <IconButton
-                borderRadius='20px'
-                aria-label='create a post'
-                icon={<Icon as={IoAdd} fontSize='20px' />}
-                colorScheme='pink'
-                variant='outline'
-                size='sm'
+                borderRadius="20px"
+                aria-label="create a post"
+                icon={<Icon as={IoAdd} fontSize="20px" />}
+                colorScheme="pink"
+                variant="outline"
+                size="sm"
                 onClick={onCreate}
                 _focus={{
                   boxShadow: 'none'
                 }}
               />
-              <Popover
-                onClose={onClose}
-                isOpen={popoverOpen}
-                placement='bottom-end'>
+              <Popover onClose={onClose} isOpen={popoverOpen} placement="bottom-end">
                 <PopoverTrigger>
                   <Button
                     onClick={avatarClick}
-                    variant='link'
+                    variant="link"
                     _focus={{
                       boxShadow: 'none'
                     }}
                     _hover={{ textDecoration: 'none' }}>
                     <Box
                       borderColor={`${popoverOpen ? '#7928CA' : 'transparent'}`}
-                      boxSizing='border-box'
-                      borderWidth='2px'
-                      padding='2px'
-                      borderRadius='50px'>
+                      boxSizing="border-box"
+                      borderWidth="2px"
+                      padding="2px"
+                      borderRadius="50px">
                       <Avatar
-                        src={data.me.profile.profileImageId}
-                        name={`${data.me.profile.first} ${data.me.profile.last}`}
+                        src={data.me.profile?.profileImageId ?? ''}
+                        name={`${data.me.profile?.first} ${data.me.profile?.last}`}
                         size={Size.SM}
                       />
                     </Box>
@@ -237,38 +231,38 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
                 </PopoverTrigger>
 
                 <PopoverContent
-                  width='175px'
-                  top='-2px'
-                  boxShadow='rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;'
+                  width="175px"
+                  top="-2px"
+                  boxShadow="rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;"
                   _focus={{
                     boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;'
                   }}>
                   <PopoverArrow />
                   <PopoverHeader>
-                    <Text fontSize='14px'>{body}</Text>
+                    <Text fontSize="14px">{body}</Text>
                   </PopoverHeader>
 
                   <PopoverBody p={0}>
-                    <VStack align='stretch' spacing={0}>
+                    <VStack align="stretch" spacing={0}>
                       <Link
                         as={ReactLink}
                         onClick={onClose}
-                        to={`/at/${data.me.profile.username}`}
-                        colorScheme='pink'
-                        border='none'
+                        to={`/at/${data.me.profile?.username}`}
+                        colorScheme="pink"
+                        border="none"
                         _focus={{
                           boxShadow: 'none'
                         }}
                         _hover={{ textDecoration: 'none' }}>
                         <Box
                           py={2}
-                          transition='0.2s'
-                          borderRadius='4px'
+                          transition="0.2s"
+                          borderRadius="4px"
                           pl={4}
                           _hover={{ backgroundColor: 'gray.100' }}>
                           <HStack>
-                            <Icon fontSize='14px' as={AtSignIcon} />
-                            <Text fontSize='14px'>
+                            <Icon fontSize="14px" as={AtSignIcon} />
+                            <Text fontSize="14px">
                               <b>Profile</b>
                             </Text>
                           </HStack>
@@ -278,21 +272,21 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
                         as={ReactLink}
                         onClick={onClose}
                         to={`/`}
-                        colorScheme='pink'
-                        border='none'
+                        colorScheme="pink"
+                        border="none"
                         _focus={{
                           boxShadow: 'none'
                         }}
                         _hover={{ textDecoration: 'none' }}>
                         <Box
                           py={2}
-                          transition='0.2s'
-                          borderRadius='4px'
+                          transition="0.2s"
+                          borderRadius="4px"
                           pl={4}
                           _hover={{ backgroundColor: 'gray.100' }}>
                           <HStack>
-                            <Icon fontSize='14px' as={IoIosHome} />
-                            <Text fontSize='14px'>
+                            <Icon fontSize="14px" as={IoIosHome} />
+                            <Text fontSize="14px">
                               <b>Home</b>
                             </Text>
                           </HStack>
@@ -301,8 +295,8 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
                       <Link
                         as={ReactLink}
                         to={'/'}
-                        colorScheme='pink'
-                        border='none'
+                        colorScheme="pink"
+                        border="none"
                         _focus={{
                           boxShadow: 'none'
                         }}
@@ -310,12 +304,12 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
                         onClick={onLogout}>
                         <Box
                           py={2}
-                          transition='0.1s'
-                          borderRadius='3px'
+                          transition="0.1s"
+                          borderRadius="3px"
                           pl={4}
-                          color='red.600'
+                          color="red.600"
                           _hover={{ backgroundColor: 'red.50' }}>
-                          <Text fontSize='14px'>
+                          <Text fontSize="14px">
                             <b>Logout</b>
                           </Text>
                         </Box>
@@ -327,24 +321,24 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
             </>
           )
         ) : loading ? (
-          <Spinner size='sm' />
+          <Spinner size="sm" />
         ) : (
           <>
             <Link
               as={ReactLink}
-              to='/register'
+              to="/register"
               onClick={toggle}
-              w='100%'
+              w="100%"
               py={`${isTabletOrMobile ? '0' : '4px'}`}
               _focus={{
                 boxShadow: 'none'
               }}>
               <Button
-                w='100%'
-                display='block'
+                w="100%"
+                display="block"
                 size={isTabletOrMobile ? 'md' : 'sm'}
-                colorScheme='pink'
-                variant='ghost'
+                colorScheme="pink"
+                variant="ghost"
                 _focus={{
                   boxShadow: 'none'
                 }}>
@@ -353,19 +347,19 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
             </Link>
             <Link
               as={ReactLink}
-              to='/login'
+              to="/login"
               py={`${isTabletOrMobile ? '0' : '4px'}`}
               onClick={toggle}
-              w='100%'
+              w="100%"
               _focus={{
                 boxShadow: 'none'
               }}>
               <Button
-                w='100%'
+                w="100%"
                 size={isTabletOrMobile ? 'md' : 'sm'}
-                colorScheme='pink'
-                display='block'
-                variant='solid'
+                colorScheme="pink"
+                display="block"
+                variant="solid"
                 _focus={{
                   boxShadow: 'none'
                 }}>
@@ -376,7 +370,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
         )}
       </Stack>
       <PostCreate
-        profileId={data && data.me ? data.me.profile.id : null}
+        profileId={data && data.me ? data.me.profile?.id : null}
         admin={data && data.me ? data.me.admin : null}
         isOpen={postOpen}
         mobile={isTabletOrMobile}
@@ -385,13 +379,10 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
       <InvitationModal
         isOpen={invitationOpen}
         setOpen={setInvitationOpen}
-        invitations={data && data.me ? data.me.invitations : null}
+        invitations={data && data.me ? data.me.invitations : 0}
       />
       {data && data.me && data.me.admin ? (
-        <AdminInvitationModal
-          isOpen={adminInvitationOpen}
-          setOpen={setAdminInvitaitonOpen}
-        />
+        <AdminInvitationModal isOpen={adminInvitationOpen} setOpen={setAdminInvitaitonOpen} />
       ) : null}
     </Box>
   );

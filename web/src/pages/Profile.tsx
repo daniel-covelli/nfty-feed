@@ -60,7 +60,7 @@ import { setAccessToken } from '../accessToken';
 
 import { RouteComponentProps } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
-import { DropzoneComponent } from '../components/profile/DropzoneComponenet';
+import { DropzoneComponent } from '../components/profile/DropzoneComponent';
 import { CropperModal } from '../components/register/CropperModal';
 import { PostsLoading } from '../components/profile/PostsLoading';
 import { FollowersModal } from '../components/profile/FollowersModal';
@@ -80,10 +80,7 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
 
   const [isMobile] = useMediaQuery('(max-width: 520px)');
 
-  const [
-    unsubscribe,
-    { loading: unsubscribeLoading }
-  ] = useUnSubscribeMutation();
+  const [unsubscribe, { loading: unsubscribeLoading }] = useUnSubscribeMutation();
   const toast = useToast();
   const [subscribe, { loading: subscribeLoading }] = useSubscribeMutation();
   const [edit, { loading: editLoading }] = useEditProfileMutation();
@@ -93,22 +90,21 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
     variables: { path: window.location.href }
   });
 
-  const [
-    getPosts,
-    { data: posts, loading: postsLoading }
-  ] = useGetUsersPostsLazyQuery();
+  const [getPosts, { data: posts, loading: postsLoading }] = useGetUsersPostsLazyQuery();
   const [getFollowers, { data: followers }] = useGetActiveFollowersLazyQuery();
   const [getFollowing, { data: following }] = useGetActiveFollowingLazyQuery();
-  const [
-    getExistingSubscription,
-    { data: existingSubscription }
-  ] = useExistingSubscriptionLazyQuery();
+  const [getExistingSubscription, { data: existingSubscription }] =
+    useExistingSubscriptionLazyQuery();
 
   useEffect(() => {
-    if (data) {
+    if (
+      data?.getUser &&
+      data.getUser.user.profile?.profileImageId &&
+      data.getUser.user.profile.ogProfileImageId
+    ) {
       getFollowers({ variables: { userId: data.getUser.user.id } });
       getFollowing({ variables: { userId: data.getUser.user.id } });
-      getExistingSubscription({ variables: { userId: data.getUser.user.id } });
+      getExistingSubscription({ variables: { userId: data.getUser?.user.id } });
       setCroppedImage(data.getUser.user.profile.profileImageId);
       setOriginalImage(data.getUser.user.profile.ogProfileImageId);
       getPosts({ variables: { profileId: data.getUser.user.profile.id } });
@@ -116,23 +112,23 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
   }, [data]);
 
   const onEditModalClose = () => {
-    setCroppedImage(data.getUser.user.profile.profileImageId);
-    setOriginalImage(data.getUser.user.profile.ogProfileImageId);
+    setCroppedImage(data?.getUser?.user.profile?.profileImageId ?? '');
+    setOriginalImage(data?.getUser?.user.profile?.ogProfileImageId ?? '');
     openEditModal(false);
   };
 
   const onCropperModalClose = () => {
-    setOriginalImage(data.getUser.user.profile.ogProfileImageId);
+    setOriginalImage(data?.getUser?.user.profile?.ogProfileImageId ?? '');
     setCropperModalOpen(false);
   };
 
   if (loading) {
     return (
       <>
-        <Box padding='6'>
+        <Box padding="6">
           <HStack spacing={'30px'}>
-            <SkeletonCircle size='100px' />
-            <Skeleton w='calc(100% - 100px - 30px)' h='100px' />
+            <SkeletonCircle size="100px" />
+            <Skeleton w="calc(100% - 100px - 30px)" h="100px" />
           </HStack>
         </Box>
         <hr />
@@ -147,11 +143,11 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
       return (
         <Text>
           To access this page please{' '}
-          <Link as={ReactLink} to={`/register`} color='teal.500'>
+          <Link as={ReactLink} to={`/register`} color="teal.500">
             register
           </Link>{' '}
           or{' '}
-          <Link as={ReactLink} to={`/login`} color='teal.500'>
+          <Link as={ReactLink} to={`/login`} color="teal.500">
             login
           </Link>
           .
@@ -167,13 +163,13 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
     );
   }
 
-  let subscriptionDisplay = <Spinner size='sm' />;
+  let subscriptionDisplay = <Spinner size="sm" />;
   if (existingSubscription && existingSubscription.existingSubscription) {
     subscriptionDisplay = (
       <Button
-        size='sm'
-        w='100%'
-        variant='outline'
+        size="sm"
+        w="100%"
+        variant="outline"
         onClick={() => openSubscriptionModal(true)}
         _focus={{
           boxShadow: 'none'
@@ -181,62 +177,58 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
         Following
       </Button>
     );
-  } else if (
-    existingSubscription &&
-    !existingSubscription.existingSubscription
-  ) {
+  } else if (existingSubscription && !existingSubscription.existingSubscription) {
     subscriptionDisplay = (
       <Button
         isLoading={subscribeLoading}
-        size='sm'
-        w='100%'
-        variant='solid'
-        colorScheme='pink'
+        size="sm"
+        w="100%"
+        variant="solid"
+        colorScheme="pink"
         _focus={{
           boxShadow: 'none'
         }}
         onClick={async () => {
-          await subscribe({
-            variables: {
-              userIdWhoIsBeingFollowed: data.getUser.user.id
-            },
-            update: (store, { data }) => {
-              const old = store.readQuery<GetActiveFollowersQuery>({
-                query: GetActiveFollowersDocument,
-                variables: {
-                  userId: data.subscribe.followingId
-                }
-              });
+          if (data?.getUser) {
+            await subscribe({
+              variables: {
+                userIdWhoIsBeingFollowed: data.getUser.user.id
+              },
+              update: (store, { data }) => {
+                const old = store.readQuery<GetActiveFollowersQuery>({
+                  query: GetActiveFollowersDocument,
+                  variables: {
+                    userId: data?.subscribe.followingId
+                  }
+                });
 
-              if (!data || !old) {
-                return null;
+                if (!data || !old) {
+                  return null;
+                }
+
+                store.writeQuery<GetActiveFollowersQuery>({
+                  query: GetActiveFollowersDocument,
+                  data: {
+                    __typename: 'Query',
+                    getActiveFollowers: [...old.getActiveFollowers, data.subscribe]
+                  },
+                  variables: {
+                    userId: data.subscribe.followingId
+                  }
+                });
+                store.writeQuery<ExistingSubscriptionQuery>({
+                  query: ExistingSubscriptionDocument,
+                  data: {
+                    __typename: 'Query',
+                    existingSubscription: true
+                  },
+                  variables: {
+                    userId: data.subscribe.followingId
+                  }
+                });
               }
-
-              store.writeQuery<GetActiveFollowersQuery>({
-                query: GetActiveFollowersDocument,
-                data: {
-                  __typename: 'Query',
-                  getActiveFollowers: [
-                    ...old.getActiveFollowers,
-                    data.subscribe
-                  ]
-                },
-                variables: {
-                  userId: data.subscribe.followingId
-                }
-              });
-              store.writeQuery<ExistingSubscriptionQuery>({
-                query: ExistingSubscriptionDocument,
-                data: {
-                  __typename: 'Query',
-                  existingSubscription: true
-                },
-                variables: {
-                  userId: data.subscribe.followingId
-                }
-              });
-            }
-          });
+            });
+          }
         }}>
         Follow
       </Button>
@@ -245,31 +237,27 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
 
   return (
     <>
-      <Container maxW='container.md' p='0'>
-        <Box mb='20px'>
-          <Grid
-            templateColumns='repeat(9, 1fr)'
-            maxH='250px'
-            h='100%'
-            pb='10px'>
+      <Container maxW="container.md" p="0">
+        <Box mb="20px">
+          <Grid templateColumns="repeat(9, 1fr)" maxH="250px" h="100%" pb="10px">
             <GridItem colSpan={3}>
-              <Box pb='10px' pr='10px'>
-                <AspectRatio maxW='150px' w='100%' ratio={1 / 1}>
+              <Box pb="10px" pr="10px">
+                <AspectRatio maxW="150px" w="100%" ratio={1 / 1}>
                   <Box
-                    as='button'
+                    as="button"
                     onClick={() => {
                       setProfilePhotoModalOpen(true);
                     }}>
                     <Avatar
-                      size='full'
-                      fontSize='60px'
+                      size="full"
+                      fontSize="60px"
                       name={
-                        data.getUser.user.profile
+                        data?.getUser?.user.profile
                           ? `${data.getUser.user.profile.first} ${data.getUser.user.profile.last}`
-                          : null
+                          : ''
                       }
                       src={
-                        data.getUser.user.profile.profileImageId
+                        data?.getUser?.user.profile?.profileImageId
                           ? `${data.getUser.user.profile.profileImageId}`
                           : ''
                       }
@@ -279,27 +267,27 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
               </Box>
             </GridItem>
             <GridItem colSpan={6}>
-              <Box pl='10px' pb='10px'>
+              <Box pl="10px" pb="10px">
                 <Wrap>
-                  <WrapItem maxW='100%' display='inline-block'>
-                    <Box w='100%' pr='10px'>
+                  <WrapItem maxW="100%" display="inline-block">
+                    <Box w="100%" pr="10px">
                       <Heading size={isMobile ? 'md' : 'lg'}>
-                        {data.getUser.user.profile
+                        {data?.getUser?.user.profile
                           ? data.getUser.user.profile.username
                           : 'No username'}
                       </Heading>
                     </Box>
                   </WrapItem>
-                  <WrapItem w='100%' maxW={isMobile ? '100%' : '150px'}>
-                    <Center w='100%' h='100%'>
-                      {data.getUser.me ? (
+                  <WrapItem w="100%" maxW={isMobile ? '100%' : '150px'}>
+                    <Center w="100%" h="100%">
+                      {data?.getUser?.me ? (
                         <ButtonGroup
                           size={isMobile ? 'sm' : 'sm'}
-                          w='100%'
-                          pt='3px'
-                          variant='outline'>
+                          w="100%"
+                          pt="3px"
+                          variant="outline">
                           <Button
-                            w='100%'
+                            w="100%"
                             onClick={() => openEditModal(true)}
                             _focus={{
                               boxShadow: 'none'
@@ -307,7 +295,7 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                             Edit Profile
                           </Button>
                           <IconButton
-                            aria-label='Settings'
+                            aria-label="Settings"
                             icon={<SettingsIcon />}
                             _focus={{
                               boxShadow: 'none'
@@ -324,56 +312,43 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
               </Box>
 
               {!isMobile ? (
-                <Box maxW='300px' w='100%' pl='10px'>
-                  <VStack spacing={2} align='stretch'>
+                <Box maxW="300px" w="100%" pl="10px">
+                  <VStack spacing={2} align="stretch">
                     <Box>
                       <Flex>
                         <Box>
-                          <Text size='md'>
-                            <b>{posts ? posts.getUsersPosts.length : 0}</b>{' '}
-                            posts
+                          <Text size="md">
+                            <b>{posts ? posts.getUsersPosts.length : 0}</b> posts
                           </Text>
                         </Box>
                         <Spacer />
                         <Box>
-                          <Text size='md'>
+                          <Text size="md">
                             <Link onClick={() => setFollowersModal(true)}>
-                              <b>
-                                {followers
-                                  ? followers.getActiveFollowers.length
-                                  : 0}
-                              </b>{' '}
-                              followers
+                              <b>{followers ? followers.getActiveFollowers.length : 0}</b> followers
                             </Link>
                           </Text>
                         </Box>
                         <Spacer />
-                        <Box float='right'>
-                          <Text size='md'>
+                        <Box float="right">
+                          <Text size="md">
                             <Link onClick={() => setFollowingModal(true)}>
-                              <b>
-                                {following
-                                  ? following.getActiveFollowing.length
-                                  : 0}
-                              </b>{' '}
-                              following
+                              <b>{following ? following.getActiveFollowing.length : 0}</b> following
                             </Link>
                           </Text>
                         </Box>
                       </Flex>
                     </Box>
                     <Box>
-                      <Text fontSize='md' isTruncated>
-                        {data.getUser.user.profile
+                      <Text fontSize="md" isTruncated>
+                        {data?.getUser?.user.profile
                           ? `${data.getUser.user.profile.first} ${data.getUser.user.profile.last}`
                           : 'No name'}
                       </Text>
                     </Box>
                     <Box>
-                      <Text fontSize='sm' noOfLines={4}>
-                        {data.getUser.user.profile
-                          ? data.getUser.user.profile.bio
-                          : null}
+                      <Text fontSize="sm" noOfLines={4}>
+                        {data?.getUser?.user.profile ? data.getUser.user.profile.bio : null}
                       </Text>
                     </Box>
                   </VStack>
@@ -382,12 +357,12 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
             </GridItem>
           </Grid>
           {isMobile ? (
-            <Box w='100%'>
-              <VStack spacing={2} align='stretch' w='100%'>
+            <Box w="100%">
+              <VStack spacing={2} align="stretch" w="100%">
                 <Box>
-                  <Text fontSize='md' isTruncated>
+                  <Text fontSize="md" isTruncated>
                     <b>
-                      {data.getUser.user.profile
+                      {data?.getUser?.user.profile
                         ? `${data.getUser.user.profile.first} ${data.getUser.user.profile.last}`
                         : 'No name'}
                     </b>
@@ -395,42 +370,30 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                 </Box>
 
                 <Box>
-                  <Text fontSize='sm' noOfLines={4}>
-                    {data.getUser.user.profile
-                      ? data.getUser.user.profile.bio
-                      : null}
+                  <Text fontSize="sm" noOfLines={4}>
+                    {data?.getUser?.user.profile ? data.getUser.user.profile.bio : null}
                   </Text>
                 </Box>
                 <Box>
                   <Flex>
                     <Box>
-                      <Text size='sm'>
+                      <Text size="sm">
                         <b>0</b> posts
                       </Text>
                     </Box>
                     <Spacer />
                     <Box>
-                      <Text size='sm'>
+                      <Text size="sm">
                         <Link onClick={() => setFollowersModal(true)}>
-                          <b>
-                            {followers
-                              ? followers.getActiveFollowers.length
-                              : 0}
-                          </b>{' '}
-                          followers
+                          <b>{followers ? followers.getActiveFollowers.length : 0}</b> followers
                         </Link>
                       </Text>
                     </Box>
                     <Spacer />
                     <Box>
-                      <Text size='sm'>
+                      <Text size="sm">
                         <Link onClick={() => setFollowingModal(true)}>
-                          <b>
-                            {following
-                              ? following.getActiveFollowing.length
-                              : 0}
-                          </b>{' '}
-                          following
+                          <b>{following ? following.getActiveFollowing.length : 0}</b> following
                         </Link>
                       </Text>
                     </Box>
@@ -460,22 +423,17 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
       ) : posts ? (
         posts.getUsersPosts.length == 0 ? (
           <Center>
-            <VStack pt='60px'>
-              <Text color='gray.500'>No posts yet</Text>
-              <Text color='gray.500'>¯\_₍⸍⸌̣ʷ̣̫⸍̣⸌₎_/¯</Text>
+            <VStack pt="60px">
+              <Text color="gray.500">No posts yet</Text>
+              <Text color="gray.500">¯\_₍⸍⸌̣ʷ̣̫⸍̣⸌₎_/¯</Text>
             </VStack>
           </Center>
         ) : (
-          <Wrap pt='10px' pl='1px'>
+          <Wrap pt="10px" pl="1px">
             {posts.getUsersPosts.map((post) =>
               post ? (
-                <WrapItem key={post.id} maxW='47.5%'>
-                  <Image
-                    src={post.media}
-                    w='190px'
-                    h='190px'
-                    objectFit='cover'
-                  />
+                <WrapItem key={post.id} maxW="47.5%">
+                  <Image src={post.media} w="190px" h="190px" objectFit="cover" />
                 </WrapItem>
               ) : null
             )}
@@ -483,25 +441,22 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
         )
       ) : null}
 
-      <Modal
-        isOpen={settingsModal}
-        onClose={() => openSettingsModal(false)}
-        size='xs'>
+      <Modal isOpen={settingsModal} onClose={() => openSettingsModal(false)} size="xs">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Profile Settings</ModalHeader>
           <ModalCloseButton />
-          <ModalBody pb='20px'>
+          <ModalBody pb="20px">
             <Center>
-              <VStack w='100%' maxW='200px'>
-                <Button w='100%' variant='outline' isDisabled>
+              <VStack w="100%" maxW="200px">
+                <Button w="100%" variant="outline" isDisabled>
                   Notifications
                 </Button>
                 <Button
                   isLoading={logoutLoading}
-                  w='100%'
-                  variant='outline'
-                  colorScheme='red'
+                  w="100%"
+                  variant="outline"
+                  colorScheme="red"
                   onClick={async () => {
                     setLogoutLoading(true);
                     await logout();
@@ -517,218 +472,143 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
           </ModalBody>
         </ModalContent>
       </Modal>
-      <Modal
-        isOpen={subscriptionModal}
-        onClose={() => openSubscriptionModal(false)}
-        size='xs'>
+      <Modal isOpen={subscriptionModal} onClose={() => openSubscriptionModal(false)} size="xs">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Unfollow</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Center>
-              <VStack w='100%' maxW='200px'>
-                <Box mb='15px'>
+              <VStack w="100%" maxW="200px">
+                <Box mb="15px">
                   <Avatar
-                    size='2xl'
-                    fontSize='60px'
+                    size="2xl"
+                    fontSize="60px"
                     name={
-                      data.getUser.user.profile
+                      data?.getUser?.user.profile
                         ? `${data.getUser.user.profile.first} ${data.getUser.user.profile.last}`
-                        : null
+                        : ''
                     }
                     src={
-                      data.getUser.user.profile.profileImageId
+                      data?.getUser?.user.profile?.profileImageId
                         ? `${data.getUser.user.profile.profileImageId}`
                         : ''
                     }
                   />
                 </Box>
-                <Text pb='15px' fontSize='sm' isTruncated>
-                  Unfollow @{data.getUser.user.profile.username}?
+                <Text pb="15px" fontSize="sm" isTruncated>
+                  Unfollow @{data?.getUser?.user.profile?.username}?
                 </Text>
 
                 <Button
                   isLoading={unsubscribeLoading}
-                  w='100%'
-                  variant='outline'
-                  colorScheme='red'
+                  w="100%"
+                  variant="outline"
+                  colorScheme="red"
                   onClick={async () => {
-                    await unsubscribe({
-                      variables: { userId: data.getUser.user.id },
-                      update: (store, { data }) => {
-                        const old = store.readQuery<GetActiveFollowersQuery>({
-                          query: GetActiveFollowersDocument,
-                          variables: {
-                            userId: data.unSubscribe.followingId
-                          }
-                        });
+                    if (data?.getUser) {
+                      await unsubscribe({
+                        variables: { userId: data?.getUser?.user.id },
+                        update: (store, { data }) => {
+                          if (data?.unSubscribe) {
+                            const old = store.readQuery<GetActiveFollowersQuery>({
+                              query: GetActiveFollowersDocument,
+                              variables: {
+                                userId: data.unSubscribe.followingId
+                              }
+                            });
 
-                        const oldFollowingData = store.readQuery<
-                          GetFollowingDataQuery
-                        >({
-                          query: GetFollowingDataDocument,
-                          variables: {
-                            userId: data.unSubscribe.userId
-                          }
-                        });
+                            const oldFollowingData = store.readQuery<GetFollowingDataQuery>({
+                              query: GetFollowingDataDocument,
+                              variables: {
+                                userId: data.unSubscribe.userId
+                              }
+                            });
 
-                        const oldFollowing = store.readQuery<
-                          GetActiveFollowersQuery
-                        >({
-                          query: GetActiveFollowersDocument,
-                          variables: {
-                            userId: data.unSubscribe.userId
-                          }
-                        });
+                            const oldFollowing = store.readQuery<GetActiveFollowersQuery>({
+                              query: GetActiveFollowersDocument,
+                              variables: {
+                                userId: data.unSubscribe.userId
+                              }
+                            });
 
-                        if (oldFollowingData) {
-                          store.writeQuery<GetFollowingDataQuery>({
-                            query: GetFollowingDataDocument,
-                            data: {
-                              __typename: 'Query',
-                              getFollowingData: oldFollowingData.getFollowingData.filter(
-                                (follower) =>
-                                  follower.id !== data.unSubscribe.followingId
-                              )
-                            },
-                            variables: {
-                              userId: data.unSubscribe.userId
-                            }
-                          });
-                          console.log(
-                            'FILTER',
-                            oldFollowingData.getFollowingData.filter(
-                              (follower) =>
-                                follower.id !== data.unSubscribe.followingId
-                            )
-                          );
-                        }
-
-                        if (oldFollowing) {
-                          console.log('OLD FOLLOWING', oldFollowing);
-                          console.log(
-                            'FILTER',
-                            oldFollowing.getActiveFollowers.filter(
-                              (user) =>
-                                user.userId !== data.unSubscribe.followingId
-                            )
-                          );
-                          store.writeQuery<GetActiveFollowersQuery>({
-                            query: GetActiveFollowersDocument,
-                            data: {
-                              __typename: 'Query',
-                              getActiveFollowers: oldFollowing.getActiveFollowers.map(
-                                (follower) => {
-                                  if (
-                                    follower.userId ===
-                                    data.unSubscribe.followingId
-                                  ) {
-                                    return { ...follower, active: 0 };
-                                  }
-                                  return follower;
+                            if (oldFollowingData) {
+                              store.writeQuery<GetFollowingDataQuery>({
+                                query: GetFollowingDataDocument,
+                                data: {
+                                  __typename: 'Query',
+                                  getFollowingData: oldFollowingData.getFollowingData.filter(
+                                    (follower) => follower.id !== data.unSubscribe.followingId
+                                  )
+                                },
+                                variables: {
+                                  userId: data.unSubscribe.userId
                                 }
-                              )
-                            },
-                            variables: {
-                              userId: data.unSubscribe.userId
+                              });
+                              console.log(
+                                'FILTER',
+                                oldFollowingData.getFollowingData.filter(
+                                  (follower) => follower.id !== data.unSubscribe.followingId
+                                )
+                              );
                             }
-                          });
-                        }
 
-                        console.log('UNSUB DATA', data.unSubscribe);
+                            if (oldFollowing) {
+                              store.writeQuery<GetActiveFollowersQuery>({
+                                query: GetActiveFollowersDocument,
+                                data: {
+                                  __typename: 'Query',
+                                  getActiveFollowers: oldFollowing.getActiveFollowers.map(
+                                    (follower) => {
+                                      if (follower.userId === data.unSubscribe.followingId) {
+                                        return { ...follower, active: 0 };
+                                      }
+                                      return follower;
+                                    }
+                                  )
+                                },
+                                variables: {
+                                  userId: data.unSubscribe.userId
+                                }
+                              });
+                            }
 
-                        // followers on page
-                        // const oldFollowers = store.readQuery<
-                        //   GetFollowersDataQuery
-                        // >({
-                        //   query: GetFollowersDataDocument,
-                        //   variables: {
-                        //     userId: data.unSubscribe.followingId
-                        //   }
-                        // });
+                            if (!data || !old) {
+                              return null;
+                            }
 
-                        // the users followers
-                        // const oldFollowersMe = store.readQuery<
-                        //   GetFollowersDataQuery
-                        // >({
-                        //   query: GetFollowersDataDocument,
-                        //   variables: {
-                        //     userId: data.unSubscribe.userId
-                        //   }
-                        // });
-
-                        if (!data || !old) {
-                          return null;
-                        }
-
-                        // if (oldFollowersMe) {
-                        //   store.writeQuery<GetFollowersDataQuery>({
-                        //     query: GetFollowersDataDocument,
-                        //     data: {
-                        //       __typename: 'Query',
-                        //       getFollowersData: oldFollowersMe.getFollowersData.map(
-                        //         (follower) =>
-                        //           follower.userId ===
-                        //           data.unSubscribe.followingId
-                        //             ? { ...follower, following: false }
-                        //             : follower
-                        //       )
-                        //     },
-                        //     variables: {
-                        //       userId: data.unSubscribe.userId
-                        //     }
-                        //   });
-                        // }
-
-                        // if (oldFollowers) {
-                        //   store.writeQuery<GetFollowersDataQuery>({
-                        //     query: GetFollowersDataDocument,
-                        //     data: {
-                        //       __typename: 'Query',
-                        //       getFollowersData: oldFollowers.getFollowersData.filter(
-                        //         (follower) =>
-                        //           follower.userId !== data.unSubscribe.userId
-                        //       )
-                        //     },
-                        //     variables: {
-                        //       userId: data.unSubscribe.followingId
-                        //     }
-                        //   });
-                        // }
-
-                        store.writeQuery<GetActiveFollowersQuery>({
-                          query: GetActiveFollowersDocument,
-                          data: {
-                            __typename: 'Query',
-                            getActiveFollowers: old.getActiveFollowers.filter(
-                              (user) => user.id !== data.unSubscribe.id
-                            )
-                          },
-                          variables: {
-                            userId: data.unSubscribe.followingId
+                            store.writeQuery<GetActiveFollowersQuery>({
+                              query: GetActiveFollowersDocument,
+                              data: {
+                                __typename: 'Query',
+                                getActiveFollowers: old.getActiveFollowers.filter(
+                                  (user) => user.id !== data.unSubscribe.id
+                                )
+                              },
+                              variables: {
+                                userId: data.unSubscribe.followingId
+                              }
+                            });
+                            store.writeQuery<ExistingSubscriptionQuery>({
+                              query: ExistingSubscriptionDocument,
+                              data: {
+                                __typename: 'Query',
+                                existingSubscription: false
+                              },
+                              variables: {
+                                userId: data.unSubscribe.followingId
+                              }
+                            });
                           }
-                        });
-                        store.writeQuery<ExistingSubscriptionQuery>({
-                          query: ExistingSubscriptionDocument,
-                          data: {
-                            __typename: 'Query',
-                            existingSubscription: false
-                          },
-                          variables: {
-                            userId: data.unSubscribe.followingId
-                          }
-                        });
-                      }
-                    });
+                        }
+                      });
+                    }
+
                     openSubscriptionModal(false);
                   }}>
                   Unfollow
                 </Button>
-                <Button
-                  w='100%'
-                  variant='outline'
-                  onClick={() => openSubscriptionModal(false)}>
+                <Button w="100%" variant="outline" onClick={() => openSubscriptionModal(false)}>
                   Cancel
                 </Button>
               </VStack>
@@ -736,150 +616,127 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
           </ModalBody>
         </ModalContent>
       </Modal>
-      {data.getUser.me ? (
+      {data?.getUser?.me ? (
         <Modal
           isOpen={editModal}
           onClose={onEditModalClose} // onEditModalClose
-          size='xs'>
+          size="xs">
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>Edit Profile</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
               <>
-                <Center>
-                  <Formik
-                    initialValues={{
-                      username: data.getUser.user.profile.username,
-                      first: data.getUser.user.profile.first,
-                      last: data.getUser.user.profile.last,
-                      bio: data.getUser.user.profile.bio
-                    }}
-                    onSubmit={async ({ username, first, last, bio }) => {
-                      const { data } = await edit({
-                        variables: {
-                          profileImage: croppedImage,
-                          ogProfileImage: originalImage,
-                          username,
-                          first,
-                          last,
-                          bio
-                        },
-                        update: (store, { data }) => {
-                          store.writeQuery<GetUserQuery>({
-                            query: GetUserDocument,
-                            data: {
-                              __typename: 'Query',
-                              getUser: {
-                                __typename: 'UserResponse',
-                                me: true,
-                                user: data.editProfile.user
-                              }
-                            },
-                            variables: { path: window.location.href }
+                {data.getUser.user.profile && (
+                  <Center>
+                    <Formik
+                      initialValues={{
+                        username: data.getUser.user.profile.username,
+                        first: data.getUser.user.profile.first,
+                        last: data.getUser.user.profile.last,
+                        bio: data.getUser.user.profile.bio
+                      }}
+                      onSubmit={async ({ username, first, last, bio }) => {
+                        const { data } = await edit({
+                          variables: {
+                            profileImage: croppedImage,
+                            ogProfileImage: originalImage,
+                            username,
+                            first,
+                            last,
+                            bio: bio ?? ''
+                          },
+                          update: (store, { data }) => {
+                            if (data?.editProfile.user) {
+                              store.writeQuery<GetUserQuery>({
+                                query: GetUserDocument,
+                                data: {
+                                  __typename: 'Query',
+                                  getUser: {
+                                    __typename: 'UserResponse',
+                                    me: true,
+                                    user: data.editProfile.user
+                                  }
+                                },
+                                variables: { path: window.location.href }
+                              });
+                            }
+                          }
+                        });
+                        if (data?.editProfile.res) {
+                          toast({
+                            title: data.editProfile.message,
+                            duration: 3000,
+                            status: 'error',
+                            position: 'top',
+                            variant: 'subtle',
+                            isClosable: true
                           });
+                        } else {
+                          toast({
+                            title: `Profile sucessfully updated`,
+                            duration: 3000,
+                            status: 'success',
+                            position: 'bottom',
+                            variant: 'subtle',
+                            isClosable: true
+                          });
+                          if (data?.editProfile.message === 'refresh') {
+                            history.push(`/at/${data.editProfile.user?.profile?.username}`);
+                          }
+                          openEditModal(false);
                         }
-                      });
-                      if (!data.editProfile.res) {
-                        toast({
-                          title: data.editProfile.message,
-                          duration: 3000,
-                          status: 'error',
-                          position: 'top',
-                          variant: 'subtle',
-                          isClosable: true
-                        });
-                      } else {
-                        toast({
-                          title: `Profile sucessfully updated`,
-                          duration: 3000,
-                          status: 'success',
-                          position: 'bottom',
-                          variant: 'subtle',
-                          isClosable: true
-                        });
-                        if (data.editProfile.message === 'refresh') {
-                          history.push(
-                            `/at/${data.editProfile.user.profile.username}`
-                          );
-                        }
-                        openEditModal(false);
-                      }
-                    }}>
-                    <Form>
-                      <Center pb='10px'>
-                        <DropzoneComponent
-                          setOpen={setCropperModalOpen}
-                          setOriginalData={setOriginalImage}
-                          initialDisplayImage={croppedImage ? croppedImage : ''}
-                          setCroppedImage={setCroppedImage}
-                        />
-                      </Center>
-                      <Box pb='10px'>
-                        <Field id='username' name='username'>
-                          {({ field }) => (
-                            <FormControl>
-                              <Text fontSize='xs'>Username</Text>
-                              <Input
-                                {...field}
-                                id='username'
-                                w='250px'
-                                placeholder='username'
-                              />
-                            </FormControl>
-                          )}
-                        </Field>
-                      </Box>
-                      <Box pb='10px'>
-                        <Field id='first' name='first'>
-                          {({ field }) => (
-                            <FormControl>
-                              <Text fontSize='xs'>First</Text>
-                              <Input
-                                {...field}
-                                id='first'
-                                placeholder='first'
-                              />
-                            </FormControl>
-                          )}
-                        </Field>
-                      </Box>
-                      <Box pb='10px'>
-                        <Field id='last' name='last'>
-                          {({ field }) => (
-                            <FormControl>
-                              <Text fontSize='xs'>Last</Text>
-                              <Input {...field} id='last' placeholder='last' />
-                            </FormControl>
-                          )}
-                        </Field>
-                      </Box>
-                      <Box pb='10px'>
-                        <Field id='bio' name='bio'>
-                          {({ field }) => (
-                            <FormControl>
-                              <Text fontSize='xs'>Bio</Text>
-                              <Textarea {...field} id='bio' placeholder='bio' />
-                            </FormControl>
-                          )}
-                        </Field>
-                      </Box>
-                      <Box pb='10px' float='right'>
-                        <Button
-                          isLoading={editLoading}
-                          type='submit'
-                          colorScheme='pink'
-                          variant='outline'
-                          size='sm'
-                          _focus={{
-                            boxShadow: 'none'
-                          }}>
-                          edit profile
-                        </Button>
-                      </Box>
-                    </Form>
-                  </Formik>
-                </Center>
+                      }}>
+                      <Form>
+                        <Center pb="10px">
+                          <DropzoneComponent
+                            setOpen={setCropperModalOpen}
+                            setOriginalData={setOriginalImage}
+                            initialDisplayImage={croppedImage ? croppedImage : ''}
+                            setCroppedImage={setCroppedImage}
+                          />
+                        </Center>
+                        <Box pb="10px">
+                          <FormControl>
+                            <Text fontSize="xs">Username</Text>
+                            <Input id="username" name="username" w="250px" placeholder="username" />
+                          </FormControl>
+                        </Box>
+                        <Box pb="10px">
+                          <FormControl>
+                            <Text fontSize="xs">First</Text>
+                            <Input id="first" name="first" placeholder="first" />
+                          </FormControl>
+                        </Box>
+                        <Box pb="10px">
+                          <FormControl>
+                            <Text fontSize="xs">Last</Text>
+                            <Input name="last" id="last" placeholder="last" />
+                          </FormControl>
+                        </Box>
+                        <Box pb="10px">
+                          <FormControl>
+                            <Text fontSize="xs">Bio</Text>
+                            <Textarea id="bio" name="bio" placeholder="bio" />
+                          </FormControl>
+                        </Box>
+                        <Box pb="10px" float="right">
+                          <Button
+                            isLoading={editLoading}
+                            type="submit"
+                            colorScheme="pink"
+                            variant="outline"
+                            size="sm"
+                            _focus={{
+                              boxShadow: 'none'
+                            }}>
+                            edit profile
+                          </Button>
+                        </Box>
+                      </Form>
+                    </Formik>
+                  </Center>
+                )}
                 <CropperModal
                   imageToBeCropped={originalImage ? originalImage : ''}
                   open={cropperModalOpen}
@@ -898,24 +755,24 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
         isOpen={profilePhotoModalOpen}
         isCentered>
         <ModalOverlay />
-        <ModalContent padding={0} width='0'>
+        <ModalContent padding={0} width="0">
           <Center>
             <Avatar
               padding={0}
               margin={0}
-              size='full'
-              h='400px'
-              width='400px'
-              maxH='90vw'
-              maxW='90vw'
-              fontSize='60px'
+              size="full"
+              h="400px"
+              width="400px"
+              maxH="90vw"
+              maxW="90vw"
+              fontSize="60px"
               name={
-                data.getUser.user.profile
+                data?.getUser?.user.profile
                   ? `${data.getUser.user.profile.first} ${data.getUser.user.profile.last}`
-                  : null
+                  : ''
               }
               src={
-                data.getUser.user.profile.profileImageId
+                data?.getUser?.user.profile?.profileImageId
                   ? `${data.getUser.user.profile.profileImageId}`
                   : ''
               }
@@ -923,51 +780,20 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
           </Center>
         </ModalContent>
       </Modal>
-      <FollowersModal
-        isOpen={followersModal}
-        setOpen={setFollowersModal}
-        userId={data.getUser.user.id}
-      />
-      <FollowingModal
-        isOpen={followingModal}
-        setOpen={setFollowingModal}
-        userId={data.getUser.user.id}
-      />
+      {data?.getUser?.user.id && (
+        <>
+          <FollowersModal
+            isOpen={followersModal}
+            setOpen={setFollowersModal}
+            userId={data.getUser.user.id}
+          />
+          <FollowingModal
+            isOpen={followingModal}
+            setOpen={setFollowingModal}
+            userId={data.getUser.user.id}
+          />
+        </>
+      )}
     </>
   );
 };
-
-// {
-//   /* <Box py='10px'>
-//         <Text>Me?: {data.getUser.me ? 'True' : 'False'}</Text>
-//         <Text>Id: {data.getUser.user['id']}</Text>
-//         <Text>Email: {data.getUser.user['email']}</Text>
-//         {data.getUser.user.profile ? (
-//           <>
-//             <Text>Username: {data.getUser.user.profile.username}</Text>
-//             <Text>Number: {data.getUser.user.profile.phone}</Text>
-//             <Text>First: {data.getUser.user.profile.first}</Text>
-//             <Text>Last: {data.getUser.user.profile.last}</Text>
-//             <Text>Bio: {data.getUser.user.profile.bio}</Text>
-//           </>
-//         ) : (
-//           <Text>Profile: no profile</Text>
-//         )}
-//       </Box> */
-// }
-
-// {
-//   __typename: 'User',
-//   id: data.editProfile.user.id,
-//   email: data.editProfile.user.email,
-//   profile: {
-//     __typename: 'Profile',
-//     id: data.editProfile.user.profile.id,
-//     first: data.editProfile.user.profile.first,
-//     last: data.editProfile.user.profile.last,
-//     username:
-//       data.editProfile.user.profile.username,
-//     bio: data.editProfile.user.profile.bio,
-//     phone: data.editProfile.user.profile.phone
-//   }
-// }

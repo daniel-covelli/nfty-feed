@@ -6,7 +6,7 @@ import { HttpLink } from 'apollo-link-http';
 import { onError } from 'apollo-link-error';
 import { ApolloLink, Observable } from 'apollo-link';
 import { TokenRefreshLink } from 'apollo-link-token-refresh';
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import { ChakraProvider } from '@chakra-ui/react';
 import theme from './theme/theme';
@@ -43,64 +43,65 @@ const requestLink = new ApolloLink(
     })
 );
 
-const client = new ApolloClient({
-  link: ApolloLink.from([
-    new TokenRefreshLink({
-      accessTokenField: 'accessToken',
-      isTokenValidOrUndefined: () => {
-        const token = getAccessToken();
+const link = ApolloLink.from([
+  new TokenRefreshLink({
+    accessTokenField: 'accessToken',
+    isTokenValidOrUndefined: async () => {
+      const token = getAccessToken();
 
-        if (!token) {
+      if (!token) {
+        return true;
+      }
+
+      try {
+        const { exp } = jwtDecode(token);
+        if (exp && Date.now() >= exp * 1000) {
+          return false;
+        } else {
           return true;
         }
-
-        try {
-          const { exp } = jwtDecode(token);
-          if (Date.now() >= exp * 1000) {
-            return false;
-          } else {
-            return true;
-          }
-        } catch {
-          return false;
-        }
-      },
-      fetchAccessToken: () => {
-        return fetch(
-          `${
-            process.env.NODE_ENV === 'production'
-              ? 'https://blooming-scrubland-30700.herokuapp.com/graphql'
-              : `${process.env.REACT_APP_SERVER_URL}/graphql`
-          }/refresh_token`,
-          {
-            method: 'POST',
-            credentials: 'include'
-          }
-        );
-      },
-      handleFetch: (accessToken) => {
-        setAccessToken(accessToken);
-      },
-      handleError: (err) => {
-        console.warn('Your refresh token is invalid. Try to relogin');
-        console.error(err);
+      } catch {
+        return false;
       }
-    }) as any,
-    onError(({ graphQLErrors, networkError }) => {
-      console.log('GRAPHQL ERROR', graphQLErrors);
-      console.log('NETWORK ERROR', networkError);
-    }),
-    requestLink,
-    new HttpLink({
-      uri: `${
-        process.env.NODE_ENV === 'production'
-          ? 'https://blooming-scrubland-30700.herokuapp.com/graphql'
-          : `${process.env.REACT_APP_SERVER_URL}/graphql`
-      }`,
-      credentials: 'include'
-    })
-  ]),
-  uploads: false,
+    },
+    fetchAccessToken: () => {
+      return fetch(
+        `${
+          process.env.NODE_ENV === 'production'
+            ? 'https://blooming-scrubland-30700.herokuapp.com/graphql'
+            : `${process.env.REACT_APP_SERVER_URL}/graphql`
+        }/refresh_token`,
+        {
+          method: 'POST',
+          credentials: 'include'
+        }
+      );
+    },
+    handleFetch: (accessToken) => {
+      setAccessToken(accessToken);
+    },
+    handleError: (err) => {
+      console.warn('Your refresh token is invalid. Try to relogin');
+      console.error(err);
+    }
+  }) as any,
+  onError(({ graphQLErrors, networkError }) => {
+    console.log('GRAPHQL ERROR', graphQLErrors);
+    console.log('NETWORK ERROR', networkError);
+  }),
+  requestLink,
+  new HttpLink({
+    uri: `${
+      process.env.NODE_ENV === 'production'
+        ? 'https://blooming-scrubland-30700.herokuapp.com/graphql'
+        : `${process.env.REACT_APP_SERVER_URL}/graphql`
+    }`,
+    credentials: 'include'
+  })
+]);
+
+const client = new ApolloClient({
+  link: link as any,
   defaultOptions: {
     mutate: { errorPolicy: 'ignore' }
   },

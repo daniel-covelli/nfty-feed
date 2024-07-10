@@ -25,11 +25,7 @@ interface PostLikesModalProps {
   postId: number;
 }
 
-export const PostLikesModal: React.FC<PostLikesModalProps> = ({
-  isOpen,
-  setOpen,
-  postId
-}) => {
+export const PostLikesModal: React.FC<PostLikesModalProps> = ({ isOpen, setOpen, postId }) => {
   const [getLikes, { data: likes, loading }] = useGetLikesLazyQuery({
     variables: { postId }
   });
@@ -44,10 +40,10 @@ export const PostLikesModal: React.FC<PostLikesModalProps> = ({
     setOpen(false);
   };
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size='sm'>
+    <Modal isOpen={isOpen} onClose={onClose} size="sm">
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader fontSize='md'>Likes</ModalHeader>
+        <ModalHeader fontSize="md">Likes</ModalHeader>
         <ModalCloseButton
           _focus={{
             boxShadow: 'none'
@@ -57,60 +53,54 @@ export const PostLikesModal: React.FC<PostLikesModalProps> = ({
         {loading ? (
           <DataModalLoading />
         ) : (
-          <Box
-            px='10px'
-            pt='5px'
-            pb='5px'
-            height='400px'
-            maxH='90vh'
-            overflow='scroll'>
+          <Box px="10px" pt="5px" pb="5px" height="400px" maxH="90vh" overflow="scroll">
             {likes ? (
               likes.getLikes.length === 0 ? (
                 <Center>
-                  <VStack pt='30px'>
-                    <Text color='gray.500' fontSize='sm'>
+                  <VStack pt="30px">
+                    <Text color="gray.500" fontSize="sm">
                       No likes on this post yet
                     </Text>
-                    <Text color='gray.500' fontSize='sm'>
+                    <Text color="gray.500" fontSize="sm">
                       ¯\_₍⸍⸌̣ʷ̣̫⸍̣⸌₎_/¯
                     </Text>
                   </VStack>
                 </Center>
               ) : (
                 likes.getLikes.map((like) => (
-                  <HStack spacing={3} pb='5px' key={like.id}>
+                  <HStack spacing={3} pb="5px" key={like.id}>
                     <LinkableAvatar
-                      profilePhoto={like.owner.profileImageId}
-                      first={like.owner.first}
-                      last={like.owner.last}
+                      profilePhoto={like.owner?.profileImageId ?? ''}
+                      first={like.owner?.first ?? ''}
+                      last={like.owner?.last ?? ''}
                       size={Size.SM}
-                      route={`/at/${like.owner.username}`}
+                      route={`/at/${like.owner?.username}`}
                     />
                     <VStack spacing={0}>
-                      <Box w='175px' float='left'>
+                      <Box w="175px" float="left">
                         <LinkableText
-                          route={`/at/${like.owner.username}`}
+                          route={`/at/${like.owner?.username}`}
                           size={Size.SM}
                           bold={true}
-                          text={like.owner.username}
-                          color='black'
+                          text={like.owner?.username ?? ''}
+                          color="black"
                         />
                       </Box>
 
-                      <Box w='175px' float='left'>
-                        <Text fontSize='xs' isTruncated>
-                          {like.owner.first} {like.owner.last}
+                      <Box w="175px" float="left">
+                        <Text fontSize="xs" isTruncated>
+                          {like.owner?.first} {like.owner?.last}
                         </Text>
                       </Box>
                     </VStack>
 
-                    <Box w='100%' float={'right'}>
+                    <Box w="100%" float={'right'}>
                       <Text
                         float={'right'}
-                        pt='4px'
-                        fontSize='10px'
-                        color='gray.500'
-                        textTransform='uppercase'>
+                        pt="4px"
+                        fontSize="10px"
+                        color="gray.500"
+                        textTransform="uppercase">
                         <b>
                           <Moment fromNow date={like.createdAt} />
                         </b>

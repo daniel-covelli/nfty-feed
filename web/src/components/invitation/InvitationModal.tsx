@@ -36,7 +36,7 @@ export const InvitationModal: React.FC<InvitationModalProps> = ({
   };
   const toast = useToast();
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size='sm'>
+    <Modal isOpen={isOpen} onClose={onClose} size="sm">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Invite a friend</ModalHeader>
@@ -52,13 +52,11 @@ export const InvitationModal: React.FC<InvitationModalProps> = ({
                 <>
                   <Text>
                     <b>
-                      {`You have ${invitations} invitaion${
-                        invitations === 1 ? '' : 's'
-                      } left `}
+                      {`You have ${invitations} invitaion${invitations === 1 ? '' : 's'} left `}
                     </b>{' '}
                     ✨
                   </Text>
-                  <Text pb='20px' fontSize='xs'>
+                  <Text pb="20px" fontSize="xs">
                     Invite a friend using their number
                   </Text>
                   <Formik
@@ -68,7 +66,7 @@ export const InvitationModal: React.FC<InvitationModalProps> = ({
                         variables: { number }
                       });
 
-                      if (!data.sendInvitation.res) {
+                      if (data?.sendInvitation.res) {
                         toast({
                           title: data.sendInvitation.message,
                           duration: 2000,
@@ -77,7 +75,7 @@ export const InvitationModal: React.FC<InvitationModalProps> = ({
                           variant: 'subtle',
                           isClosable: true
                         });
-                      } else {
+                      } else if (data?.sendInvitation.message) {
                         toast({
                           title: data.sendInvitation.message,
                           status: 'success',
@@ -90,27 +88,18 @@ export const InvitationModal: React.FC<InvitationModalProps> = ({
                     }}>
                     <Center>
                       <Form>
-                        <Box pb='50px'>
-                          <Field id='number' name='number'>
-                            {({ field }) => (
-                              <FormControl>
-                                <Text fontSize='xs'>Phone number</Text>
-                                <Input
-                                  {...field}
-                                  id='number'
-                                  placeholder='number'
-                                  w='250px'
-                                />
-                              </FormControl>
-                            )}
-                          </Field>
+                        <Box pb="50px">
+                          <FormControl>
+                            <Text fontSize="xs">Phone number</Text>
+                            <Input id="number" placeholder="number" w="250px" />
+                          </FormControl>
                         </Box>
-                        <Box pb='10px' float='right'>
+                        <Box pb="10px" float="right">
                           <Button
-                            mr='3'
+                            mr="3"
                             onClick={onClose}
-                            variant='outline'
-                            size='sm'
+                            variant="outline"
+                            size="sm"
                             _focus={{
                               boxShadow: 'none'
                             }}>
@@ -118,10 +107,10 @@ export const InvitationModal: React.FC<InvitationModalProps> = ({
                           </Button>
                           <Button
                             isLoading={loading}
-                            type='submit'
-                            colorScheme='pink'
-                            variant='solid'
-                            size='sm'
+                            type="submit"
+                            colorScheme="pink"
+                            variant="solid"
+                            size="sm"
                             _focus={{
                               boxShadow: 'none'
                             }}>
@@ -137,16 +126,16 @@ export const InvitationModal: React.FC<InvitationModalProps> = ({
                   <Text>
                     <b>Looks like you have 0 invitations left</b> 🥺
                   </Text>
-                  <Text fontSize='xs' pb='30px'>
+                  <Text fontSize="xs" pb="30px">
                     Try reaching out if you want more invites
                   </Text>
-                  <Box pb='10px' w='100%'>
+                  <Box pb="10px" w="100%">
                     <Button
-                      float='right'
+                      float="right"
                       onClick={onClose}
-                      colorScheme='pink'
-                      variant='outline'
-                      size='sm'
+                      colorScheme="pink"
+                      variant="outline"
+                      size="sm"
                       _focus={{
                         boxShadow: 'none'
                       }}>

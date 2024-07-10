@@ -3,7 +3,8 @@ import {
   useUsersQuery,
   useMeQuery,
   useGetTopPostsAdminLazyQuery,
-  useGetTopPostsLazyQuery
+  useGetTopPostsLazyQuery,
+  GetTopPostsAdminQuery
 } from '../generated/graphql';
 import {
   Text,
@@ -28,17 +29,13 @@ export const Home: React.FC<HomeProps> = () => {
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [dataToLoad, setDataToLoad] = useState<boolean>(true);
   const [postsLoading, setPostsLoading] = useState<boolean>(false);
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState<any[]>([]);
   const [page, setPage] = useState<number>(1);
   const { data, loading } = useUsersQuery();
-  const [
-    getTopPosts,
-    { data: postsNotAdmin, loading: postsLoadingNotAdmin }
-  ] = useGetTopPostsLazyQuery();
-  const [
-    getTopPostsAdmin,
-    { data: postsAdmin, loading: postsLoadingAdmin }
-  ] = useGetTopPostsAdminLazyQuery();
+  const [getTopPosts, { data: postsNotAdmin, loading: postsLoadingNotAdmin }] =
+    useGetTopPostsLazyQuery();
+  const [getTopPostsAdmin, { data: postsAdmin, loading: postsLoadingAdmin }] =
+    useGetTopPostsAdminLazyQuery();
   const { data: me, loading: meLoading } = useMeQuery();
   // const [isSmall] = useMediaQuery('(max-width: 670px)');
   const [isNotDesktop] = useMediaQuery('(max-width: 1024px)');
@@ -49,17 +46,20 @@ export const Home: React.FC<HomeProps> = () => {
   }, []);
 
   useEffect(() => {
-    setPostsLoading(true);
-    if (me && me.me) {
-      setLoggedIn(true);
-    }
-    if (me && me.me && me.me.admin) {
-      setAdmin(true);
-      return getTopPostsAdmin({ variables: { page: page } });
-    }
-    if (me) {
-      return getTopPosts({ variables: { page: page } });
-    }
+    const request = async () => {
+      setPostsLoading(true);
+      if (me && me.me) {
+        setLoggedIn(true);
+      }
+      if (me && me.me && me.me.admin) {
+        setAdmin(true);
+        return getTopPostsAdmin({ variables: { page: page } });
+      }
+      if (me) {
+        return getTopPosts({ variables: { page: page } });
+      }
+    };
+    request();
   }, [me]);
 
   useEffect(() => {
@@ -71,7 +71,6 @@ export const Home: React.FC<HomeProps> = () => {
         return setPosts((posts) => [postsAdmin.getTopPostsAdmin[0], ...posts]);
       }
       setPosts((posts) => [...posts, ...postsAdmin.getTopPostsAdmin]);
-
       setPostsLoading(false);
     }
   }, [postsAdmin]);
@@ -98,7 +97,7 @@ export const Home: React.FC<HomeProps> = () => {
     }
   }, [page]);
 
-  const handleObserver = useCallback((entries) => {
+  const handleObserver = useCallback<IntersectionObserverCallback>((entries) => {
     const target = entries[0];
     if (target.isIntersecting && dataToLoad) {
       setPage((prev) => prev + 1);
@@ -113,7 +112,7 @@ export const Home: React.FC<HomeProps> = () => {
     };
     const observer = new IntersectionObserver(handleObserver, option);
     if (loader.current) observer.observe(loader.current);
-  }, [handleObserver]);
+  }, []);
 
   return (
     <>
@@ -121,35 +120,38 @@ export const Home: React.FC<HomeProps> = () => {
         <>
           {!isNotDesktop ? (
             <Flex>
-              <Box w='100%' maxW='600px'>
-                {posts.map((post) => (
-                  <Post
-                    key={post.id}
-                    post={post}
-                    admin={admin}
-                    loggedIn={loggedIn}
-                    profileId={me.me ? me.me.profile.id : -1}
-                  />
-                ))}
+              <Box w="100%" maxW="600px">
+                {posts.map(
+                  (post) =>
+                    post.id && (
+                      <Post
+                        key={post.id}
+                        post={post}
+                        admin={admin}
+                        loggedIn={loggedIn}
+                        profileId={me.me?.profile ? me.me.profile.id : -1}
+                      />
+                    )
+                )}
                 {!dataToLoad ? (
-                  <Center pb='40px'>
-                    <Text color='gray.500'>No more posts</Text>
+                  <Center pb="40px">
+                    <Text color="gray.500">No more posts</Text>
                   </Center>
                 ) : null}
               </Box>
               {!isNotDesktop ? (
-                <Box pl='80px'>
-                  <Box position='fixed'>
+                <Box pl="80px">
+                  <Box position="fixed">
                     <Text>
                       <b>Users</b>
                     </Text>
                     <Box
-                      h='400px'
-                      w='300px'
-                      overflow='scroll'
+                      h="400px"
+                      w="300px"
+                      overflow="scroll"
                       style={{ overscrollBehaviorY: 'contain' }}>
-                      {data.users.map((x) => (
-                        <HStack pb='10px' key={x.id}>
+                      {data?.users.map((x) => (
+                        <HStack pb="10px" key={x.id}>
                           <Link
                             as={ReactLink}
                             _focus={{
@@ -159,15 +161,11 @@ export const Home: React.FC<HomeProps> = () => {
                             {x.profile ? (
                               <Avatar
                                 name={`${x.profile.first} ${x.profile.last}`}
-                                size='xs'
-                                src={
-                                  x.profile.profileImageId
-                                    ? `${x.profile.profileImageId}`
-                                    : ''
-                                }
+                                size="xs"
+                                src={x.profile.profileImageId ? `${x.profile.profileImageId}` : ''}
                               />
                             ) : (
-                              <Avatar size='xs' />
+                              <Avatar size="xs" />
                             )}
                           </Link>
                           <Link
@@ -176,24 +174,23 @@ export const Home: React.FC<HomeProps> = () => {
                             _focus={{
                               boxShadow: 'none'
                             }}>
-                            <Text fontSize='sm'>
-                              {process.env.REACT_APP_ENVIRONMENT ===
-                              'development'
+                            <Text fontSize="sm">
+                              {process.env.REACT_APP_ENVIRONMENT === 'development'
                                 ? x.email
                                 : x.profile
-                                ? x.profile.username
-                                : ''}
+                                  ? x.profile.username
+                                  : ''}
                             </Text>
                           </Link>
                         </HStack>
                       ))}
                     </Box>
 
-                    <Text fontSize='10px' pt='20px'>
+                    <Text fontSize="10px" pt="20px">
                       Created by{' '}
                       <Link
-                        color='teal.500'
-                        href='https://github.com/daniel-covelli/nfty-feed'
+                        color="teal.500"
+                        href="https://github.com/daniel-covelli/nfty-feed"
                         isExternal>
                         Daniel Covelli
                       </Link>{' '}
@@ -205,15 +202,15 @@ export const Home: React.FC<HomeProps> = () => {
             </Flex>
           ) : (
             <Center>
-              <Box w='100%' maxW='600px'>
+              <Box w="100%" maxW="600px">
                 {posts.map((post) =>
-                  post ? (
+                  post.id ? (
                     <Post
                       key={post.id}
                       post={post}
                       admin={admin}
                       loggedIn={loggedIn}
-                      profileId={me.me ? me.me.profile.id : -1}
+                      profileId={me.me?.profile ? me.me.profile.id : -1}
                     />
                   ) : null
                 )}
@@ -224,7 +221,7 @@ export const Home: React.FC<HomeProps> = () => {
       ) : (
         <LoadingContent />
       )}
-      {dataToLoad ? <Box ref={loader} height='96px' /> : null}
+      {dataToLoad ? <Box ref={loader} height="96px" /> : null}
     </>
   );
 };

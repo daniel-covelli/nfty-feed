@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import Dropzone from 'react-dropzone';
+import Dropzone, { DropEvent, DropzoneRef, FileRejection } from 'react-dropzone';
 import { Box, Text, useToast } from '@chakra-ui/react';
 
 interface PostDropzoneProps {
@@ -16,9 +16,9 @@ export const PostDropzone: React.FC<PostDropzoneProps> = ({
   setEditImage
 }) => {
   const toast = useToast();
-  const dropzoneRef = useRef(null);
+  const dropzoneRef = useRef<DropzoneRef>(null);
 
-  const onDrop = (f) => {
+  const onDrop = (f: any) => {
     const file = f[0];
     const input = file['name'];
     const lastIndex = input.lastIndexOf('.');
@@ -35,7 +35,7 @@ export const PostDropzone: React.FC<PostDropzoneProps> = ({
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onloadend = (e) => {
-        setImage([e.target.result]);
+        setImage([e.target?.result]);
       };
     }
   };
@@ -49,11 +49,7 @@ export const PostDropzone: React.FC<PostDropzoneProps> = ({
   }
 
   return (
-    <Dropzone
-      ref={dropzoneRef}
-      accept={'image/*'}
-      multiple={false}
-      onDrop={(file) => onDrop(file)}>
+    <Dropzone ref={dropzoneRef} accept={'image/*'} multiple={false} onDrop={(file) => onDrop(file)}>
       {({ getRootProps, getInputProps }) => (
         <Box
           style={{
@@ -76,8 +72,8 @@ export const PostDropzone: React.FC<PostDropzoneProps> = ({
               alignItems: 'center',
               cursor: 'pointer'
             }}
-            __hover={{ boxShadow: 'grey' }}>
-            <Text color='pink.500'>
+            _hover={{ boxShadow: 'grey' }}>
+            <Text color="pink.500">
               <b>Select an image</b>
             </Text>
           </Box>

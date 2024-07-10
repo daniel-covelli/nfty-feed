@@ -23,10 +23,7 @@ interface AdminInvitationModalProps {
   setOpen: any;
 }
 
-export const AdminInvitationModal: React.FC<AdminInvitationModalProps> = ({
-  isOpen,
-  setOpen
-}) => {
+export const AdminInvitationModal: React.FC<AdminInvitationModalProps> = ({ isOpen, setOpen }) => {
   const [sendAdminInvitation] = useSendAdminInvitationMutation();
   const onClose = () => {
     setOpen(false);
@@ -34,7 +31,7 @@ export const AdminInvitationModal: React.FC<AdminInvitationModalProps> = ({
   const toast = useToast();
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size='sm'>
+    <Modal isOpen={isOpen} onClose={onClose} size="sm">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Admin invitation</ModalHeader>
@@ -46,9 +43,7 @@ export const AdminInvitationModal: React.FC<AdminInvitationModalProps> = ({
         <ModalBody>
           <Center>
             <VStack>
-              <Text pb='20px'>
-                Manually add someone to the invitations table
-              </Text>
+              <Text pb="20px">Manually add someone to the invitations table</Text>
               <Formik
                 initialValues={{ number: '', code: '' }}
                 onSubmit={async ({ number, code }) => {
@@ -56,7 +51,7 @@ export const AdminInvitationModal: React.FC<AdminInvitationModalProps> = ({
                     variables: { number, code }
                   });
 
-                  if (!data.sendAdminInvitation.res) {
+                  if (data?.sendAdminInvitation.res) {
                     toast({
                       title: data.sendAdminInvitation.message,
                       duration: 2000,
@@ -65,7 +60,7 @@ export const AdminInvitationModal: React.FC<AdminInvitationModalProps> = ({
                       variant: 'subtle',
                       isClosable: true
                     });
-                  } else {
+                  } else if (data?.sendAdminInvitation.invitation) {
                     toast({
                       title: `Invitation added for number - ${data.sendAdminInvitation.invitation.number}`,
                       status: 'success',
@@ -78,42 +73,24 @@ export const AdminInvitationModal: React.FC<AdminInvitationModalProps> = ({
                 }}>
                 <Center>
                   <Form>
-                    <Box pb='10px'>
-                      <Field id='number' name='number'>
-                        {({ field }) => (
-                          <FormControl>
-                            <Text fontSize='xs'>Phone number</Text>
-                            <Input
-                              {...field}
-                              id='number'
-                              placeholder='number'
-                              w='250px'
-                            />
-                          </FormControl>
-                        )}
-                      </Field>
+                    <Box pb="10px">
+                      <FormControl>
+                        <Text fontSize="xs">Phone number</Text>
+                        <Input id="number" placeholder="number" w="250px" />
+                      </FormControl>
                     </Box>
-                    <Box pb='50px'>
-                      <Field id='code' name='code'>
-                        {({ field }) => (
-                          <FormControl>
-                            <Text fontSize='xs'>Invitation Code</Text>
-                            <Input
-                              {...field}
-                              id='code'
-                              placeholder='code'
-                              w='250px'
-                            />
-                          </FormControl>
-                        )}
-                      </Field>
+                    <Box pb="50px">
+                      <FormControl>
+                        <Text fontSize="xs">Invitation Code</Text>
+                        <Input id="code" name="code" placeholder="code" w="250px" />
+                      </FormControl>
                     </Box>
-                    <Box pb='10px' float='right'>
+                    <Box pb="10px" float="right">
                       <Button
-                        mr='3'
+                        mr="3"
                         onClick={onClose}
-                        variant='outline'
-                        size='sm'
+                        variant="outline"
+                        size="sm"
                         _focus={{
                           boxShadow: 'none'
                         }}>
@@ -121,10 +98,10 @@ export const AdminInvitationModal: React.FC<AdminInvitationModalProps> = ({
                       </Button>
                       <Button
                         // isLoading={loading}
-                        type='submit'
-                        colorScheme='pink'
-                        variant='solid'
-                        size='sm'
+                        type="submit"
+                        colorScheme="pink"
+                        variant="solid"
+                        size="sm"
                         _focus={{
                           boxShadow: 'none'
                         }}>

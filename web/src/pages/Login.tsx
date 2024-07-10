@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  useLoginMutation,
-  MeDocument,
-  MeQuery,
-  useMeQuery
-} from '../generated/graphql';
+import { useLoginMutation, MeDocument, MeQuery, useMeQuery } from '../generated/graphql';
 import { RouteComponentProps } from 'react-router-dom';
 import { setAccessToken } from '../accessToken';
 import { Link as ReactLink } from 'react-router-dom';
@@ -32,9 +27,9 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
 
   return (
     <Center>
-      <SimpleGrid columns={1} spacing='10px'>
+      <SimpleGrid columns={1} spacing="10px">
         <Box>
-          <Text fontSize='lg'>
+          <Text fontSize="lg">
             <b>Login</b>
           </Text>
         </Box>
@@ -70,7 +65,7 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
                 await setAccessToken(response.data.login.accessToken);
                 history.push('/');
                 toast({
-                  title: `Welcome back ${response.data.login.user.profile.first} 👋`,
+                  title: `Welcome back ${response?.data.login.user.profile?.first} 👋`,
                   description: `You're logged in!!`,
                   status: 'success',
                   position: 'bottom',
@@ -80,47 +75,39 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
               }
             }}>
             <Form>
-              <Box pb='10px'>
-                <Field id='email' name='email'>
-                  {({ field }) => (
-                    <FormControl>
-                      <Input {...field} id='email' placeholder='email' />
-                    </FormControl>
-                  )}
-                </Field>
+              <Box pb="10px">
+                <FormControl>
+                  <Input id="email" name="email" placeholder="email" />
+                </FormControl>
               </Box>
-              <Box pb='10px'>
-                <Field id='password' name='password'>
-                  {({ field }) => (
-                    <FormControl>
-                      <Input
-                        w='250px'
-                        {...field}
-                        id='password'
-                        type='password'
-                        placeholder='password'
-                      />
-                    </FormControl>
-                  )}
-                </Field>
+              <Box pb="10px">
+                <FormControl>
+                  <Input
+                    w="250px"
+                    id="password"
+                    type="password"
+                    placeholder="password"
+                    name="password"
+                  />
+                </FormControl>
               </Box>
-              <Box pb='10px'>
+              <Box pb="10px">
                 <Button
                   isLoading={loading}
-                  type='submit'
-                  colorScheme='pink'
-                  variant='outline'
-                  size='sm'>
+                  type="submit"
+                  colorScheme="pink"
+                  variant="outline"
+                  size="sm">
                   login
                 </Button>
               </Box>
 
-              <Text fontSize='sm'>
+              <Text fontSize="sm">
                 Don't have an account?{' '}
                 <Link
                   as={ReactLink}
-                  to='/register'
-                  color='teal.500'
+                  to="/register"
+                  color="teal.500"
                   _focus={{
                     boxShadow: 'none'
                   }}>

@@ -81,18 +81,14 @@ export const PostCreate: React.FC<PostCreateProps> = ({
     setIsOpen(true);
   };
 
-  const onSwitch = async (e) => {
+  const onSwitch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSwitched(!switched);
   };
   return (
     <>
-      <Modal
-        isOpen={isOpen}
-        onClose={close}
-        size='xl'
-        scrollBehavior={'inside'}>
+      <Modal isOpen={isOpen} onClose={close} size="xl" scrollBehavior={'inside'}>
         <ModalOverlay />
-        <ModalContent maxH='90vh'>
+        <ModalContent maxH="90vh">
           <ModalHeader>Create Post</ModalHeader>
           <ModalCloseButton
             _focus={{
@@ -102,9 +98,9 @@ export const PostCreate: React.FC<PostCreateProps> = ({
           <ModalBody>
             {image ? (
               <>
-                <Box position='relative' w='100%' h='100%'>
+                <Box position="relative" w="100%" h="100%">
                   <DisplayButtons onDelete={onDelete} onEdit={onEdit} />
-                  <Image src={image} w='100%' />
+                  <Image src={image} w="100%" />
                 </Box>
                 <VisuallyHidden>
                   <PostDropzone
@@ -128,9 +124,9 @@ export const PostCreate: React.FC<PostCreateProps> = ({
           <ModalFooter>
             <Button
               isDisabled={!image}
-              variant='outline'
-              size='sm'
-              colorScheme='pink'
+              variant="outline"
+              size="sm"
+              colorScheme="pink"
               onClick={onContinue}
               rightIcon={<ArrowForwardIcon />}
               _focus={{
@@ -142,7 +138,7 @@ export const PostCreate: React.FC<PostCreateProps> = ({
         </ModalContent>
       </Modal>
 
-      <Modal isOpen={continued} onClose={close} size='xl'>
+      <Modal isOpen={continued} onClose={close} size="xl">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Create Post</ModalHeader>
@@ -155,8 +151,8 @@ export const PostCreate: React.FC<PostCreateProps> = ({
 
           <SlideFade in={continued}>
             <ModalBody>
-              <Center mb='10px' backgroundColor='#F7FAFC'>
-                <Image src={image} h='200px' maxW='100%' />
+              <Center mb="10px" backgroundColor="#F7FAFC">
+                <Image src={image} h="200px" maxW="100%" />
               </Center>
 
               <Formik
@@ -180,42 +176,39 @@ export const PostCreate: React.FC<PostCreateProps> = ({
                     },
                     update: async (store, { data }) => {
                       if (admin === 1) {
-                        const old = store.readQuery<GetTopPostsAdminQuery>({
-                          query: GetTopPostsAdminDocument,
-                          variables: { page: 1 }
-                        });
-                        store.writeQuery<GetTopPostsAdminQuery>({
-                          query: GetTopPostsAdminDocument,
-                          variables: { page: 1 },
-                          data: {
-                            __typename: 'Query',
-                            getTopPostsAdmin: [
-                              data.createPost.post,
-                              ...old.getTopPostsAdmin
-                            ]
-                          }
-                        });
+                        // const old = store.readQuery<GetTopPostsAdminQuery>({
+                        //   query: GetTopPostsAdminDocument,
+                        //   variables: { page: 1 }
+                        // });
+                        // store.writeQuery<GetTopPostsAdminQuery>({
+                        //   query: GetTopPostsAdminDocument,
+                        //   variables: { page: 1 },
+                        //   data: {
+                        //     __typename: 'Query',
+                        //     getTopPostsAdmin: [
+                        //       data.createPost.post,
+                        //       ...old.getTopPostsAdmin
+                        //     ]
+                        //   }
+                        // });
                       } else {
-                        const old = store.readQuery<GetTopPostsQuery>({
-                          query: GetTopPostsDocument,
-                          variables: { page: 1 }
-                        });
-                        store.writeQuery<GetTopPostsQuery>({
-                          query: GetTopPostsDocument,
-                          data: {
-                            __typename: 'Query',
-                            getTopPosts: [
-                              data.createPost.post,
-                              ...old.getTopPosts
-                            ]
-                          },
-                          variables: { page: 1 }
-                        });
+                        // const old = store.readQuery<GetTopPostsQuery>({
+                        //   query: GetTopPostsDocument,
+                        //   variables: { page: 1 }
+                        // });
+                        // store.writeQuery<GetTopPostsQuery>({
+                        //   query: GetTopPostsDocument,
+                        //   data: {
+                        //     __typename: 'Query',
+                        //     getTopPosts: [data.createPost.post, ...old.getTopPosts]
+                        //   },
+                        //   variables: { page: 1 }
+                        // });
                       }
                     }
                   });
 
-                  if (!data.createPost.res) {
+                  if (data?.createPost.res) {
                     toast({
                       title: data.createPost.message,
                       duration: 2000,
@@ -239,72 +232,45 @@ export const PostCreate: React.FC<PostCreateProps> = ({
                 }}>
                 <Center>
                   <Form>
-                    <Box pb='10px'>
-                      <Field id='title' name='title'>
-                        {({ field }) => (
-                          <FormControl>
-                            <Text fontSize='xs'>Title</Text>
-                            <Input
-                              {...field}
-                              id='title'
-                              placeholder='title'
-                              w='250px'
-                            />
-                          </FormControl>
-                        )}
-                      </Field>
+                    <Box pb="10px">
+                      <FormControl>
+                        <Text fontSize="xs">Title</Text>
+                        <Input id="title" name="title" placeholder="title" w="250px" />
+                      </FormControl>
                     </Box>
-                    <Box pb='5px'>
-                      <Field id='artist' name='artist'>
-                        {({ field }) => (
-                          <FormControl>
-                            <Text fontSize='xs'>Artist</Text>
-                            <Input
-                              isDisabled={switched}
-                              w='250px'
-                              {...field}
-                              id='artist'
-                              placeholder='artist'
-                            />
-                          </FormControl>
-                        )}
-                      </Field>
-                    </Box>
-                    <Box pb='10px'>
-                      <FormControl display='flex' alignItems='center'>
-                        <FormLabel htmlFor='original-work' mb='0' fontSize='xs'>
-                          Original work?
-                        </FormLabel>
-                        <Switch
-                          id='original-work'
-                          colorScheme='pink'
-                          onChange={(e) => onSwitch(e)}
+                    <Box pb="5px">
+                      <FormControl>
+                        <Text fontSize="xs">Artist</Text>
+                        <Input
+                          isDisabled={switched}
+                          w="250px"
+                          id="artist"
+                          name="artist"
+                          placeholder="artist"
                         />
                       </FormControl>
                     </Box>
-
-                    <Box pb='10px'>
-                      <Field id='link' name='link'>
-                        {({ field }) => (
-                          <FormControl>
-                            <Text fontSize='xs'>Artist Link</Text>
-                            <Input
-                              w='250px'
-                              {...field}
-                              id='link'
-                              placeholder='link'
-                            />
-                          </FormControl>
-                        )}
-                      </Field>
+                    <Box pb="10px">
+                      <FormControl display="flex" alignItems="center">
+                        <FormLabel htmlFor="original-work" mb="0" fontSize="xs">
+                          Original work?
+                        </FormLabel>
+                        <Switch id="original-work" colorScheme="pink" onChange={onSwitch} />
+                      </FormControl>
                     </Box>
-                    <Box pb='10px' float='right'>
+                    <Box pb="10px">
+                      <FormControl>
+                        <Text fontSize="xs">Artist Link</Text>
+                        <Input w="250px" name="link" id="link" placeholder="link" />
+                      </FormControl>
+                    </Box>
+                    <Box pb="10px" float="right">
                       <IconButton
-                        aria-label='go back'
-                        mr='3'
+                        aria-label="go back"
+                        mr="3"
                         onClick={onBack}
-                        variant='outline'
-                        size='sm'
+                        variant="outline"
+                        size="sm"
                         icon={<ArrowBackIcon />}
                         _focus={{
                           boxShadow: 'none'
@@ -312,10 +278,10 @@ export const PostCreate: React.FC<PostCreateProps> = ({
                       />
                       <Button
                         isLoading={loading}
-                        type='submit'
-                        colorScheme='pink'
-                        variant='solid'
-                        size='sm'
+                        type="submit"
+                        colorScheme="pink"
+                        variant="solid"
+                        size="sm"
                         _focus={{
                           boxShadow: 'none'
                         }}>

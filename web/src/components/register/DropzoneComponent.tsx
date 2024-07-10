@@ -31,7 +31,7 @@ export const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
   };
 
   return (
-    <Box position='relative'>
+    <Box position="relative">
       {cropData ? <DisplayButtons onDelete={onDelete} onEdit={onEdit} /> : null}
       <Dropzone
         accept={'image/*'}
@@ -56,8 +56,8 @@ export const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onloadend = (e) => {
-              setImage([e.target.result]);
-              setOriginalData([e.target.result]);
+              setImage([e.target?.result]);
+              setOriginalData([e.target?.result]);
             };
             setOpen(true);
           }
@@ -72,7 +72,7 @@ export const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
               outlineColor: 'transparent'
             }}
             {...getRootProps()}
-            __hover={{ boxShadow: 'grey' }}>
+            _hover={{ boxShadow: 'grey' }}>
             <input {...getInputProps()} />
             <Box
               style={{
@@ -89,14 +89,8 @@ export const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
                 cursor: `${cropData ? 'auto' : 'pointer'}`,
                 borderStyle: 'dotted'
               }}
-              __hover={{ boxShadow: 'grey' }}>
-              {!cropData ? (
-                imageLoading ? (
-                  <Spinner size='sm' />
-                ) : (
-                  <Link>Add image</Link>
-                )
-              ) : null}
+              _hover={{ boxShadow: 'grey' }}>
+              {!cropData ? imageLoading ? <Spinner size="sm" /> : <Link>Add image</Link> : null}
             </Box>
           </Box>
         )}

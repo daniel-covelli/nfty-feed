@@ -59,10 +59,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [register, { error }] = useRegisterMutation();
   const [login] = useLoginMutation();
-  const [
-    checkInvitation,
-    { loading: checkInvitationLoading }
-  ] = useCheckInvitationMutation();
+  const [checkInvitation, { loading: checkInvitationLoading }] = useCheckInvitationMutation();
   const toast = useToast();
 
   const onCropperModalClose = () => {
@@ -81,11 +78,11 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
   return (
     <>
       <Center>
-        <SimpleGrid columns={1} spacing='10px'>
+        <SimpleGrid columns={1} spacing="10px">
           {isOpen ? (
             <SlideFade in={isOpen}>
-              <Box mb='10px'>
-                <Text fontSize='lg'>
+              <Box mb="10px">
+                <Text fontSize="lg">
                   <b>Profile</b>
                 </Text>
               </Box>
@@ -119,17 +116,19 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                         if (!data || !old) {
                           return null;
                         }
-                        store.writeQuery<UsersQuery>({
-                          query: UsersDocument,
-                          data: {
-                            __typename: 'Query',
-                            users: [...old.users, data.register.user]
-                          }
-                        });
+                        if (data.register.user) {
+                          store.writeQuery<UsersQuery>({
+                            query: UsersDocument,
+                            data: {
+                              __typename: 'Query',
+                              users: [...old.users, data.register.user]
+                            }
+                          });
+                        }
                       }
                     });
 
-                    if (!data.register.res) {
+                    if (data?.register.res) {
                       toast({
                         title: data.register.message,
                         duration: 2000,
@@ -170,8 +169,8 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                         setAccessToken(response.data.login.accessToken);
                         history.push('/');
                         toast({
-                          title: `Congradulations ${response.data.login.user.profile.first} 🎉 `,
-                          description: `‎You're account ${response.data.login.user.profile.username} is registered.`,
+                          title: `Congradulations ${response?.data.login.user.profile?.first} 🎉 `,
+                          description: `‎You're account ${response.data.login.user.profile?.username} is registered.`,
                           status: 'success',
                           position: 'bottom',
                           variant: 'subtle',
@@ -182,7 +181,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                     setRegistrationLoading(false);
                   }}>
                   <Form>
-                    <Center pb='10px'>
+                    <Center pb="10px">
                       <DropzoneComponent
                         cropData={cropData}
                         setCropData={setCropData}
@@ -191,74 +190,37 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                         setOriginalData={setOriginalData}
                       />
                     </Center>
-                    <Box pb='10px'>
-                      <Field id='username' name='username' key={'username'}>
-                        {({ field }) => (
-                          <FormControl>
-                            <Text fontSize='xs'>Username</Text>
-                            <Input
-                              {...field}
-                              id='username'
-                              w='250px'
-                              placeholder='username'
-                            />
-                          </FormControl>
-                        )}
-                      </Field>
+                    <Box pb="10px">
+                      <FormControl>
+                        <Text fontSize="xs">Username</Text>
+                        <Input name="username" id="username" w="250px" placeholder="username" />
+                      </FormControl>
                     </Box>
-                    {/* <Box pb='10px'>
-                      <Field id='phone' name='phone'>
-                        {({ field }) => (
-                          <FormControl>
-                            <Text fontSize='xs'>Number</Text>
-                            <Input
-                              {...field}
-                              id='phone'
-                              w='250px'
-                              placeholder='phone'
-                              type='phone'
-                            />
-                          </FormControl>
-                        )}
-                      </Field>
-                    </Box> */}
-                    <Box pb='10px'>
-                      <Field id='first' name='first'>
-                        {({ field }) => (
-                          <FormControl>
-                            <Text fontSize='xs'>First</Text>
-                            <Input {...field} id='first' placeholder='first' />
-                          </FormControl>
-                        )}
-                      </Field>
+                    <Box pb="10px">
+                      <FormControl>
+                        <Text fontSize="xs">First</Text>
+                        <Input id="first" name="first" placeholder="first" />
+                      </FormControl>
                     </Box>
-                    <Box pb='10px'>
-                      <Field id='last' name='last'>
-                        {({ field }) => (
-                          <FormControl>
-                            <Text fontSize='xs'>Last</Text>
-                            <Input {...field} id='last' placeholder='last' />
-                          </FormControl>
-                        )}
-                      </Field>
+                    <Box pb="10px">
+                      <FormControl>
+                        <Text fontSize="xs">Last</Text>
+                        <Input id="last" name="last" placeholder="last" />
+                      </FormControl>
                     </Box>
-                    <Box pb='10px'>
-                      <Field id='bio' name='bio'>
-                        {({ field }) => (
-                          <FormControl>
-                            <Text fontSize='xs'>Bio</Text>
-                            <Textarea {...field} id='bio' placeholder='bio' />
-                          </FormControl>
-                        )}
-                      </Field>
+                    <Box pb="10px">
+                      <FormControl>
+                        <Text fontSize="xs">Bio</Text>
+                        <Textarea id="bio" name="bio" placeholder="bio" />
+                      </FormControl>
                     </Box>
-                    <Box pb='10px'>
+                    <Box pb="10px">
                       <Button
                         isLoading={registrationLoading}
-                        type='submit'
-                        colorScheme='pink'
-                        variant='outline'
-                        size='sm'>
+                        type="submit"
+                        colorScheme="pink"
+                        variant="outline"
+                        size="sm">
                         register
                       </Button>
                     </Box>
@@ -269,7 +231,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
           ) : isRegisterOpen ? (
             <SlideFade in={isRegisterOpen}>
               <Box>
-                <Text fontSize='lg' pb='10px'>
+                <Text fontSize="lg" pb="10px">
                   <b>Register</b>
                 </Text>
               </Box>
@@ -307,7 +269,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                       variables: { email }
                     });
 
-                    if (!data.checkEmail.res) {
+                    if (data?.checkEmail.res) {
                       toast({
                         title: data.checkEmail.message,
                         duration: 3000,
@@ -323,58 +285,48 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                     onToggle();
                   }}>
                   <Form>
-                    <Box pb='10px'>
-                      <Field id='email' name='email'>
-                        {({ field }) => (
-                          <FormControl>
-                            <Text fontSize='xs'>Email</Text>
-                            <Input {...field} id='email' placeholder='email' />
-                          </FormControl>
-                        )}
-                      </Field>
+                    <Box pb="10px">
+                      <FormControl>
+                        <Text fontSize="xs">Email</Text>
+                        <Input name="email" id="email" placeholder="email" />
+                      </FormControl>
                     </Box>
-                    <Box pb='10px'>
-                      <Field id='password' name='password'>
-                        {({ field }) => (
-                          <FormControl>
-                            <Text fontSize='xs'>Password</Text>
-                            <Input
-                              w='250px'
-                              {...field}
-                              id='password'
-                              placeholder='password'
-                              type='password'
-                            />
-                          </FormControl>
-                        )}
-                      </Field>
+                    <Box pb="10px">
+                      <FormControl>
+                        <Text fontSize="xs">Password</Text>
+                        <Input
+                          name="password"
+                          w="250px"
+                          id="password"
+                          placeholder="password"
+                          type="password"
+                        />
+                      </FormControl>
                     </Box>
-                    <Box pb='10px'>
+                    <Box pb="10px">
                       <Button
                         rightIcon={<ArrowForwardIcon />}
-                        type='submit'
-                        colorScheme='pink'
-                        variant='outline'
-                        size='sm'>
+                        type="submit"
+                        colorScheme="pink"
+                        variant="outline"
+                        size="sm">
                         continue
                       </Button>
                     </Box>
 
                     <Alert
-                      status='success'
-                      w='250px'
+                      status="success"
+                      w="250px"
                       opacity={alertVisible ? 1 : 0}
                       transition={'0.3s'}>
                       <AlertIcon />
-                      <Box flex='1'>
-                        <AlertTitle fontSize='sm'>
-                          Congrats, you're in!
-                        </AlertTitle>
+                      <Box flex="1">
+                        <AlertTitle fontSize="sm">Congrats, you're in!</AlertTitle>
                         <CloseButton
                           onClick={() => setAlertVisible(false)}
-                          position='absolute'
-                          right='8px'
-                          top='8px'
+                          position="absolute"
+                          right="8px"
+                          top="8px"
                         />
                       </Box>
                     </Alert>
@@ -385,7 +337,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
           ) : (
             <>
               <Box>
-                <Text fontSize='lg'>
+                <Text fontSize="lg">
                   <b>Register </b>
                 </Text>
               </Box>
@@ -396,7 +348,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                     const { data } = await checkInvitation({
                       variables: { number, verificationCode }
                     });
-                    if (!data.checkInvitation.res) {
+                    if (data && !data.checkInvitation.res) {
                       toast({
                         title: data.checkInvitation.message,
                         duration: 3000,
@@ -412,51 +364,39 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                     }
                   }}>
                   <Form>
-                    <Box pb='10px'>
-                      <Field id='number' name='number'>
-                        {({ field }) => (
-                          <FormControl>
-                            <Text fontSize='xs'>Phone number</Text>
-                            <Input
-                              {...field}
-                              id='number'
-                              placeholder='number'
-                            />
-                          </FormControl>
-                        )}
-                      </Field>
+                    <Box pb="10px">
+                      <FormControl>
+                        <Text fontSize="xs">Phone number</Text>
+                        <Input id="number" name="number" placeholder="number" />
+                      </FormControl>
                     </Box>
-                    <Box pb='10px'>
-                      <Field id='verificationCode' name='verificationCode'>
-                        {({ field }) => (
-                          <FormControl>
-                            <Text fontSize='xs'>Invitation code</Text>
-                            <Input
-                              w='250px'
-                              {...field}
-                              id='verificationCode'
-                              placeholder='code'
-                            />
-                          </FormControl>
-                        )}
-                      </Field>
+                    <Box pb="10px">
+                      <FormControl>
+                        <Text fontSize="xs">Invitation code</Text>
+                        <Input
+                          w="250px"
+                          id="verificationCode"
+                          name="verificationCode"
+                          placeholder="code"
+                        />
+                      </FormControl>
                     </Box>
-                    <Box pb='10px'>
+                    <Box pb="10px">
                       <Button
                         isLoading={checkInvitationLoading}
-                        type='submit'
-                        colorScheme='pink'
-                        variant='outline'
-                        size='sm'>
+                        type="submit"
+                        colorScheme="pink"
+                        variant="outline"
+                        size="sm">
                         Verify
                       </Button>
                     </Box>
-                    <Text fontSize='sm'>
+                    <Text fontSize="sm">
                       Already have an account?{' '}
                       <Link
                         as={ReactLink}
-                        to='/login'
-                        color='teal.500'
+                        to="/login"
+                        color="teal.500"
                         _focus={{
                           boxShadow: 'none'
                         }}>
