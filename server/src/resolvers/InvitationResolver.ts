@@ -8,7 +8,6 @@ import {
   ObjectType,
   Field
 } from 'type-graphql';
-
 import { Invitation } from '../entity/Invitation';
 import { isAuth } from '../isAuth';
 import { MyContext } from '../migration/MyContext';

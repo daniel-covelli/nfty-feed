@@ -398,17 +398,4 @@ export class UserResolver {
     sendRefreshToken(res, '');
     return true;
   }
-
-  // @Mutation(() => User)
-  // async adminify() {
-  //   const user = await User.findOne({ id: asdjhasjkd });
-
-  //   user!.admin = AdminStatus.ADMIN;
-
-  //   await user!.save();
-
-  //   console.log('USER', user);
-
-  //   return user;
-  // }
 }

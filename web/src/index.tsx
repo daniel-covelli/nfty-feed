@@ -1,5 +1,4 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { getAccessToken, setAccessToken } from './accessToken';
 import { App } from './App';
 import { HttpLink } from 'apollo-link-http';
@@ -107,12 +106,11 @@ const client = new ApolloClient({
   },
   cache
 });
-
-ReactDOM.render(
+const root = createRoot(document.getElementById('root')!);
+root.render(
   <ApolloProvider client={client}>
     <ChakraProvider theme={theme}>
       <App />
     </ChakraProvider>
-  </ApolloProvider>,
-  document.getElementById('root')
+  </ApolloProvider>
 );
