@@ -7,8 +7,17 @@ import { ApolloLink, Observable } from 'apollo-link';
 import { TokenRefreshLink } from 'apollo-link-token-refresh';
 import { jwtDecode } from 'jwt-decode';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider, Container } from '@chakra-ui/react';
 import theme from './theme/theme';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { Register } from './pages/Register';
+import { Bye } from './pages/Bye';
+import { Login } from './pages/Login';
+import { Profile } from './pages/Profile';
+import Layout from './components/shared/Layout';
+import { validateUser } from './utils/validate-user';
+import { Home } from './pages/Home';
+import { routes } from './routes';
 
 const cache = new InMemoryCache({});
 
@@ -106,11 +115,13 @@ const client = new ApolloClient({
   },
   cache
 });
-const root = createRoot(document.getElementById('root')!);
-root.render(
+
+const router = createBrowserRouter(routes);
+
+createRoot(document.getElementById('root')!).render(
   <ApolloProvider client={client}>
     <ChakraProvider theme={theme}>
-      <App />
+      <RouterProvider router={router} />
     </ChakraProvider>
   </ApolloProvider>
 );

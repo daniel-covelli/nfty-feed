@@ -10,8 +10,7 @@ import {
   UsersDocument,
   useCheckInvitationMutation
 } from '../generated/graphql';
-import { RouteComponentProps } from 'react-router-dom';
-import { Link as ReactLink } from 'react-router-dom';
+import { Link as ReactLink, redirect } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
 import {
   Center,
@@ -36,7 +35,7 @@ import { setAccessToken } from '../accessToken';
 import { CropperModal } from '../components/register/CropperModal';
 import { DropzoneComponent } from '../components/register/DropzoneComponent';
 
-export const Register: React.FC<RouteComponentProps> = ({ history }) => {
+export const Register = () => {
   const { isOpen, onToggle } = useDisclosure();
   const { data: me } = useMeQuery();
   const [alertVisible, setAlertVisible] = useState(true);
@@ -54,7 +53,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
   const [checkEmail] = useCheckEmailMutation();
 
   if (me && me.me) {
-    history.push('/');
+    redirect('/');
   }
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [register, { error }] = useRegisterMutation();
@@ -167,7 +166,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                       }
                       if (response && response.data) {
                         setAccessToken(response.data.login.accessToken);
-                        history.push('/');
+                        redirect('/');
                         toast({
                           title: `Congradulations ${response?.data.login.user.profile?.first} 🎉 `,
                           description: `‎You're account ${response.data.login.user.profile?.username} is registered.`,

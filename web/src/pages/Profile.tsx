@@ -54,11 +54,10 @@ import {
   GetFollowingDataQuery,
   GetFollowingDataDocument
 } from '../generated/graphql';
-import { Link as ReactLink } from 'react-router-dom';
+import { Link as ReactLink, redirect } from 'react-router-dom';
 import { SettingsIcon } from '@chakra-ui/icons';
 import { setAccessToken } from '../accessToken';
 
-import { RouteComponentProps } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
 import { DropzoneComponent } from '../components/profile/DropzoneComponent';
 import { CropperModal } from '../components/register/CropperModal';
@@ -66,7 +65,7 @@ import { PostsLoading } from '../components/profile/PostsLoading';
 import { FollowersModal } from '../components/profile/FollowersModal';
 import { FollowingModal } from '../components/profile/FollowingModal';
 
-export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
+export const Profile: React.FC = () => {
   const [settingsModal, openSettingsModal] = useState(false);
   const [subscriptionModal, openSubscriptionModal] = useState(false);
   const [editModal, openEditModal] = useState(false);
@@ -461,7 +460,7 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                     setLogoutLoading(true);
                     await logout();
                     setAccessToken('');
-                    history.push('/');
+                    redirect('/');
                     await client!.resetStore();
                     setLogoutLoading(false);
                   }}>
@@ -682,7 +681,7 @@ export const Profile: React.FC<RouteComponentProps> = ({ history }) => {
                             isClosable: true
                           });
                           if (data?.editProfile.message === 'refresh') {
-                            history.push(`/at/${data.editProfile.user?.profile?.username}`);
+                            redirect(`/at/${data.editProfile.user?.profile?.username}`);
                           }
                           openEditModal(false);
                         }
