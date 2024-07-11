@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLoginMutation, MeDocument, MeQuery, useMeQuery } from '../generated/graphql';
-import { redirect, RouterProps, useParams } from 'react-router-dom';
+import { redirect, useNavigate } from 'react-router-dom';
 import { setAccessToken } from '../accessToken';
 import { Link as ReactLink } from 'react-router-dom';
 import {
@@ -20,9 +20,10 @@ export const Login: React.FC = () => {
   const { data } = useMeQuery();
   const toast = useToast();
   const [login, { loading }] = useLoginMutation();
+  const navigate = useNavigate();
 
   if (data && data.me) {
-    redirect('/');
+    navigate('/home');
   }
 
   return (
@@ -37,42 +38,43 @@ export const Login: React.FC = () => {
           <Formik
             initialValues={{ email: '', password: '' }}
             onSubmit={async ({ email, password }) => {
-              const response = await login({
+              await login({
                 variables: { email, password },
-                update: (store, { data }) => {
-                  if (!data) {
-                    return null;
+                awaitRefetchQueries: true,
+                refetchQueries: [{ query: MeDocument }],
+                onError: (err) => {
+                  toast({
+                    title: err.message,
+                    status: 'error',
+                    position: 'top',
+                    variant: 'subtle',
+                    isClosable: true
+                  });
+                },
+                onCompleted: (data) => {
+                  if (!data.login.accessToken) {
+                    toast({
+                      title: `Invalid credentials, please try again...`,
+                      status: 'error',
+                      position: 'top',
+                      variant: 'subtle',
+                      isClosable: true
+                    });
+                    return;
                   }
-                  store.writeQuery<MeQuery>({
-                    query: MeDocument,
-                    data: {
-                      __typename: 'Query',
-                      me: data.login.user
-                    }
+
+                  setAccessToken(data.login.accessToken);
+                  navigate('/home');
+                  toast({
+                    title: `Welcome back ${data.login.user.profile?.first} 👋`,
+                    description: `You're logged in!!`,
+                    status: 'success',
+                    position: 'bottom',
+                    variant: 'subtle',
+                    isClosable: true
                   });
                 }
               });
-              if (!response.data) {
-                toast({
-                  title: `Invalid credentials, please try again...`,
-                  status: 'error',
-                  position: 'top',
-                  variant: 'subtle',
-                  isClosable: true
-                });
-              }
-              if (response && response.data) {
-                setAccessToken(response.data.login.accessToken);
-                redirect('/');
-                toast({
-                  title: `Welcome back ${response?.data.login.user.profile?.first} 👋`,
-                  description: `You're logged in!!`,
-                  status: 'success',
-                  position: 'bottom',
-                  variant: 'subtle',
-                  isClosable: true
-                });
-              }
             }}>
             {({ handleSubmit, handleChange }) => (
               <Form onSubmit={handleSubmit}>
@@ -103,7 +105,6 @@ export const Login: React.FC = () => {
                     login
                   </Button>
                 </Box>
-
                 <Text fontSize="sm">
                   Don't have an account?{' '}
                   <Link

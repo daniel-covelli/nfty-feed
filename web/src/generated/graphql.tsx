@@ -12,9 +12,10 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
-  DateTime: any;
+  /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.This scalar is serialized to a string in ISO 8601 format and parsed from a string in ISO 8601 format. */
+  DateTimeISO: any;
 };
+
 
 export type AdminInvitationResponse = {
   __typename?: 'AdminInvitationResponse';
@@ -52,7 +53,7 @@ export type Invitation = {
   number: Scalars['String'];
   verificationCode: Scalars['Float'];
   active: Scalars['Float'];
-  createdAt: Scalars['DateTime'];
+  createdAt: Scalars['DateTimeISO'];
 };
 
 export type InvitationResponse = {
@@ -68,7 +69,7 @@ export type Like = {
   id: Scalars['Int'];
   owner?: Maybe<Profile>;
   post?: Maybe<Post>;
-  createdAt: Scalars['DateTime'];
+  createdAt: Scalars['DateTimeISO'];
 };
 
 export type LoginResponse = {
@@ -81,6 +82,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   login: LoginResponse;
   checkEmail: GenericResponse;
+  createAdminUser: UserResponse;
   register: RegisterResponse;
   revokeRefreshTokensForUser: Scalars['Boolean'];
   logout: Scalars['Boolean'];
@@ -108,6 +110,17 @@ export type MutationLoginArgs = {
 
 
 export type MutationCheckEmailArgs = {
+  email: Scalars['String'];
+};
+
+
+export type MutationCreateAdminUserArgs = {
+  bio: Scalars['String'];
+  last: Scalars['String'];
+  first: Scalars['String'];
+  phone: Scalars['String'];
+  username: Scalars['String'];
+  password: Scalars['String'];
   email: Scalars['String'];
 };
 
@@ -220,7 +233,7 @@ export type Post = {
   removed: Scalars['Float'];
   numberOfLikes: Scalars['Float'];
   likes: Array<Like>;
-  createdAt: Scalars['DateTime'];
+  createdAt: Scalars['DateTimeISO'];
 };
 
 export type PostResponse = {
@@ -336,7 +349,7 @@ export type Subscription = {
   userId: Scalars['Float'];
   followingId: Scalars['Float'];
   active: Scalars['Float'];
-  createdAt: Scalars['DateTime'];
+  createdAt: Scalars['DateTimeISO'];
 };
 
 export type User = {
@@ -346,7 +359,7 @@ export type User = {
   invitations: Scalars['Float'];
   admin: Scalars['Float'];
   profile?: Maybe<Profile>;
-  createdAt: Scalars['DateTime'];
+  createdAt: Scalars['DateTimeISO'];
 };
 
 export type UserResponse = {

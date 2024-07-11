@@ -27,5 +27,5 @@ export const validateUser: LoaderFunction = async () => {
 
   setAccessToken(data.accessToken);
 
-  return null;
+  return redirect('/home');
 };

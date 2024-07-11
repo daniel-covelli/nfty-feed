@@ -21,6 +21,7 @@
     "./src/**/*.ts",
     "./src/**/*.tsx",
     "./src/theme/theme.tsx",
-    "src/hooks/useInfiniteScroll.tsx"
+    "src/hooks/useInfiniteScroll.tsx",
+    "src/routes.tsx"
   ]
 }

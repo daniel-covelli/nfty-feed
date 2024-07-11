@@ -39,6 +39,7 @@ export class UserResolver {
   @Query(() => User, { nullable: true })
   me(@Ctx() context: MyContext) {
     const authorization = context.req.headers["authorization"];
+    console.log("authorization", JSON.stringify(authorization, null, 2));
 
     if (!authorization) {
       return null;
@@ -97,13 +98,13 @@ export class UserResolver {
     });
 
     if (!user) {
-      throw new Error("could not find user");
+      throw new Error("Incorrect credentials, please try again.");
     }
 
     const valid = await compare(password, user.password);
 
     if (!valid) {
-      throw new Error("invalid password");
+      throw new Error("Incorrect credentials, please try again.");
     }
 
     sendRefreshToken(res, createRefreshToken(user));
@@ -373,6 +374,7 @@ export class UserResolver {
 
   @Mutation(() => Boolean)
   async logout(@Ctx() { res }: MyContext) {
+    console.log("logout");
     sendRefreshToken(res, "");
     return true;
   }

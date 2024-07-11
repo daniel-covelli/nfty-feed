@@ -3,10 +3,9 @@ import "dotenv/config";
 import express from "express";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServer } from "@apollo/server";
-import { buildSchema } from "type-graphql";
+import { buildTypeDefsAndResolvers } from "type-graphql";
 import { UserResolver } from "./resolvers/UserResolver";
 import { ProfileResolver } from "./resolvers/ProfileResolver";
-
 import cookieParser from "cookie-parser";
 import { verify } from "jsonwebtoken";
 import cors from "cors";
@@ -17,7 +16,7 @@ import { getConnectionOptions, createConnection } from "typeorm";
 import { Profile } from "./entity/Profile";
 import { Subscription as Sub } from "./entity/Subscription";
 import { SubscriptionResolver } from "./resolvers/SubscriptionResolver";
-
+import http from "http";
 import bodyParser from "body-parser";
 import { Post } from "./entity/Post";
 import { Like } from "./entity/Like";
@@ -25,6 +24,8 @@ import { PostResolver } from "./resolvers/PostResolver";
 import { LikeResolver } from "./resolvers/LikeResolver";
 import { InvitationResolver } from "./resolvers/InvitationResolver";
 import { Invitation } from "./entity/Invitation";
+import { MyContext } from "./migration/MyContext";
+import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 
 // server set up
 (async () => {
@@ -84,7 +85,7 @@ import { Invitation } from "./entity/Invitation";
 
   await createTypeOrmConn();
 
-  const schema = await buildSchema({
+  const schema = await buildTypeDefsAndResolvers({
     resolvers: [
       UserResolver,
       ProfileResolver,
@@ -95,12 +96,39 @@ import { Invitation } from "./entity/Invitation";
     ],
   });
 
-  const server = new ApolloServer({ schema });
+  const httpServer = http.createServer(app);
+
+  const server = new ApolloServer<MyContext>({
+    ...schema,
+    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+  });
+
   await server.start();
 
-  app.use("/graphql", cors<cors.CorsRequest>(), express.json(), expressMiddleware(server));
+  app.use(
+    "/graphql",
+    cors<cors.CorsRequest>(corsOptions),
+    express.json(),
+    expressMiddleware(server, {
+      context: async ({ req, res }): Promise<MyContext> => {
+        return {
+          req,
+          res,
+          ...(typeof req.headers.userId === "string"
+            ? {
+                payload: {
+                  userId: req.headers.userId,
+                },
+              }
+            : {}),
+        };
+      },
+    }),
+  );
 
-  app.listen(process.env.PORT || 4000, () => {
-    console.log(`🚀 Server ready at ${process.env.PORT ? process.env.PORT : 4000} `);
-  });
+  await new Promise<void>((resolve) =>
+    httpServer.listen({ port: process.env.PORT || 4000 }, resolve),
+  );
+
+  console.log(`🚀 Server ready at ${process.env.PORT ? process.env.PORT : 4000} `);
 })();

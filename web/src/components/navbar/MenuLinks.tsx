@@ -20,8 +20,8 @@ import {
   IconButton,
   Tag
 } from '@chakra-ui/react';
-import { setAccessToken } from '../../accessToken';
-import { Link as ReactLink } from 'react-router-dom';
+import { clearAccessToken, setAccessToken } from '../../accessToken';
+import { Link as ReactLink, useNavigate } from 'react-router-dom';
 import { useMeQuery, useLogoutMutation } from '../../generated/graphql';
 import { Size } from '../shared/ClickableAvatar';
 import { AtSignIcon } from '@chakra-ui/icons';
@@ -67,13 +67,17 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
     setIsOpen(false);
     setPopoverOpen(false);
   };
-
+  const navigate = useNavigate();
   const onLogout = async () => {
-    await logout();
-    setAccessToken('');
-    await client!.resetStore();
-    setIsOpen(false);
-    setPopoverOpen(false);
+    await logout({
+      onCompleted: async (d) => {
+        clearAccessToken();
+        await client!.resetStore();
+        setIsOpen(false);
+        setPopoverOpen(false);
+        navigate('/login');
+      }
+    });
   };
 
   const onCreate = () => {
@@ -82,7 +86,6 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
 
   const onInvitationClick = () => {
     setInvitationOpen(true);
-    console.log('INVITATION MODAL');
   };
 
   const adminOpenInvitation = () => {
