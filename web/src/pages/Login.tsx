@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLoginMutation, MeDocument, MeQuery, useMeQuery } from '../generated/graphql';
-import { redirect, useNavigate } from 'react-router-dom';
-import { setAccessToken } from '../accessToken';
+import { useNavigate } from 'react-router-dom';
+
 import { Link as ReactLink } from 'react-router-dom';
 import {
   Input,
@@ -52,21 +52,9 @@ export const Login: React.FC = () => {
                   });
                 },
                 onCompleted: (data) => {
-                  if (!data.login.accessToken) {
-                    toast({
-                      title: `Invalid credentials, please try again...`,
-                      status: 'error',
-                      position: 'top',
-                      variant: 'subtle',
-                      isClosable: true
-                    });
-                    return;
-                  }
-
-                  setAccessToken(data.login.accessToken);
                   navigate('/home');
                   toast({
-                    title: `Welcome back ${data.login.user.profile?.first} 👋`,
+                    title: `Welcome back ${data.login.profile?.first} 👋`,
                     description: `You're logged in!!`,
                     status: 'success',
                     position: 'bottom',

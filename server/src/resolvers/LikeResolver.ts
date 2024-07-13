@@ -1,7 +1,7 @@
-import { Resolver, Query, Arg, Mutation, UseMiddleware } from 'type-graphql';
+import { Resolver, Query, Arg, Mutation } from 'type-graphql';
 import { Like } from '../entity/Like';
 import { Post } from '../entity/Post';
-import { isAuth } from '../isAuth';
+
 
 @Resolver()
 export class LikeResolver {
@@ -35,7 +35,7 @@ export class LikeResolver {
   }
 
   @Query(() => [Like])
-  @UseMiddleware(isAuth)
+  // @UseMiddleware(isAuth)
   async getLikes(@Arg('postId') postId: number) {
     const post = await Post.findOne(postId, { relations: ['likes'] });
 

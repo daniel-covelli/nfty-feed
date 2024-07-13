@@ -26,11 +26,3 @@ export class UserResponse {
   @Field()
   user: User;
 }
-
-@ObjectType()
-export class LoginResponse {
-  @Field()
-  accessToken: string;
-  @Field(() => User)
-  user: User;
-}

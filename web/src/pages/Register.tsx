@@ -31,7 +31,6 @@ import {
   CloseButton
 } from '@chakra-ui/react';
 import { ArrowForwardIcon } from '@chakra-ui/icons';
-import { setAccessToken } from '../accessToken';
 import { CropperModal } from '../components/register/CropperModal';
 import { DropzoneComponent } from '../components/register/DropzoneComponent';
 
@@ -150,7 +149,7 @@ export const Register = () => {
                             query: MeDocument,
                             data: {
                               __typename: 'Query',
-                              me: data.login.user
+                              me: data.login
                             }
                           });
                         }
@@ -165,11 +164,11 @@ export const Register = () => {
                         });
                       }
                       if (response && response.data) {
-                        setAccessToken(response.data.login.accessToken);
+                        // setAccessToken(response.data.login.accessToken);
                         redirect('/');
                         toast({
-                          title: `Congradulations ${response?.data.login.user.profile?.first} 🎉 `,
-                          description: `‎You're account ${response.data.login.user.profile?.username} is registered.`,
+                          title: `Congradulations ${response?.data.login.profile?.first} 🎉 `,
+                          description: `‎You're account ${response.data.login.profile?.username} is registered.`,
                           status: 'success',
                           position: 'bottom',
                           variant: 'subtle',

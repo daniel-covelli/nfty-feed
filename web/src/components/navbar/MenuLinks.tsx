@@ -20,7 +20,6 @@ import {
   IconButton,
   Tag
 } from '@chakra-ui/react';
-import { clearAccessToken, setAccessToken } from '../../accessToken';
 import { Link as ReactLink, useNavigate } from 'react-router-dom';
 import { useMeQuery, useLogoutMutation } from '../../generated/graphql';
 import { Size } from '../shared/ClickableAvatar';
@@ -71,7 +70,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
   const onLogout = async () => {
     await logout({
       onCompleted: async (d) => {
-        clearAccessToken();
+        // clearAccessToken();
         await client!.resetStore();
         setIsOpen(false);
         setPopoverOpen(false);

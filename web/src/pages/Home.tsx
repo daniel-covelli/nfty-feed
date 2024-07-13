@@ -148,8 +148,7 @@ export const Home: React.FC<HomeProps> = () => {
                     <Box
                       h="400px"
                       w="300px"
-                      overflow="scroll"
-                      style={{ overscrollBehaviorY: 'contain' }}>
+                      overflowY="scroll">
                       {data?.users.map((x) => (
                         <HStack pb="10px" key={x.id}>
                           <Link

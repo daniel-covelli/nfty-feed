@@ -1,20 +1,20 @@
 import 'dotenv/config';
 import { User } from './entity/User';
-import { sign } from 'jsonwebtoken';
+// import { sign } from 'jsonwebtoken';
 
 // payload, secret, options
 export const createAccessToken = (user: User) => {
-  return sign({ userId: user.id }, process.env.ACCESS_TOKEN_SECRET!, {
-    expiresIn: '1d'
-  });
+  // return sign({ userId: user.id }, process.env.ACCESS_TOKEN_SECRET!, {
+  //   expiresIn: '1d'
+  // });
 };
 
 export const createRefreshToken = (user: User) => {
-  return sign(
-    { userId: user.id, tokenVersion: user.tokenVersion },
-    process.env.REFRESH_TOKEN_SECRET!,
-    {
-      expiresIn: '30d'
-    }
-  );
+  // return sign(
+  //   { userId: user.id, tokenVersion: user.tokenVersion },
+  //   process.env.REFRESH_TOKEN_SECRET!,
+  //   {
+  //     expiresIn: '30d'
+  //   }
+  // );
 };

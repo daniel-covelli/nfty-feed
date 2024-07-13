@@ -72,15 +72,9 @@ export type Like = {
   createdAt: Scalars['DateTimeISO'];
 };
 
-export type LoginResponse = {
-  __typename?: 'LoginResponse';
-  accessToken: Scalars['String'];
-  user: User;
-};
-
 export type Mutation = {
   __typename?: 'Mutation';
-  login: LoginResponse;
+  login: User;
   checkEmail: GenericResponse;
   createAdminUser: UserResponse;
   register: RegisterResponse;
@@ -693,16 +687,12 @@ export type LoginMutationVariables = Exact<{
 export type LoginMutation = (
   { __typename?: 'Mutation' }
   & { login: (
-    { __typename?: 'LoginResponse' }
-    & Pick<LoginResponse, 'accessToken'>
-    & { user: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'email' | 'admin' | 'invitations'>
-      & { profile?: Maybe<(
-        { __typename?: 'Profile' }
-        & Pick<Profile, 'id' | 'username' | 'first' | 'last' | 'profileImageId'>
-      )> }
-    ) }
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'email' | 'admin' | 'invitations'>
+    & { profile?: Maybe<(
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'id' | 'username' | 'first' | 'last' | 'profileImageId'>
+    )> }
   ) }
 );
 
@@ -1776,19 +1766,16 @@ export type LikedByCurrentProfileQueryResult = Apollo.QueryResult<LikedByCurrent
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   login(email: $email, password: $password) {
-    accessToken
-    user {
+    id
+    email
+    admin
+    invitations
+    profile {
       id
-      email
-      admin
-      invitations
-      profile {
-        id
-        username
-        first
-        last
-        profileImageId
-      }
+      username
+      first
+      last
+      profileImageId
     }
   }
 }

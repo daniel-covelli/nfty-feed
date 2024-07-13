@@ -56,8 +56,6 @@ import {
 } from '../generated/graphql';
 import { Link as ReactLink, redirect } from 'react-router-dom';
 import { SettingsIcon } from '@chakra-ui/icons';
-import { setAccessToken } from '../accessToken';
-
 import { Formik, Form, Field } from 'formik';
 import { DropzoneComponent } from '../components/profile/DropzoneComponent';
 import { CropperModal } from '../components/register/CropperModal';
@@ -459,7 +457,7 @@ export const Profile: React.FC = () => {
                   onClick={async () => {
                     setLogoutLoading(true);
                     await logout();
-                    setAccessToken('');
+                    // setAccessToken('');
                     redirect('/');
                     await client!.resetStore();
                     setLogoutLoading(false);

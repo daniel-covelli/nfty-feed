@@ -3,14 +3,14 @@ import {
   Query,
   Mutation,
   Arg,
-  UseMiddleware,
+  // UseMiddleware,
   ObjectType,
   Field,
   Ctx
 } from 'type-graphql';
 
 import { Post } from '../entity/Post';
-import { isAuth } from '../isAuth';
+// import { isAuth } from '../isAuth';
 import {
   validUrl,
   PostStatus,
@@ -19,9 +19,10 @@ import {
   AdminStatus
 } from '../enums';
 import { Profile } from '../entity/Profile';
-import { MyContext } from 'src/migration/MyContext';
+
 import { User } from '../entity/User';
 import { Like } from '../entity/Like';
+import { MyContext } from 'src/context';
 const cloudinary = require('cloudinary');
 
 @ObjectType()
@@ -43,9 +44,9 @@ export class PostResolver {
   }
 
   @Mutation(() => Post)
-  @UseMiddleware(isAuth)
-  async like(@Ctx() { payload }: MyContext, @Arg('postId') postId: number) {
-    const user = await User.findOne(payload!.userId);
+  // @UseMiddleware(isAuth)
+  async like(@Ctx() ctx: MyContext, @Arg('postId') postId: number) {
+    const user = await User.findOne(ctx.user?.id);
 
     if (!user) {
       throw new Error(`Unable to find user`);
@@ -87,9 +88,9 @@ export class PostResolver {
   }
 
   @Mutation(() => Post)
-  @UseMiddleware(isAuth)
-  async unlike(@Ctx() { payload }: MyContext, @Arg('postId') postId: number) {
-    const user = await User.findOne(payload!.userId);
+  // @UseMiddleware(isAuth)
+  async unlike(@Ctx() ctx: MyContext, @Arg('postId') postId: number) {
+    const user = await User.findOne(ctx.user?.id);
 
     if (!user) {
       throw new Error(`Unable to find user`);
@@ -129,7 +130,7 @@ export class PostResolver {
   }
 
   @Query(() => [Post])
-  @UseMiddleware(isAuth)
+  // @UseMiddleware(isAuth)
   async getUsersPosts(@Arg('profileId') profileId: number) {
     const posts = await Post.find({
       where: { owner: { id: profileId }, removed: GlobalStatus.VISIBLE }
@@ -143,12 +144,12 @@ export class PostResolver {
   }
 
   @Mutation(() => PostResponse)
-  @UseMiddleware(isAuth)
+  // @UseMiddleware(isAuth)
   async invisible(
-    @Ctx() { payload }: MyContext,
+    @Ctx() ctx: MyContext,
     @Arg('postId') postId: number
   ) {
-    const user = await User.findOne(payload!.userId);
+    const user = await User.findOne(ctx.user?.id);
 
     if (!user || user.admin === AdminStatus.NORMY) {
       return {
@@ -179,9 +180,9 @@ export class PostResolver {
   }
 
   @Mutation(() => PostResponse)
-  @UseMiddleware(isAuth)
-  async visible(@Ctx() { payload }: MyContext, @Arg('postId') postId: number) {
-    const user = await User.findOne(payload!.userId);
+  // @UseMiddleware(isAuth)
+  async visible(@Ctx() ctx: MyContext, @Arg('postId') postId: number) {
+    const user = await User.findOne(ctx.user?.id);
 
     if (!user || user.admin === AdminStatus.NORMY) {
       return {
@@ -212,9 +213,9 @@ export class PostResolver {
   }
 
   @Mutation(() => PostResponse)
-  @UseMiddleware(isAuth)
-  async remove(@Ctx() { payload }: MyContext, @Arg('postId') postId: number) {
-    const user = await User.findOne(payload!.userId);
+  // @UseMiddleware(isAuth)
+  async remove(@Ctx() ctx: MyContext, @Arg('postId') postId: number) {
+    const user = await User.findOne(ctx.user?.id);
 
     if (!user || user.admin === AdminStatus.NORMY) {
       return {
@@ -245,9 +246,9 @@ export class PostResolver {
   }
 
   @Mutation(() => PostResponse)
-  @UseMiddleware(isAuth)
-  async readd(@Ctx() { payload }: MyContext, @Arg('postId') postId: number) {
-    const user = await User.findOne(payload!.userId);
+  // @UseMiddleware(isAuth)
+  async readd(@Ctx() ctx: MyContext, @Arg('postId') postId: number) {
+    const user = await User.findOne(ctx.user?.id);
 
     if (!user || user.admin === AdminStatus.NORMY) {
       return {
@@ -305,7 +306,7 @@ export class PostResolver {
   }
 
   @Mutation(() => PostResponse)
-  @UseMiddleware(isAuth)
+  // @UseMiddleware(isAuth)
   async createPost(
     @Arg('profileId') profileId: number,
     @Arg('media') media: string,

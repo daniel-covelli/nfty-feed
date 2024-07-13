@@ -5,16 +5,14 @@ import {
   Ctx,
   ObjectType,
   Field,
-  UseMiddleware,
   Query
 } from 'type-graphql';
-import { MyContext } from '../migration/MyContext';
 import { User } from '../entity/User';
-import { isAuth } from '../isAuth';
 import { Profile } from '../entity/Profile';
 import { SubStatus } from '../enums';
 import { Subscription } from '../entity/Subscription';
 import { createQueryBuilder } from 'typeorm';
+import { MyContext } from 'src/context';
 
 const cloudinary = require('cloudinary');
 
@@ -43,9 +41,9 @@ class FollowersResponse {
 @Resolver()
 export class ProfileResolver {
   @Query(() => [FollowersResponse])
-  @UseMiddleware(isAuth)
+  // @UseMiddleware(isAuth)
   async getFollowersData(
-    @Ctx() { payload }: MyContext,
+    @Ctx() ctx: MyContext,
     @Arg('userId') userId: number
   ) {
     const followers = await Subscription.find({
@@ -56,7 +54,7 @@ export class ProfileResolver {
       return [];
     }
     const following = await Subscription.find({
-      where: { userId: payload?.userId, active: SubStatus.ACTIVE }
+      where: { userId: ctx?.user, active: SubStatus.ACTIVE }
     });
 
     const followerIds = followers.map((follower) => follower.userId);
@@ -74,7 +72,7 @@ export class ProfileResolver {
       return {
         profile: user.profile,
         following: isFollowing,
-        me: user.id === Number(payload?.userId),
+        me: user.id === Number(ctx?.user?.id),
         userId: user.id
       };
     });
@@ -83,9 +81,9 @@ export class ProfileResolver {
   }
 
   @Query(() => [User])
-  @UseMiddleware(isAuth)
+  // @UseMiddleware(isAuth)
   async getFollowingData(
-    @Ctx() { payload }: MyContext,
+    @Ctx() _ctx: MyContext,
     @Arg('userId') userId: number
   ) {
     const followers = await Subscription.find({
@@ -99,18 +97,18 @@ export class ProfileResolver {
       .leftJoinAndSelect('user.profile', 'profile')
       .getMany();
 
-    console.log('PAYLOAD', payload);
-    console.log('USERID', userId);
-    console.log('FOLLOWERS', followers);
-    console.log('FOLLOWERIDS', followingIds);
-    console.log('USERS', users);
+    // console.log('PAYLOAD', payload);
+    // console.log('USERID', userId);
+    // console.log('FOLLOWERS', followers);
+    // console.log('FOLLOWERIDS', followingIds);
+    // console.log('USERS', users);
     return users;
   }
 
   @Mutation(() => EditResponse)
-  @UseMiddleware(isAuth)
+  // @UseMiddleware(isAuth)
   async editProfile(
-    @Ctx() { payload }: MyContext,
+    @Ctx() ctx: MyContext,
     @Arg('username') username: string,
     @Arg('first') first: string,
     @Arg('last') last: string,
@@ -119,7 +117,7 @@ export class ProfileResolver {
     @Arg('ogProfileImage') ogProfileImage: string
   ) {
     const existingUser = await User.findOne({
-      where: { id: payload?.userId }
+      where: { id: ctx.user?.id }
     });
 
     if (!existingUser) {

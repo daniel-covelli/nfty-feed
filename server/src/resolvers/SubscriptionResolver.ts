@@ -2,17 +2,13 @@ import {
   Resolver,
   Mutation,
   Arg,
-  UseMiddleware,
   Ctx,
   Query
 } from 'type-graphql';
-
-import { isAuth } from '../isAuth';
-
-import { MyContext } from '../migration/MyContext';
 import { Subscription } from '../entity/Subscription';
 import { SubStatus } from '../enums';
 import { getConnection } from 'typeorm';
+import { MyContext } from 'src/context';
 
 @Resolver()
 export class SubscriptionResolver {
@@ -25,7 +21,7 @@ export class SubscriptionResolver {
 
   // who is following a user
   @Query(() => [Subscription])
-  @UseMiddleware(isAuth)
+  // @UseMiddleware(isAuth)
   async getActiveFollowers(@Arg('userId') userId: number) {
     const subscriptions = await Subscription.find({
       where: { followingId: userId, active: SubStatus.ACTIVE }
@@ -36,7 +32,7 @@ export class SubscriptionResolver {
 
   // who a user follows
   @Query(() => [Subscription])
-  @UseMiddleware(isAuth)
+  // @UseMiddleware(isAuth)
   async getActiveFollowing(@Arg('userId') userId: number) {
     const subscriptions = await Subscription.find({
       where: { userId: userId, active: SubStatus.ACTIVE }
@@ -46,14 +42,14 @@ export class SubscriptionResolver {
   }
 
   @Query(() => Boolean)
-  @UseMiddleware(isAuth)
+  // @UseMiddleware(isAuth)
   async existingSubscription(
-    @Ctx() { payload }: MyContext,
+    @Ctx() ctx: MyContext,
     @Arg('userId') userId: number
   ) {
     const existingActive = await Subscription.findOne({
       where: {
-        userId: Number(payload?.userId),
+        userId: Number(ctx.user?.id),
         followingId: userId,
         active: SubStatus.ACTIVE
       }
@@ -66,18 +62,18 @@ export class SubscriptionResolver {
   }
 
   @Mutation(() => Subscription)
-  @UseMiddleware(isAuth)
+  // @UseMiddleware(isAuth)
   async subscribe(
-    @Ctx() { payload }: MyContext,
+    @Ctx() ctx: MyContext,
     @Arg('userIdWhoIsBeingFollowed') userIdWhoIsBeingFollowed: number
   ) {
-    if (userIdWhoIsBeingFollowed == Number(payload?.userId)) {
+    if (userIdWhoIsBeingFollowed == Number(ctx.user?.id)) {
       throw new Error(`Users can't follow themselves`);
     }
 
     const existing = await Subscription.findOne({
       where: {
-        userId: Number(payload?.userId),
+        userId: Number(ctx.user?.id),
         followingId: userIdWhoIsBeingFollowed,
         active: SubStatus.ACTIVE
       }
@@ -89,7 +85,7 @@ export class SubscriptionResolver {
 
     const existingInactive = await Subscription.findOne({
       where: {
-        userId: Number(payload?.userId),
+        userId: Number(ctx.user?.id),
         followingId: userIdWhoIsBeingFollowed,
         active: SubStatus.INACTIVE
       }
@@ -106,7 +102,7 @@ export class SubscriptionResolver {
       .insert()
       .into(Subscription)
       .values({
-        userId: Number(payload?.userId),
+        userId: Number(ctx.user?.id),
         followingId: userIdWhoIsBeingFollowed,
         active: SubStatus.ACTIVE
       })
@@ -114,7 +110,7 @@ export class SubscriptionResolver {
 
     const subscription = await Subscription.findOne({
       where: {
-        userId: Number(payload?.userId),
+        userId: Number(ctx.user?.id),
         followingId: userIdWhoIsBeingFollowed,
         active: SubStatus.ACTIVE
       }
@@ -124,18 +120,18 @@ export class SubscriptionResolver {
   }
 
   @Mutation(() => Subscription)
-  @UseMiddleware(isAuth)
+  // @UseMiddleware(isAuth)
   async unSubscribe(
-    @Ctx() { payload }: MyContext,
+    @Ctx()ctx: MyContext,
     @Arg('userId') userId: number
   ) {
-    if (Number(payload?.userId) == userId) {
+    if (Number(ctx.user?.id) == userId) {
       throw new Error(`Users can't unfollow themselves`);
     }
 
     const existingInactive = await Subscription.findOne({
       where: {
-        userId: Number(payload?.userId),
+        userId: Number(ctx.user?.id),
         followingId: userId,
         active: SubStatus.INACTIVE
       }
@@ -149,7 +145,7 @@ export class SubscriptionResolver {
 
     const existingActive = await Subscription.findOne({
       where: {
-        userId: Number(payload?.userId),
+        userId: Number(ctx.user?.id),
         followingId: userId,
         active: SubStatus.ACTIVE
       }

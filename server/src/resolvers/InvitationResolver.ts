@@ -3,17 +3,15 @@ import {
   Query,
   Mutation,
   Arg,
-  UseMiddleware,
   Ctx,
   ObjectType,
   Field
 } from 'type-graphql';
 import { Invitation } from '../entity/Invitation';
-import { isAuth } from '../isAuth';
-import { MyContext } from '../migration/MyContext';
 import { Status, AdminStatus } from '../enums';
 import { User } from '../entity/User';
 import { Twilio } from 'twilio';
+import { MyContext } from 'src/context';
 
 @ObjectType()
 class InvitationResponse {
@@ -117,9 +115,9 @@ export class InvitationResolver {
   }
 
   @Mutation(() => AdminInvitationResponse)
-  @UseMiddleware(isAuth)
+  // @UseMiddleware(isAuth)
   async sendAdminInvitation(
-    @Ctx() { payload }: MyContext,
+    @Ctx() ctx: MyContext,
     @Arg('number') number: string,
     @Arg('code') code: string
   ) {
@@ -151,7 +149,7 @@ export class InvitationResolver {
       };
     }
 
-    const user = await User.findOne(payload?.userId);
+    const user = await User.findOne(ctx.user?.id);
 
     if (!user) {
       return { res: false, message: 'Could not find user', invitation: null };
@@ -162,7 +160,7 @@ export class InvitationResolver {
     }
 
     const invitation = new Invitation();
-    invitation.ownerId = Number(payload?.userId);
+    invitation.ownerId = Number(ctx.user?.id);
     invitation.number = number;
     invitation.verificationCode = Number(code);
     invitation.active = Status.ACTIVE;
@@ -173,9 +171,9 @@ export class InvitationResolver {
   }
 
   @Mutation(() => InvitationResponse)
-  @UseMiddleware(isAuth)
+  // @UseMiddleware(isAuth)
   async sendInvitation(
-    @Ctx() { payload }: MyContext,
+    @Ctx() ctx: MyContext,
     @Arg('number') number: string
   ) {
     if (!number) {
@@ -209,7 +207,7 @@ export class InvitationResolver {
       };
     }
 
-    const owner = await User.findOne(payload?.userId);
+    const owner = await User.findOne(ctx.user?.id);
 
     if (!owner) {
       return {
@@ -232,7 +230,7 @@ export class InvitationResolver {
     const verificationCode = Math.floor(Math.random() * 100000);
 
     const invitation = new Invitation();
-    invitation.ownerId = Number(payload?.userId);
+    invitation.ownerId = Number(ctx.user?.id);
     invitation.number = number;
     invitation.verificationCode = verificationCode;
     invitation.active = Status.ACTIVE;

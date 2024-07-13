@@ -1,18 +1,13 @@
-import { Resolver, Query, Arg, Mutation, Ctx, UseMiddleware, Int } from "type-graphql";
+import { Resolver, Query, Arg, Mutation, Ctx, Int } from "type-graphql";
 import { User } from "../entity/User";
 import { compare, hash } from "bcryptjs";
-import { MyContext } from "../migration/MyContext";
-import { createAccessToken, createRefreshToken } from "../auth";
-import { isAuth } from "../isAuth";
-import { sendRefreshToken } from "../sendRefreshToken";
 import { getConnection } from "typeorm";
-import { verify } from "jsonwebtoken";
 import { Profile } from "../entity/Profile";
 import { Invitation } from "../entity/Invitation";
 import { AdminStatus, Status } from "../enums";
-import { GenericResponse, LoginResponse, RegisterResponse, UserResponse } from "../wire/user";
-
-const cloudinary = require("cloudinary");
+import { GenericResponse, RegisterResponse, UserResponse } from "../wire/user";
+import { v2 as cloudinary } from 'cloudinary'
+import { MyContext } from "src/context";
 
 const INVITATIONS = 2;
 
@@ -24,40 +19,34 @@ export class UserResolver {
   }
 
   @Query(() => String)
-  @UseMiddleware(isAuth)
-  bye(@Ctx() { payload }: MyContext) {
-    return `your user id is: ${payload!.userId}`;
+  bye(@Ctx() { user }: MyContext) {
+    return `your user id is: ${user?.id}`;
   }
 
   @Query(() => [User])
   async users() {
     const users = await User.find();
-
     return users;
   }
 
   @Query(() => User, { nullable: true })
-  me(@Ctx() context: MyContext) {
-    const authorization = context.req.headers["authorization"];
-    console.log("authorization", JSON.stringify(authorization, null, 2));
+  me(@Ctx() _ctx: MyContext) {
 
-    if (!authorization) {
-      return null;
-    }
 
-    try {
-      const token = authorization.split(" ")[1];
-      const payload: any = verify(token, process.env.ACCESS_TOKEN_SECRET!);
-      return User.findOne(payload.userId);
-    } catch (err) {
-      console.log(err);
-      return null;
-    }
+    return null;
+    // try {
+    //   // const token = authorization.split(' ')[1];
+    //   // const payload: any = verify(token, process.env.ACCESS_TOKEN_SECRET!);
+    //   // return User.findOne(payload.userId);
+    //   return null;
+    // } catch (err) {
+    //   console.log(err);
+    //   return null;
+    // }
   }
 
   @Query(() => UserResponse, { nullable: true })
-  @UseMiddleware(isAuth)
-  async getUser(@Ctx() { payload }: MyContext, @Arg("path") path: string) {
+  async getUser(@Ctx() context: MyContext, @Arg("path") path: string) {
     const userIdOrUsername = path.split("/")[path.split("/").length - 1];
 
     let user;
@@ -81,17 +70,17 @@ export class UserResolver {
       user = profile.user;
     }
 
-    const isMe = payload!.userId == `${user!.id}`;
+    const isMe = context?.user?.id === user.id;
 
     return { me: isMe, user };
   }
 
-  @Mutation(() => LoginResponse)
+  @Mutation(() => User)
   async login(
     @Arg("email") email: string,
     @Arg("password") password: string,
-    @Ctx() { res }: MyContext,
-  ): Promise<LoginResponse> {
+    @Ctx() ctx: MyContext,
+  ): Promise<User> {
     const user = await User.findOne({
       where: { email },
       relations: ["profile"],
@@ -107,12 +96,10 @@ export class UserResolver {
       throw new Error("Incorrect credentials, please try again.");
     }
 
-    sendRefreshToken(res, createRefreshToken(user));
+    ctx.user = user;
+    ctx.req.session.userId = `${user.id}`;
 
-    return {
-      accessToken: createAccessToken(user),
-      user,
-    };
+    return user
   }
 
   @Mutation(() => GenericResponse)
@@ -129,7 +116,6 @@ export class UserResolver {
 
       return { res: true, message: `Congrats, you're registered!` };
     } catch (err) {
-      console.log(err);
       return {
         res: false,
         message: "Internal server error. Try again later...",
@@ -231,7 +217,7 @@ export class UserResolver {
       };
     }
 
-    const validCharacters = username.match(/^[\.a-zA-Z0-9]*$/);
+    const validCharacters = username.match(/^[.a-zA-Z0-9]*$/);
 
     if (!validCharacters) {
       return {
@@ -294,6 +280,7 @@ export class UserResolver {
     }
 
     let profileImageResult: any;
+
     let originalProfileImageResult: any;
     if (profileImage && ogProfileImage) {
       cloudinary.config({
@@ -303,7 +290,7 @@ export class UserResolver {
       });
 
       try {
-        profileImageResult = await cloudinary.v2.uploader.upload(profileImage, {
+        profileImageResult = await cloudinary.uploader.upload(profileImage, {
           allowed_formats: ["jpg", "png", "heic", "jpeg"],
           public_id: "",
         });
@@ -316,7 +303,7 @@ export class UserResolver {
       }
 
       try {
-        originalProfileImageResult = await cloudinary.v2.uploader.upload(ogProfileImage, {
+        originalProfileImageResult = await cloudinary.uploader.upload(ogProfileImage, {
           allowed_formats: ["jpg", "png", "heic", "jpeg"],
           public_id: "",
         });
@@ -373,9 +360,10 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean)
-  async logout(@Ctx() { res }: MyContext) {
-    console.log("logout");
-    sendRefreshToken(res, "");
-    return true;
+  async logout(@Ctx() { req }: MyContext): Promise<Boolean> {
+    return new Promise((resolve) => {
+      req.res?.clearCookie("nfty");
+      req.session.destroy(() => resolve(true));
+    });
   }
 }
