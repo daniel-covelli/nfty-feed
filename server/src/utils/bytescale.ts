@@ -1,4 +1,4 @@
-const nodeFetch = require("node-fetch");
+import nodeFetch from "node-fetch";
 import * as Bytescale from "@bytescale/sdk";
 
 const uploadManager = new Bytescale.UploadManager({

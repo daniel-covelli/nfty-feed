@@ -3,7 +3,6 @@
     "name": "production",
     "type": "postgres",
     "synchronize": true,
-    "logging": true,
     "ssl": true,
     "extra": {
       "ssl": {

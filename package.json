@@ -4,7 +4,8 @@
     "build:server": "yarn --cwd ./server build",
     "build:web": "yarn --cwd ./web build",
     "deploy:web": "sh ./deploy_web_netlify.sh",
-    "deploy:server": "sh ./deploy_server_heroku.sh"
+    "deploy:server": "sh ./deploy_server_heroku.sh",
+    "start": "node server/dist/server/src/index.js"
   },
   "devDependencies": {
     "lerna": "^8.0.0"

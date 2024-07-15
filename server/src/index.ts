@@ -21,7 +21,6 @@ import { PostResolver } from "./resolvers/PostResolver";
 import { LikeResolver } from "./resolvers/LikeResolver";
 import { InvitationResolver } from "./resolvers/InvitationResolver";
 import { Invitation } from "./entity/Invitation";
-
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import session from "express-session";
 import RedisStore from "connect-redis";
@@ -30,7 +29,7 @@ import { getUser, MyContext } from "./context";
 import { customAuthChecker } from "./auth";
 
 // server set up
-(async () => {
+async function main() {
   const corsOptions = {
     credentials: true,
     origin: process.env.FRONTEND_HOST,
@@ -45,7 +44,7 @@ import { customAuthChecker } from "./auth";
   const connectionOptions = await getConnectionOptions(process.env.NODE_ENV);
 
   if (process.env.NODE_ENV === "production") {
-    const connection = await createConnection({
+    await createConnection({
       ...connectionOptions,
       url: process.env.DATABASE_URL ?? "",
       entities: [User, Profile, Sub, Post, Like, Invitation],
@@ -53,11 +52,8 @@ import { customAuthChecker } from "./auth";
       type: "postgres",
       database: "postgres",
     });
-    console.log("connectionOptions", JSON.stringify({ connection }, null, 2));
   } else {
-    const conn = await createConnection({ ...connectionOptions, name: "default" });
-
-    console.log("connectionOptions", JSON.stringify({ conn }, null, 2));
+    await createConnection({ ...connectionOptions, name: "default" });
   }
 
   const schema = await buildTypeDefsAndResolvers({
@@ -81,7 +77,7 @@ import { customAuthChecker } from "./auth";
 
   await server.start();
 
-  const redisClient = createClient();
+  const redisClient = createClient({ url: process.env.REDISCLOUD_URL });
   redisClient.connect();
 
   app.use(
@@ -112,9 +108,16 @@ import { customAuthChecker } from "./auth";
     }),
   );
 
+  app.get("/hello", (_req, res) => {
+    console.log("hello");
+    res.send("Hello World!");
+  });
+
   await new Promise<void>((resolve) =>
     httpServer.listen({ port: process.env.PORT || 4000 }, resolve),
   );
 
   console.log(`🚀 Server ready at ${process.env.PORT ? process.env.PORT : 4000} `);
-})();
+}
+
+main();

@@ -2,7 +2,7 @@ import { Resolver, Mutation, Arg, Ctx, Query, Authorized } from "type-graphql";
 import { Subscription } from "../entity/Subscription";
 import { SubStatus } from "../enums";
 import { getConnection } from "typeorm";
-import { MyContext } from "src/context";
+import { MyContext } from "../context";
 
 @Resolver()
 export class SubscriptionResolver {

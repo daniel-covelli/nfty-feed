@@ -13,6 +13,7 @@ const INVITATIONS = 2;
 export class UserResolver {
   @Query(() => String)
   hello() {
+    console.log("hello");
     return "hi!";
   }
 
