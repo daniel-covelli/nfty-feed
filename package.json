@@ -11,8 +11,5 @@
     "deploy:server": "sh ./deploy_server_heroku.sh",
     "start": "yarn workspace server start",
     "heroku-postbuild": "yarn build:server"
-  },
-  "devDependencies": {
-    "lerna": "^8.0.0"
   }
 }
