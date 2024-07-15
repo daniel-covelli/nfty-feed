@@ -44,6 +44,8 @@ async function main() {
   const connectionOptions = await getConnectionOptions(process.env.NODE_ENV);
 
   if (process.env.NODE_ENV === "production") {
+    console.log(process.env.DATABASE_URL, "process.env.DATABASE_URL");
+    console.log(connectionOptions, "connectionOptions");
     await createConnection({
       ...connectionOptions,
       url: process.env.DATABASE_URL ?? "",
