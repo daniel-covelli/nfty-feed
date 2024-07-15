@@ -6,7 +6,7 @@ const uploadManager = new Bytescale.UploadManager({
   apiKey: process.env.BYTE_SCALE_API_KEY ?? "",
   debug: true,
 });
-
+console.log("process.env.BYTE_SCALE_API_KEY", process.env.BYTE_SCALE_API_KEY);
 const base64toBuffer = (media: string) => {
   const base64Data = media.replace(/^data:image\/\w+;base64,/, "");
   return Buffer.from(base64Data, "base64");
