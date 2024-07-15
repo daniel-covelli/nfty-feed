@@ -1,8 +1,9 @@
 *
-!./server/package.json 
-!./server/dist 
-!./server/.env.prod 
+!./server/package.json
+!./server/dist
+!./server/.env.prod
 !./server/.env
-!./server/ormconfig.json 
-!./package.json 
+!./server/ormconfig.json
+!./package.json
 !./server/yarn.lock
+!./yarn.lock
