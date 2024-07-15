@@ -1,4 +1,4 @@
-FROM node
+FROM --platform=linux/amd64 node
 
 WORKDIR /nfty-feed
 
@@ -15,9 +15,9 @@ COPY ./server/ormconfig.json ./server
 
 WORKDIR ./server
 
-RUN yarn
-
 ENV NODE_ENV production
+
+RUN yarn
 
 EXPOSE 4000
 

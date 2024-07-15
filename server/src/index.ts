@@ -77,7 +77,7 @@ import { customAuthChecker } from "./auth";
   await server.start();
 
   const redisClient = createClient();
-  redisClient.connect().catch(console.error);
+  redisClient.connect();
 
   app.use(
     "/",

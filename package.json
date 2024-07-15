@@ -3,10 +3,10 @@
   "scripts": {
     "build:server": "yarn --cwd ./server build",
     "build:web": "yarn --cwd ./web build",
-    "deploy:web": "sh ./deploy_web_netlify.sh"
+    "deploy:web": "sh ./deploy_web_netlify.sh",
+    "deploy:server": "sh ./deploy_server_heroku.sh"
   },
   "devDependencies": {
-    "lerna": "^8.0.0",
-    "netlify-cli": "^17.33.3"
+    "lerna": "^8.0.0"
   }
 }
