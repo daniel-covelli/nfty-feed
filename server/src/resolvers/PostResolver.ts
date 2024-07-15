@@ -4,9 +4,9 @@ import { validUrl, PostStatus, VisStatus, GlobalStatus, AdminStatus } from "../e
 import { Profile } from "../entity/Profile";
 import { User } from "../entity/User";
 import { Like } from "../entity/Like";
-import { MyContext } from "src/context";
-import { uploadMedia } from "src/utils/bytescale";
+import { MyContext } from "../context";
 import { UploadResult } from "@bytescale/sdk";
+import { uploadMedia } from "../utils/bytescale";
 
 @ObjectType()
 class PostResponse {
@@ -66,7 +66,6 @@ export class PostResolver {
 
     await Post.save(post);
 
-    // console.log('LIKE', like);
     return post;
   }
 

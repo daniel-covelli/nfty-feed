@@ -3,8 +3,8 @@ import { User } from "../entity/User";
 import { compare, hash } from "bcryptjs";
 import { Profile } from "../entity/Profile";
 import { GenericResponse, RegisterResponse, UserResponse } from "../wire/user";
-import { MyContext } from "src/context";
-import { uploadMedia } from "src/utils/bytescale";
+import { MyContext } from "../context";
+import { uploadMedia } from "../utils/bytescale";
 import { UploadResult } from "@bytescale/sdk";
 
 const INVITATIONS = 2;

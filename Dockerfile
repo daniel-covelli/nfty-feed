@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 node
+FROM --platform=linux/amd64 node:21
 
 WORKDIR /nfty-feed
 
@@ -21,4 +21,4 @@ RUN yarn
 
 EXPOSE 4000
 
-CMD ["node", "dist/index.js"]
+CMD ["node", "dist/server/src/index.js"]

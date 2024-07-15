@@ -44,16 +44,21 @@ import { customAuthChecker } from "./auth";
 
   const connectionOptions = await getConnectionOptions(process.env.NODE_ENV);
 
-  process.env.NODE_ENV === "production"
-    ? await createConnection({
-        ...connectionOptions,
-        url: process.env.DATABASE_URL ?? "",
-        entities: [User, Profile, Sub, Post, Like, Invitation],
-        name: "default",
-        type: "postgres",
-        database: "postgres",
-      })
-    : await createConnection({ ...connectionOptions, name: "default" });
+  if (process.env.NODE_ENV === "production") {
+    const connection = await createConnection({
+      ...connectionOptions,
+      url: process.env.DATABASE_URL ?? "",
+      entities: [User, Profile, Sub, Post, Like, Invitation],
+      name: "default",
+      type: "postgres",
+      database: "postgres",
+    });
+    console.log("connectionOptions", JSON.stringify({ connection }, null, 2));
+  } else {
+    const conn = await createConnection({ ...connectionOptions, name: "default" });
+
+    console.log("connectionOptions", JSON.stringify({ conn }, null, 2));
+  }
 
   const schema = await buildTypeDefsAndResolvers({
     resolvers: [
