@@ -1,11 +1,15 @@
 {
   "private": true,
+  "workspaces": [
+    "server",
+    "web"
+  ],
   "scripts": {
     "build:server": "yarn workspace server build",
     "build:web": "yarn workspace web build",
     "deploy:web": "sh ./deploy_web_netlify.sh",
     "deploy:server": "sh ./deploy_server_heroku.sh",
-    "start": "node server/dist/index.js",
+    "start": "yarn workspace server start",
     "heroku-postbuild": "yarn build:server"
   },
   "devDependencies": {
