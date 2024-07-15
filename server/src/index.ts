@@ -118,7 +118,6 @@ async function main() {
   await new Promise<void>((resolve) =>
     httpServer.listen({ port: process.env.PORT || 4000 }, resolve),
   );
-
   console.log(`🚀 Server ready at ${process.env.PORT ? process.env.PORT : 4000} `);
 }
 
