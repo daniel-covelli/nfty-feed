@@ -7,7 +7,7 @@ export const DataModalLoading: React.FC<DataModalLoadingProps> = ({}) => {
   const fields: JSX.Element[] = [];
   for (let i = 1; i <= 7; i++) {
     fields.push(
-      <HStack pb="20px">
+      <HStack key={i} pb="20px">
         <Box>
           <SkeletonCircle size="8" />
         </Box>

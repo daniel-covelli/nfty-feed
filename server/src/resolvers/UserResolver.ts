@@ -1,13 +1,11 @@
-import { Resolver, Query, Arg, Mutation, Ctx, Int } from "type-graphql";
+import { Resolver, Query, Arg, Mutation, Ctx, Authorized } from "type-graphql";
 import { User } from "../entity/User";
 import { compare, hash } from "bcryptjs";
-import { getConnection } from "typeorm";
 import { Profile } from "../entity/Profile";
-import { Invitation } from "../entity/Invitation";
-import { AdminStatus, Status } from "../enums";
 import { GenericResponse, RegisterResponse, UserResponse } from "../wire/user";
-import { v2 as cloudinary } from 'cloudinary'
 import { MyContext } from "src/context";
+import { uploadMedia } from "src/utils/bytescale";
+import { UploadResult } from "@bytescale/sdk";
 
 const INVITATIONS = 2;
 
@@ -18,33 +16,19 @@ export class UserResolver {
     return "hi!";
   }
 
-  @Query(() => String)
-  bye(@Ctx() { user }: MyContext) {
-    return `your user id is: ${user?.id}`;
-  }
-
   @Query(() => [User])
   async users() {
     const users = await User.find();
     return users;
   }
 
+  @Authorized()
   @Query(() => User, { nullable: true })
-  me(@Ctx() _ctx: MyContext) {
-
-
-    return null;
-    // try {
-    //   // const token = authorization.split(' ')[1];
-    //   // const payload: any = verify(token, process.env.ACCESS_TOKEN_SECRET!);
-    //   // return User.findOne(payload.userId);
-    //   return null;
-    // } catch (err) {
-    //   console.log(err);
-    //   return null;
-    // }
+  me(@Ctx() ctx: MyContext) {
+    return ctx.user;
   }
 
+  @Authorized()
   @Query(() => UserResponse, { nullable: true })
   async getUser(@Ctx() context: MyContext, @Arg("path") path: string) {
     const userIdOrUsername = path.split("/")[path.split("/").length - 1];
@@ -99,7 +83,7 @@ export class UserResolver {
     ctx.user = user;
     ctx.req.session.userId = `${user.id}`;
 
-    return user
+    return user;
   }
 
   @Mutation(() => GenericResponse)
@@ -123,37 +107,9 @@ export class UserResolver {
     }
   }
 
-  @Mutation(() => UserResponse)
-  async createAdminUser(
-    @Arg("email") email: string,
-    @Arg("password") password: string,
-    @Arg("username") username: string,
-    @Arg("phone") phone: string,
-    @Arg("first") first: string,
-    @Arg("last") last: string,
-    @Arg("bio") bio: string,
-  ): Promise<UserResponse> {
-    const profile = new Profile();
-    profile.username = username;
-    profile.phone = phone;
-    profile.first = first;
-    profile.last = last;
-    profile.bio = bio;
-    await Profile.save(profile);
-
-    const user = new User();
-    user.email = email;
-    user.invitations = INVITATIONS;
-    user.password = await hash(password, 12);
-    user.profile = profile;
-    user.admin = AdminStatus.ADMIN;
-    await User.save(user);
-
-    return { me: true, user };
-  }
-
   @Mutation(() => RegisterResponse)
   async register(
+    @Ctx() ctx: MyContext,
     @Arg("email") email: string,
     @Arg("password") password: string,
     @Arg("username") username: string,
@@ -161,7 +117,7 @@ export class UserResolver {
     @Arg("first") first: string,
     @Arg("last") last: string,
     @Arg("bio") bio: string,
-    @Arg("verificationCode") verificationCode: string,
+    @Arg("verificationCode") _verificationCode: string,
     @Arg("profileImage") profileImage: string,
     @Arg("ogProfileImage") ogProfileImage: string,
   ) {
@@ -169,14 +125,6 @@ export class UserResolver {
       return {
         res: false,
         message: "Please enter a valid username...",
-        user: null,
-      };
-    }
-
-    if (!phone) {
-      return {
-        res: false,
-        message: "Please enter a valid phone number...",
         user: null,
       };
     }
@@ -237,16 +185,6 @@ export class UserResolver {
       };
     }
 
-    const valid = phone.match(/^[0-9]{10}$/);
-
-    if (!valid) {
-      return {
-        res: false,
-        message: "Please enter valid phone number, ex. 1234567890",
-        user: null,
-      };
-    }
-
     const existing = await Profile.findOne({ where: { username } });
 
     if (existing) {
@@ -267,51 +205,38 @@ export class UserResolver {
       };
     }
 
-    const invitation = await Invitation.findOne({
-      where: { active: Status.ACTIVE, number: phone, verificationCode },
-    });
+    // const invitation = await Invitation.findOne({
+    //   where: { active: Status.ACTIVE, number: phone, verificationCode },
+    // });
 
-    if (!invitation) {
-      return {
-        res: false,
-        message: "Please enter valid phone number, ex. 1234567890",
-        user: null,
-      };
-    }
+    // if (!invitation) {
+    //   return {
+    //     res: false,
+    //     message: "Please enter valid phone number, ex. 1234567890",
+    //     user: null,
+    //   };
+    // }
 
-    let profileImageResult: any;
-
-    let originalProfileImageResult: any;
+    let profileImageResult: UploadResult | undefined = undefined;
+    let ogProfile: UploadResult | undefined = undefined;
     if (profileImage && ogProfileImage) {
-      cloudinary.config({
-        cloud_name: process.env.CLOUDINARY_NAME,
-        api_key: process.env.CLOUDINARY_API_KEY,
-        api_secret: process.env.CLOUDINARY_API_SECRET,
-      });
-
       try {
-        profileImageResult = await cloudinary.uploader.upload(profileImage, {
-          allowed_formats: ["jpg", "png", "heic", "jpeg"],
-          public_id: "",
-        });
+        profileImageResult = await uploadMedia(profileImage);
       } catch (e) {
         return {
           res: false,
-          message: `Image could not be uploaded:${e.message}`,
-          user: null,
+          message: `Image could not be uploaded`,
+          post: null,
         };
       }
 
       try {
-        originalProfileImageResult = await cloudinary.uploader.upload(ogProfileImage, {
-          allowed_formats: ["jpg", "png", "heic", "jpeg"],
-          public_id: "",
-        });
+        ogProfile = await uploadMedia(ogProfileImage);
       } catch (e) {
         return {
           res: false,
-          message: `Image could not be uploaded:${e.message}`,
-          user: null,
+          message: `Image could not be uploaded`,
+          post: null,
         };
       }
     }
@@ -326,10 +251,8 @@ export class UserResolver {
       profile.first = first;
       profile.last = last;
       profile.bio = bio;
-      profile.ogProfileImageId = `${
-        originalProfileImageResult ? originalProfileImageResult.url : ""
-      }`;
-      profile.profileImageId = `${profileImageResult ? profileImageResult.url : ""}`;
+      profile.ogProfileImageId = `${ogProfile?.fileUrl ? ogProfile.fileUrl : ""}`;
+      profile.profileImageId = `${profileImageResult?.fileUrl ? profileImageResult.fileUrl : ""}`;
       await Profile.save(profile);
 
       user = new User();
@@ -339,10 +262,12 @@ export class UserResolver {
       user.profile = profile;
       await User.save(user);
 
-      invitation.active = Status.INACTIVE;
-      await Invitation.save(invitation);
+      ctx.user = user;
+      ctx.req.session.userId = `${user.id}`;
+
+      // invitation.active = Status.INACTIVE;
+      // await Invitation.save(invitation);
     } catch (err) {
-      console.log(err);
       return {
         res: false,
         message: "Internal server error. Try again later...",
@@ -351,12 +276,6 @@ export class UserResolver {
     }
 
     return { res: true, message: `Congrats, you're registered!`, user };
-  }
-
-  @Mutation(() => Boolean)
-  async revokeRefreshTokensForUser(@Arg("userId", () => Int) userId: number) {
-    await getConnection().getRepository(User).increment({ id: userId }, "tokenVersion", 1);
-    return true;
   }
 
   @Mutation(() => Boolean)

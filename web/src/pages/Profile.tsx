@@ -99,12 +99,16 @@ export const Profile: React.FC = () => {
       data.getUser.user.profile?.profileImageId &&
       data.getUser.user.profile.ogProfileImageId
     ) {
-      getFollowers({ variables: { userId: data.getUser.user.id } });
-      getFollowing({ variables: { userId: data.getUser.user.id } });
-      getExistingSubscription({ variables: { userId: data.getUser?.user.id } });
       setCroppedImage(data.getUser.user.profile.profileImageId);
       setOriginalImage(data.getUser.user.profile.ogProfileImageId);
       getPosts({ variables: { profileId: data.getUser.user.profile.id } });
+    }
+    if (data?.getUser) {
+      getFollowers({ variables: { userId: data.getUser.user.id } });
+      getFollowing({ variables: { userId: data.getUser.user.id } });
+      getExistingSubscription({
+        variables: { userId: data.getUser?.user.id }
+      });
     }
   }, [data]);
 
@@ -135,23 +139,6 @@ export const Profile: React.FC = () => {
   }
 
   if (error) {
-    console.log('ERROR MESSAGE', error.message);
-    if (error.message === 'not authenticated') {
-      return (
-        <Text>
-          To access this page please{' '}
-          <Link as={ReactLink} to={`/register`} color="teal.500">
-            register
-          </Link>{' '}
-          or{' '}
-          <Link as={ReactLink} to={`/login`} color="teal.500">
-            login
-          </Link>
-          .
-        </Text>
-      );
-    }
-
     return (
       <HStack>
         <Text>🥴</Text>

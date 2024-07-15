@@ -1,60 +1,53 @@
-import { RouteObject } from 'react-router-dom';
+import { Outlet, RouteObject } from 'react-router-dom';
 import { App } from './App';
-import Layout from './components/shared/Layout';
-import { Bye } from './pages/Bye';
 import ErrorPage from './pages/Error';
-import { Home } from './pages/Home';
+
 import { Login } from './pages/Login';
-import { Profile } from './pages/Profile';
+import Layout from './components/shared/Layout';
 import { Register } from './pages/Register';
-import { validateUser } from './utils/validate-user';
+import { Profile } from './pages/Profile';
+import middleware from './utils/middleware';
 
 export const routes: RouteObject[] = [
   {
     path: '/',
-    element: <App />,
-    loader: validateUser
+    loader: middleware.rerouteIfNotLoggedIn,
+    children: [
+      { index: true, element: <App /> },
+      {
+        element: (
+          <Layout>
+            <Outlet />
+          </Layout>
+        ),
+        children: [
+          {
+            path: '/at/:id',
+            element: <Profile />
+          }
+        ]
+      }
+    ]
   },
   {
-    path: '/home',
+    loader: middleware.rerouteIfLoggedIn,
     element: (
       <Layout>
-        <Home />
+        <Outlet />
       </Layout>
-    )
+    ),
+    children: [
+      {
+        path: 'register',
+        element: <Register />
+      },
+      {
+        path: 'login',
+        element: <Login />
+      }
+    ]
   },
-  {
-    path: 'register',
-    element: (
-      <Layout>
-        <Register />
-      </Layout>
-    )
-  },
-  {
-    path: 'bye',
-    element: (
-      <Layout>
-        <Bye />
-      </Layout>
-    )
-  },
-  {
-    path: 'login',
-    element: (
-      <Layout>
-        <Login />
-      </Layout>
-    )
-  },
-  {
-    path: '/at/:id',
-    element: (
-      <Layout>
-        <Profile />
-      </Layout>
-    )
-  },
+
   {
     path: '/error',
     element: <ErrorPage />

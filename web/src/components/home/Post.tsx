@@ -95,17 +95,7 @@ export const Post: React.FC<PostProps> = ({ post, admin, loggedIn, profileId }) 
     setLiked(!liked);
     setLikes(likes - 1);
     await unlike({
-      variables: { postId: parseFloat(post.id) },
-      update: async (store, { data }) => {
-        // store.writeQuery<GetLikesQuery>({
-        //   query: GetLikesDocument,
-        //   variables: { postId: parseFloat(post.id) },
-        //   data: {
-        //     __typename: 'Query',
-        //     getLikes: data.unlike.likes
-        //   }
-        // });
-      }
+      variables: { postId: parseFloat(post.id) }
     });
   };
 

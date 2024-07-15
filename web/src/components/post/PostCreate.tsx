@@ -16,8 +16,6 @@ import {
   FormControl,
   Input,
   Center,
-  FormLabel,
-  Switch,
   IconButton,
   useToast
 } from '@chakra-ui/react';
@@ -25,13 +23,7 @@ import { PostDropzone } from './PostDropzone';
 import { ArrowForwardIcon, ArrowBackIcon } from '@chakra-ui/icons';
 import { DisplayButtons } from './DisplayButtons';
 import { Formik, Form, Field } from 'formik';
-import {
-  useCreatePostMutation,
-  GetTopPostsAdminDocument,
-  GetTopPostsDocument,
-  GetTopPostsQuery,
-  GetTopPostsAdminQuery
-} from '../../generated/graphql';
+import { useCreatePostMutation } from '../../generated/graphql';
 
 interface PostCreateProps {
   isOpen: boolean;
@@ -208,9 +200,9 @@ export const PostCreate: React.FC<PostCreateProps> = ({
                     }
                   });
 
-                  if (data?.createPost.res) {
+                  if (!data?.createPost.res) {
                     toast({
-                      title: data.createPost.message,
+                      title: data?.createPost.message,
                       duration: 2000,
                       status: 'error',
                       position: 'top',
@@ -230,66 +222,79 @@ export const PostCreate: React.FC<PostCreateProps> = ({
 
                   setLoading(false);
                 }}>
-                <Center>
-                  <Form>
-                    <Box pb="10px">
-                      <FormControl>
-                        <Text fontSize="xs">Title</Text>
-                        <Input id="title" name="title" placeholder="title" w="250px" />
-                      </FormControl>
-                    </Box>
-                    <Box pb="5px">
-                      <FormControl>
-                        <Text fontSize="xs">Artist</Text>
-                        <Input
-                          isDisabled={switched}
-                          w="250px"
-                          id="artist"
-                          name="artist"
-                          placeholder="artist"
-                        />
-                      </FormControl>
-                    </Box>
-                    <Box pb="10px">
-                      <FormControl display="flex" alignItems="center">
-                        <FormLabel htmlFor="original-work" mb="0" fontSize="xs">
-                          Original work?
-                        </FormLabel>
-                        <Switch id="original-work" colorScheme="pink" onChange={onSwitch} />
-                      </FormControl>
-                    </Box>
-                    <Box pb="10px">
-                      <FormControl>
+                {({ handleSubmit, handleChange }) => (
+                  <Center>
+                    <Form onSubmit={handleSubmit}>
+                      <Box pb="10px">
+                        <FormControl>
+                          <Text fontSize="xs">Title</Text>
+                          <Input
+                            id="title"
+                            onChange={handleChange}
+                            name="title"
+                            placeholder="title"
+                            w="250px"
+                          />
+                        </FormControl>
+                      </Box>
+                      <Box pb="5px">
+                        <FormControl>
+                          <Text fontSize="xs">Artist</Text>
+                          <Input
+                            isDisabled={switched}
+                            w="250px"
+                            id="artist"
+                            name="artist"
+                            onChange={handleChange}
+                            placeholder="artist"
+                          />
+                        </FormControl>
+                      </Box>
+                      {/* <Box pb="10px">
+                        <FormControl display="flex" alignItems="center">
+                          <FormLabel htmlFor="original-work" mb="0" fontSize="xs">
+                            Original work?
+                          </FormLabel>
+                          <Switch id="original-work" colorScheme="pink" onChange={onSwitch} />
+                        </FormControl>
+                      </Box> */}
+                      <Box pb="10px">
                         <Text fontSize="xs">Artist Link</Text>
-                        <Input w="250px" name="link" id="link" placeholder="link" />
-                      </FormControl>
-                    </Box>
-                    <Box pb="10px" float="right">
-                      <IconButton
-                        aria-label="go back"
-                        mr="3"
-                        onClick={onBack}
-                        variant="outline"
-                        size="sm"
-                        icon={<ArrowBackIcon />}
-                        _focus={{
-                          boxShadow: 'none'
-                        }}
-                      />
-                      <Button
-                        isLoading={loading}
-                        type="submit"
-                        colorScheme="pink"
-                        variant="solid"
-                        size="sm"
-                        _focus={{
-                          boxShadow: 'none'
-                        }}>
-                        Submit
-                      </Button>
-                    </Box>
-                  </Form>
-                </Center>
+                        <Input
+                          w="250px"
+                          onChange={handleChange}
+                          name="link"
+                          id="link"
+                          placeholder="link"
+                        />
+                      </Box>
+                      <Box pb="10px" float="right">
+                        <IconButton
+                          aria-label="go back"
+                          mr="3"
+                          onClick={onBack}
+                          variant="outline"
+                          size="sm"
+                          icon={<ArrowBackIcon />}
+                          _focus={{
+                            boxShadow: 'none'
+                          }}
+                        />
+                        <Button
+                          isLoading={loading}
+                          type="submit"
+                          colorScheme="pink"
+                          variant="solid"
+                          size="sm"
+                          _focus={{
+                            boxShadow: 'none'
+                          }}>
+                          Submit
+                        </Button>
+                      </Box>
+                    </Form>
+                  </Center>
+                )}
               </Formik>
             </ModalBody>
           </SlideFade>

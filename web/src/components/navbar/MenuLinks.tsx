@@ -20,7 +20,7 @@ import {
   IconButton,
   Tag
 } from '@chakra-ui/react';
-import { Link as ReactLink, useNavigate } from 'react-router-dom';
+import { Link as ReactLink } from 'react-router-dom';
 import { useMeQuery, useLogoutMutation } from '../../generated/graphql';
 import { Size } from '../shared/ClickableAvatar';
 import { AtSignIcon } from '@chakra-ui/icons';
@@ -52,12 +52,6 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
   const [adminInvitationOpen, setAdminInvitaitonOpen] = useState(false);
   const [isTabletOrMobile] = useMediaQuery('(max-width: 767px)');
 
-  let body: any = null;
-
-  if (data && data.me) {
-    body = `${data.me.profile?.username}`;
-  }
-
   const avatarClick = () => {
     setPopoverOpen(true);
   };
@@ -66,15 +60,13 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
     setIsOpen(false);
     setPopoverOpen(false);
   };
-  const navigate = useNavigate();
+
   const onLogout = async () => {
     await logout({
-      onCompleted: async (d) => {
-        // clearAccessToken();
+      onCompleted: async () => {
         await client!.resetStore();
         setIsOpen(false);
         setPopoverOpen(false);
-        navigate('/login');
       }
     });
   };
@@ -127,6 +119,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
                 _focus={{
                   boxShadow: 'none'
                 }}
+                reloadDocument
                 _hover={{ textDecoration: 'none' }}>
                 <Button variant="outline" w="100%" size="md">
                   <HStack>
@@ -240,9 +233,11 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
                     boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;'
                   }}>
                   <PopoverArrow />
-                  <PopoverHeader>
-                    <Text fontSize="14px">{body}</Text>
-                  </PopoverHeader>
+                  {data.me.profile && (
+                    <PopoverHeader>
+                      <Text fontSize="14px">{`${data.me.profile?.username}`}</Text>
+                    </PopoverHeader>
+                  )}
 
                   <PopoverBody p={0}>
                     <VStack align="stretch" spacing={0}>
@@ -252,6 +247,7 @@ export const MenuLinks: React.FC<MenuLinksProps> = ({
                         to={`/at/${data.me.profile?.username}`}
                         colorScheme="pink"
                         border="none"
+                        reloadDocument
                         _focus={{
                           boxShadow: 'none'
                         }}

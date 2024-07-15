@@ -6,17 +6,7 @@ import {
   useGetTopPostsLazyQuery,
   GetTopPostsAdminQuery
 } from '../generated/graphql';
-import {
-  Text,
-  useMediaQuery,
-  Link,
-  Avatar,
-  Box,
-  Flex,
-  Center,
-  HStack,
-  VStack
-} from '@chakra-ui/react';
+import { Text, useMediaQuery, Link, Avatar, Box, Flex, Center, HStack } from '@chakra-ui/react';
 import { Link as ReactLink } from 'react-router-dom';
 
 import { LoadingContent } from '../components/home/LoadingContent';
@@ -145,10 +135,7 @@ export const Home: React.FC<HomeProps> = () => {
                     <Text>
                       <b>Users</b>
                     </Text>
-                    <Box
-                      h="400px"
-                      w="300px"
-                      overflowY="scroll">
+                    <Box h="400px" w="300px" overflowY="scroll">
                       {data?.users.map((x) => (
                         <HStack pb="10px" key={x.id}>
                           <Link

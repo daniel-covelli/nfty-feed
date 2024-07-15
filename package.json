@@ -2,9 +2,11 @@
   "private": true,
   "scripts": {
     "build:server": "yarn --cwd ./server build",
-    "build:web": "yarn --cwd ./web build"
+    "build:web": "yarn --cwd ./web build",
+    "deploy:web": "sh ./deploy_web_netlify.sh"
   },
   "devDependencies": {
-    "lerna": "^4.0.0"
+    "lerna": "^8.0.0",
+    "netlify-cli": "^17.33.3"
   }
 }

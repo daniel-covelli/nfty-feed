@@ -28,7 +28,13 @@ interface FollowersModalProps {
 export const FollowersModal: React.FC<FollowersModalProps> = ({ isOpen, setOpen, userId }) => {
   const [getData, { data, loading }] = useGetFollowersDataLazyQuery({
     variables: { userId },
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'network-only',
+    onCompleted: (data) => {
+      console.log('data', JSON.stringify(data, null, 2));
+    },
+    onError: (err) => {
+      console.log('err', JSON.stringify(err, null, 2));
+    }
   });
 
   useEffect(() => {

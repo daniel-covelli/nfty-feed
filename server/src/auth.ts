@@ -1,20 +1,7 @@
-import 'dotenv/config';
-import { User } from './entity/User';
-// import { sign } from 'jsonwebtoken';
+import "dotenv/config";
+import { MyContext } from "./context";
+import { AuthChecker } from "type-graphql";
 
-// payload, secret, options
-export const createAccessToken = (user: User) => {
-  // return sign({ userId: user.id }, process.env.ACCESS_TOKEN_SECRET!, {
-  //   expiresIn: '1d'
-  // });
-};
-
-export const createRefreshToken = (user: User) => {
-  // return sign(
-  //   { userId: user.id, tokenVersion: user.tokenVersion },
-  //   process.env.REFRESH_TOKEN_SECRET!,
-  //   {
-  //     expiresIn: '30d'
-  //   }
-  // );
+export const customAuthChecker: AuthChecker<MyContext> = ({ context }) => {
+  return Boolean(context.user);
 };

@@ -17,14 +17,9 @@ import {
 import { Formik, Form } from 'formik';
 
 export const Login: React.FC = () => {
-  const { data } = useMeQuery();
   const toast = useToast();
   const [login, { loading }] = useLoginMutation();
   const navigate = useNavigate();
-
-  if (data && data.me) {
-    navigate('/home');
-  }
 
   return (
     <Center>
@@ -52,7 +47,7 @@ export const Login: React.FC = () => {
                   });
                 },
                 onCompleted: (data) => {
-                  navigate('/home');
+                  navigate('/');
                   toast({
                     title: `Welcome back ${data.login.profile?.first} 👋`,
                     description: `You're logged in!!`,

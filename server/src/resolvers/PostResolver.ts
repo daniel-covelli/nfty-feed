@@ -1,29 +1,12 @@
-import {
-  Resolver,
-  Query,
-  Mutation,
-  Arg,
-  // UseMiddleware,
-  ObjectType,
-  Field,
-  Ctx
-} from 'type-graphql';
-
-import { Post } from '../entity/Post';
-// import { isAuth } from '../isAuth';
-import {
-  validUrl,
-  PostStatus,
-  VisStatus,
-  GlobalStatus,
-  AdminStatus
-} from '../enums';
-import { Profile } from '../entity/Profile';
-
-import { User } from '../entity/User';
-import { Like } from '../entity/Like';
-import { MyContext } from 'src/context';
-const cloudinary = require('cloudinary');
+import { Resolver, Query, Mutation, Arg, ObjectType, Field, Ctx, Authorized } from "type-graphql";
+import { Post } from "../entity/Post";
+import { validUrl, PostStatus, VisStatus, GlobalStatus, AdminStatus } from "../enums";
+import { Profile } from "../entity/Profile";
+import { User } from "../entity/User";
+import { Like } from "../entity/Like";
+import { MyContext } from "src/context";
+import { uploadMedia } from "src/utils/bytescale";
+import { UploadResult } from "@bytescale/sdk";
 
 @ObjectType()
 class PostResponse {
@@ -43,9 +26,9 @@ export class PostResolver {
     return posts;
   }
 
+  @Authorized()
   @Mutation(() => Post)
-  // @UseMiddleware(isAuth)
-  async like(@Ctx() ctx: MyContext, @Arg('postId') postId: number) {
+  async like(@Ctx() ctx: MyContext, @Arg("postId") postId: number) {
     const user = await User.findOne(ctx.user?.id);
 
     if (!user) {
@@ -58,14 +41,14 @@ export class PostResolver {
       throw new Error(`Unable to find profile`);
     }
 
-    const post = await Post.findOne(postId, { relations: ['likes'] });
+    const post = await Post.findOne(postId, { relations: ["likes"] });
 
     if (!post) {
       throw new Error(`Unable to find post`);
     }
 
     const existingLike = await Like.findOne({
-      where: { post, owner: profile }
+      where: { post, owner: profile },
     });
 
     if (existingLike) {
@@ -87,9 +70,9 @@ export class PostResolver {
     return post;
   }
 
+  @Authorized()
   @Mutation(() => Post)
-  // @UseMiddleware(isAuth)
-  async unlike(@Ctx() ctx: MyContext, @Arg('postId') postId: number) {
+  async unlike(@Ctx() ctx: MyContext, @Arg("postId") postId: number) {
     const user = await User.findOne(ctx.user?.id);
 
     if (!user) {
@@ -102,14 +85,14 @@ export class PostResolver {
       throw new Error(`Unable to find profile`);
     }
 
-    const post = await Post.findOne(postId, { relations: ['likes'] });
+    const post = await Post.findOne(postId, { relations: ["likes"] });
 
     if (!post) {
       throw new Error(`Unable to find post`);
     }
 
     const existingLike = await Like.findOne({
-      where: { post, owner: profile }
+      where: { post, owner: profile },
     });
 
     if (!existingLike) {
@@ -129,33 +112,30 @@ export class PostResolver {
     return post;
   }
 
+  @Authorized()
   @Query(() => [Post])
-  // @UseMiddleware(isAuth)
-  async getUsersPosts(@Arg('profileId') profileId: number) {
+  async getUsersPosts(@Arg("profileId") profileId: number) {
     const posts = await Post.find({
-      where: { owner: { id: profileId }, removed: GlobalStatus.VISIBLE }
+      where: { owner: { id: profileId }, removed: GlobalStatus.VISIBLE },
     });
 
     if (!posts) {
-      throw new Error('No posts found');
+      throw new Error("No posts found");
     }
 
     return posts;
   }
 
+  @Authorized()
   @Mutation(() => PostResponse)
-  // @UseMiddleware(isAuth)
-  async invisible(
-    @Ctx() ctx: MyContext,
-    @Arg('postId') postId: number
-  ) {
+  async invisible(@Ctx() ctx: MyContext, @Arg("postId") postId: number) {
     const user = await User.findOne(ctx.user?.id);
 
     if (!user || user.admin === AdminStatus.NORMY) {
       return {
         res: false,
-        message: 'Invalid credentials...',
-        post: null
+        message: "Invalid credentials...",
+        post: null,
       };
     }
 
@@ -164,8 +144,8 @@ export class PostResolver {
     if (!post) {
       return {
         res: false,
-        message: 'Unable to find post...',
-        post: null
+        message: "Unable to find post...",
+        post: null,
       };
     }
 
@@ -175,20 +155,20 @@ export class PostResolver {
     return {
       res: true,
       message: `Post ${postId} has been made invisible...`,
-      post: post
+      post: post,
     };
   }
 
+  @Authorized()
   @Mutation(() => PostResponse)
-  // @UseMiddleware(isAuth)
-  async visible(@Ctx() ctx: MyContext, @Arg('postId') postId: number) {
+  async visible(@Ctx() ctx: MyContext, @Arg("postId") postId: number) {
     const user = await User.findOne(ctx.user?.id);
 
     if (!user || user.admin === AdminStatus.NORMY) {
       return {
         res: false,
-        message: 'Invalid credentials...',
-        post: null
+        message: "Invalid credentials...",
+        post: null,
       };
     }
 
@@ -197,8 +177,8 @@ export class PostResolver {
     if (!post) {
       return {
         res: false,
-        message: 'Unable to find post...',
-        post: null
+        message: "Unable to find post...",
+        post: null,
       };
     }
 
@@ -208,20 +188,20 @@ export class PostResolver {
     return {
       res: true,
       message: `Post ${postId} has been made visible...`,
-      post: post
+      post: post,
     };
   }
 
+  @Authorized()
   @Mutation(() => PostResponse)
-  // @UseMiddleware(isAuth)
-  async remove(@Ctx() ctx: MyContext, @Arg('postId') postId: number) {
+  async remove(@Ctx() ctx: MyContext, @Arg("postId") postId: number) {
     const user = await User.findOne(ctx.user?.id);
 
     if (!user || user.admin === AdminStatus.NORMY) {
       return {
         res: false,
-        message: 'Invalid credentials...',
-        post: null
+        message: "Invalid credentials...",
+        post: null,
       };
     }
 
@@ -230,8 +210,8 @@ export class PostResolver {
     if (!post) {
       return {
         res: false,
-        message: 'Unable to find post...',
-        post: null
+        message: "Unable to find post...",
+        post: null,
       };
     }
 
@@ -241,20 +221,20 @@ export class PostResolver {
     return {
       res: true,
       message: `Post ${postId} has been made invisible...`,
-      post: post
+      post: post,
     };
   }
 
+  @Authorized()
   @Mutation(() => PostResponse)
-  // @UseMiddleware(isAuth)
-  async readd(@Ctx() ctx: MyContext, @Arg('postId') postId: number) {
+  async readd(@Ctx() ctx: MyContext, @Arg("postId") postId: number) {
     const user = await User.findOne(ctx.user?.id);
 
     if (!user || user.admin === AdminStatus.NORMY) {
       return {
         res: false,
-        message: 'Invalid credentials...',
-        post: null
+        message: "Invalid credentials...",
+        post: null,
       };
     }
 
@@ -263,8 +243,8 @@ export class PostResolver {
     if (!post) {
       return {
         res: false,
-        message: 'Unable to find post...',
-        post: null
+        message: "Unable to find post...",
+        post: null,
       };
     }
 
@@ -274,46 +254,46 @@ export class PostResolver {
     return {
       res: true,
       message: `Post ${postId} has been made invisible...`,
-      post: post
+      post: post,
     };
   }
 
   @Query(() => [Post])
-  async getTopPosts(@Arg('page') page: number) {
+  async getTopPosts(@Arg("page") page: number) {
     const posts = await Post.find({
       where: { visibility: VisStatus.VISIBLE, removed: GlobalStatus.VISIBLE },
       order: {
-        createdAt: 'DESC'
+        createdAt: "DESC",
       },
       take: 4,
       skip: 4 * (page - 1),
-      relations: ['owner']
+      relations: ["owner"],
     });
     return posts;
   }
 
   @Query(() => [Post])
-  async getTopPostsAdmin(@Arg('page') page: number) {
+  async getTopPostsAdmin(@Arg("page") page: number) {
     const posts = await Post.find({
       order: {
-        createdAt: 'DESC'
+        createdAt: "DESC",
       },
       take: 4,
       skip: 4 * (page - 1),
-      relations: ['likes', 'likes.owner']
+      relations: ["likes", "likes.owner"],
     });
     return [...posts];
   }
 
+  @Authorized()
   @Mutation(() => PostResponse)
-  // @UseMiddleware(isAuth)
   async createPost(
-    @Arg('profileId') profileId: number,
-    @Arg('media') media: string,
-    @Arg('artist', { nullable: true }) artist: string,
-    @Arg('link', { nullable: true }) link: string,
-    @Arg('title') title: string,
-    @Arg('type', { nullable: true }) type: PostStatus
+    @Arg("profileId") profileId: number,
+    @Arg("media") media: string,
+    @Arg("artist", { nullable: true }) artist: string,
+    @Arg("link", { nullable: true }) link: string,
+    @Arg("title") title: string,
+    @Arg("type", { nullable: true }) type: PostStatus,
   ) {
     if (link) {
       const validLink = link.match(validUrl);
@@ -321,8 +301,8 @@ export class PostResolver {
       if (!validLink) {
         return {
           res: false,
-          message: 'Provide valid url...',
-          post: null
+          message: "Provide valid url...",
+          post: null,
         };
       }
     }
@@ -333,8 +313,8 @@ export class PostResolver {
       if (!validArtist) {
         return {
           res: false,
-          message: 'Provide valid artist name...',
-          post: null
+          message: "Provide valid artist name...",
+          post: null,
         };
       }
     }
@@ -344,40 +324,31 @@ export class PostResolver {
       profile = await Profile.findOne({ id: profileId });
 
       if (!profile) {
-        throw new Error('could not find profile');
+        throw new Error("could not find profile");
       }
     } catch (e) {
       console.log(e);
       return {
         res: false,
-        message: 'Internal server error please try again...',
-        post: null
+        message: "Internal server error please try again...",
+        post: null,
       };
     }
 
-    cloudinary.config({
-      cloud_name: process.env.CLOUDINARY_NAME,
-      api_key: process.env.CLOUDINARY_API_KEY,
-      api_secret: process.env.CLOUDINARY_API_SECRET
-    });
-
-    let postMedia: any;
+    let postMedia: UploadResult | undefined = undefined;
     try {
-      postMedia = await cloudinary.v2.uploader.upload(media, {
-        allowed_formats: ['jpg', 'png', 'heic', 'jpeg'],
-        public_id: ''
-      });
+      postMedia = await uploadMedia(media);
     } catch (e) {
       return {
         res: false,
-        message: `Image could not be uploaded:${e.message}`,
-        post: null
+        message: `Image could not be uploaded`,
+        post: null,
       };
     }
 
     const post = new Post();
     post.owner = profile;
-    post.media = postMedia.url;
+    post.media = postMedia?.fileUrl ?? "";
     if (link) {
       post.link = link;
     }
@@ -394,149 +365,8 @@ export class PostResolver {
 
     return {
       res: true,
-      message: 'Post successful...',
-      post: post
+      message: "Post successful...",
+      post: post,
     };
   }
 }
-
-// who is following a user
-//   @Query(() => [Subscription])
-//   @UseMiddleware(isAuth)
-//   async getActiveFollowers(@Arg('userId') userId: number) {
-//     const subscriptions = await Subscription.find({
-//       where: { followingId: userId, active: SubStatus.ACTIVE }
-//     });
-
-//     return subscriptions;
-//   }
-
-//   // who a user follows
-//   @Query(() => [Subscription])
-//   @UseMiddleware(isAuth)
-//   async getActiveFollowing(@Arg('userId') userId: number) {
-//     const subscriptions = await Subscription.find({
-//       where: { userId: userId, active: SubStatus.ACTIVE }
-//     });
-
-//     return subscriptions;
-//   }
-
-//   @Query(() => Boolean)
-//   @UseMiddleware(isAuth)
-//   async existingSubscription(
-//     @Ctx() { payload }: MyContext,
-//     @Arg('userId') userId: number
-//   ) {
-//     const existingActive = await Subscription.findOne({
-//       where: {
-//         userId: Number(payload?.userId),
-//         followingId: userId,
-//         active: SubStatus.ACTIVE
-//       }
-//     });
-
-//     if (existingActive) {
-//       return true;
-//     }
-//     return false;
-//   }
-
-//   @Mutation(() => Subscription)
-//   @UseMiddleware(isAuth)
-//   async subscribe(
-//     @Ctx() { payload }: MyContext,
-//     @Arg('userIdWhoIsBeingFollowed') userIdWhoIsBeingFollowed: number
-//   ) {
-//     if (userIdWhoIsBeingFollowed == Number(payload?.userId)) {
-//       throw new Error(`Users can't follow themselves`);
-//     }
-
-//     const existing = await Subscription.findOne({
-//       where: {
-//         userId: Number(payload?.userId),
-//         followingId: userIdWhoIsBeingFollowed,
-//         active: SubStatus.ACTIVE
-//       }
-//     });
-
-//     if (existing) {
-//       throw new Error(`Users have existing relationship`);
-//     }
-
-//     const existingInactive = await Subscription.findOne({
-//       where: {
-//         userId: Number(payload?.userId),
-//         followingId: userIdWhoIsBeingFollowed,
-//         active: SubStatus.INACTIVE
-//       }
-//     });
-
-//     if (existingInactive) {
-//       existingInactive.active = SubStatus.ACTIVE;
-//       existingInactive.save();
-//       return existingInactive;
-//     }
-
-//     await getConnection()
-//       .createQueryBuilder()
-//       .insert()
-//       .into(Subscription)
-//       .values({
-//         userId: Number(payload?.userId),
-//         followingId: userIdWhoIsBeingFollowed,
-//         active: SubStatus.ACTIVE
-//       })
-//       .execute();
-
-//     const subscription = await Subscription.findOne({
-//       where: {
-//         userId: Number(payload?.userId),
-//         followingId: userIdWhoIsBeingFollowed,
-//         active: SubStatus.ACTIVE
-//       }
-//     });
-
-//     return subscription;
-//   }
-
-//   @Mutation(() => Subscription)
-//   @UseMiddleware(isAuth)
-//   async unSubscribe(
-//     @Ctx() { payload }: MyContext,
-//     @Arg('userId') userId: number
-//   ) {
-//     if (Number(payload?.userId) == userId) {
-//       throw new Error(`Users can't unfollow themselves`);
-//     }
-
-//     const existingInactive = await Subscription.findOne({
-//       where: {
-//         userId: Number(payload?.userId),
-//         followingId: userId,
-//         active: SubStatus.INACTIVE
-//       }
-//     });
-
-//     if (existingInactive) {
-//       throw new Error(
-//         `Users can't unfollow someone whom they've already unfollowed`
-//       );
-//     }
-
-//     const existingActive = await Subscription.findOne({
-//       where: {
-//         userId: Number(payload?.userId),
-//         followingId: userId,
-//         active: SubStatus.ACTIVE
-//       }
-//     });
-
-//     if (!existingActive) {
-//       throw new Error(`This relationship wasn't found`);
-//     }
-
-//     existingActive.active = SubStatus.INACTIVE;
-//     existingActive.save();
-//     return existingActive;
-//   }

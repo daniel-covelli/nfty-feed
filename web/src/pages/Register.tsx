@@ -10,7 +10,7 @@ import {
   UsersDocument,
   useCheckInvitationMutation
 } from '../generated/graphql';
-import { Link as ReactLink, redirect } from 'react-router-dom';
+import { Link as ReactLink, redirect, useNavigate } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
 import {
   Center,
@@ -24,20 +24,15 @@ import {
   SimpleGrid,
   SlideFade,
   useDisclosure,
-  Textarea,
-  Alert,
-  AlertTitle,
-  AlertIcon,
-  CloseButton
+  Textarea
 } from '@chakra-ui/react';
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { CropperModal } from '../components/register/CropperModal';
 import { DropzoneComponent } from '../components/register/DropzoneComponent';
+import * as EmailValidator from 'email-validator';
 
 export const Register = () => {
   const { isOpen, onToggle } = useDisclosure();
-  const { data: me } = useMeQuery();
-  const [alertVisible, setAlertVisible] = useState(true);
   const [originalData, setOriginalData] = useState('');
   const [cropData, setCropData] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -46,17 +41,10 @@ export const Register = () => {
   const [verificationCode, setVerificationCode] = useState('');
   const [image, setImage] = useState([]);
   const [open, setOpen] = useState(false);
-
-  const [registrationLoading, setRegistrationLoading] = useState(false);
-
   const [checkEmail] = useCheckEmailMutation();
 
-  if (me && me.me) {
-    redirect('/');
-  }
-  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
-  const [register, { error }] = useRegisterMutation();
-  const [login] = useLoginMutation();
+  const [isRegisterOpen, setIsRegisterOpen] = useState(true);
+  const [register, { loading }] = useRegisterMutation();
   const [checkInvitation, { loading: checkInvitationLoading }] = useCheckInvitationMutation();
   const toast = useToast();
 
@@ -64,14 +52,7 @@ export const Register = () => {
     setOriginalData('');
     setOpen(false);
   };
-
-  if (error) {
-    return (
-      <>
-        <Text>image uploading failed</Text>
-      </>
-    );
-  }
+  const navigate = useNavigate();
 
   return (
     <>
@@ -93,8 +74,7 @@ export const Register = () => {
                     bio: ''
                   }}
                   onSubmit={async ({ username, first, last, bio }) => {
-                    setRegistrationLoading(true);
-                    const { data } = await register({
+                    await register({
                       variables: {
                         email: loginEmail,
                         password: loginPassword,
@@ -107,122 +87,83 @@ export const Register = () => {
                         last: `${last ? last : ''}`,
                         bio: `${bio ? bio : ''}`
                       },
-                      update: (store, { data }) => {
-                        const old = store.readQuery<UsersQuery>({
-                          query: UsersDocument
-                        });
-                        if (!data || !old) {
-                          return null;
-                        }
-                        if (data.register.user) {
-                          store.writeQuery<UsersQuery>({
-                            query: UsersDocument,
-                            data: {
-                              __typename: 'Query',
-                              users: [...old.users, data.register.user]
-                            }
+                      onCompleted: (data) => {
+                        if (!data?.register.res) {
+                          toast({
+                            title: data?.register.message,
+                            duration: 2000,
+                            status: 'error',
+                            position: 'top',
+                            variant: 'subtle',
+                            isClosable: true
+                          });
+                        } else {
+                          navigate('/');
+                          toast({
+                            title: `Congradulations ${data.register.user?.profile?.first} 🎉 `,
+                            description: `‎You're account ${data.register.user?.profile?.username} is registered.`,
+                            status: 'success',
+                            position: 'bottom',
+                            variant: 'subtle',
+                            isClosable: true
                           });
                         }
+                      },
+                      onError: (error) => {
+                        console.log('ErrorPage', JSON.stringify(error, null, 2));
                       }
                     });
-
-                    if (data?.register.res) {
-                      toast({
-                        title: data.register.message,
-                        duration: 2000,
-                        status: 'error',
-                        position: 'top',
-                        variant: 'subtle',
-                        isClosable: true
-                      });
-                    } else {
-                      const response = await login({
-                        variables: {
-                          email: loginEmail,
-                          password: loginPassword
-                        },
-                        update: (store, { data }) => {
-                          if (!data) {
-                            return null;
-                          }
-                          store.writeQuery<MeQuery>({
-                            query: MeDocument,
-                            data: {
-                              __typename: 'Query',
-                              me: data.login
-                            }
-                          });
-                        }
-                      });
-                      if (!response.data) {
-                        toast({
-                          title: `Something went wrong! Please try again...`,
-                          status: 'error',
-                          position: 'top',
-                          variant: 'subtle',
-                          isClosable: true
-                        });
-                      }
-                      if (response && response.data) {
-                        // setAccessToken(response.data.login.accessToken);
-                        redirect('/');
-                        toast({
-                          title: `Congradulations ${response?.data.login.profile?.first} 🎉 `,
-                          description: `‎You're account ${response.data.login.profile?.username} is registered.`,
-                          status: 'success',
-                          position: 'bottom',
-                          variant: 'subtle',
-                          isClosable: true
-                        });
-                      }
-                    }
-                    setRegistrationLoading(false);
                   }}>
-                  <Form>
-                    <Center pb="10px">
-                      <DropzoneComponent
-                        cropData={cropData}
-                        setCropData={setCropData}
-                        setOpen={setOpen}
-                        setImage={setImage}
-                        setOriginalData={setOriginalData}
-                      />
-                    </Center>
-                    <Box pb="10px">
-                      <FormControl>
+                  {({ handleChange, handleSubmit }) => (
+                    <Form onSubmit={handleSubmit}>
+                      <Center pb="10px">
+                        <DropzoneComponent
+                          cropData={cropData}
+                          setCropData={setCropData}
+                          setOpen={setOpen}
+                          setImage={setImage}
+                          setOriginalData={setOriginalData}
+                        />
+                      </Center>
+                      <Box pb="10px">
                         <Text fontSize="xs">Username</Text>
-                        <Input name="username" id="username" w="250px" placeholder="username" />
-                      </FormControl>
-                    </Box>
-                    <Box pb="10px">
-                      <FormControl>
+                        <Input
+                          name="username"
+                          onChange={handleChange}
+                          id="username"
+                          w="250px"
+                          placeholder="username"
+                        />
+                      </Box>
+                      <Box pb="10px">
                         <Text fontSize="xs">First</Text>
-                        <Input id="first" name="first" placeholder="first" />
-                      </FormControl>
-                    </Box>
-                    <Box pb="10px">
-                      <FormControl>
+                        <Input
+                          id="first"
+                          name="first"
+                          onChange={handleChange}
+                          placeholder="first"
+                        />
+                      </Box>
+                      <Box pb="10px">
                         <Text fontSize="xs">Last</Text>
-                        <Input id="last" name="last" placeholder="last" />
-                      </FormControl>
-                    </Box>
-                    <Box pb="10px">
-                      <FormControl>
+                        <Input id="last" name="last" placeholder="last" onChange={handleChange} />
+                      </Box>
+                      <Box pb="10px">
                         <Text fontSize="xs">Bio</Text>
-                        <Textarea id="bio" name="bio" placeholder="bio" />
-                      </FormControl>
-                    </Box>
-                    <Box pb="10px">
-                      <Button
-                        isLoading={registrationLoading}
-                        type="submit"
-                        colorScheme="pink"
-                        variant="outline"
-                        size="sm">
-                        register
-                      </Button>
-                    </Box>
-                  </Form>
+                        <Textarea id="bio" name="bio" placeholder="bio" onChange={handleChange} />
+                      </Box>
+                      <Box pb="10px">
+                        <Button
+                          isLoading={loading}
+                          type="submit"
+                          colorScheme="pink"
+                          variant="outline"
+                          size="sm">
+                          register
+                        </Button>
+                      </Box>
+                    </Form>
+                  )}
                 </Formik>
               </Box>
             </SlideFade>
@@ -238,7 +179,7 @@ export const Register = () => {
                 <Formik
                   initialValues={{ email: '', password: '' }}
                   onSubmit={async ({ email, password }) => {
-                    const valid = email.match(/^\S+@\S+\.\S+$/g);
+                    const valid = EmailValidator.validate(email);
                     if (!valid) {
                       toast({
                         title: 'Please enter a valid email address...',
@@ -267,30 +208,22 @@ export const Register = () => {
                       variables: { email }
                     });
 
-                    if (data?.checkEmail.res) {
-                      toast({
-                        title: data.checkEmail.message,
-                        duration: 3000,
-                        status: 'error',
-                        position: 'top',
-                        variant: 'subtle',
-                        isClosable: true
-                      });
-                      return;
-                    }
                     setLoginEmail(email);
                     setLoginPassword(password);
                     onToggle();
                   }}>
-                  <Form>
-                    <Box pb="10px">
-                      <FormControl>
+                  {({ handleSubmit, handleChange }) => (
+                    <Form onSubmit={handleSubmit}>
+                      <Box pb="10px">
                         <Text fontSize="xs">Email</Text>
-                        <Input name="email" id="email" placeholder="email" />
-                      </FormControl>
-                    </Box>
-                    <Box pb="10px">
-                      <FormControl>
+                        <Input
+                          onChange={handleChange}
+                          name="email"
+                          id="email"
+                          placeholder="email"
+                        />
+                      </Box>
+                      <Box pb="10px">
                         <Text fontSize="xs">Password</Text>
                         <Input
                           name="password"
@@ -298,21 +231,21 @@ export const Register = () => {
                           id="password"
                           placeholder="password"
                           type="password"
+                          onChange={handleChange}
                         />
-                      </FormControl>
-                    </Box>
-                    <Box pb="10px">
-                      <Button
-                        rightIcon={<ArrowForwardIcon />}
-                        type="submit"
-                        colorScheme="pink"
-                        variant="outline"
-                        size="sm">
-                        continue
-                      </Button>
-                    </Box>
+                      </Box>
+                      <Box pb="10px">
+                        <Button
+                          rightIcon={<ArrowForwardIcon />}
+                          type="submit"
+                          colorScheme="pink"
+                          variant="outline"
+                          size="sm">
+                          continue
+                        </Button>
+                      </Box>
 
-                    <Alert
+                      {/* <Alert
                       status="success"
                       w="250px"
                       opacity={alertVisible ? 1 : 0}
@@ -327,8 +260,9 @@ export const Register = () => {
                           top="8px"
                         />
                       </Box>
-                    </Alert>
-                  </Form>
+                    </Alert> */}
+                    </Form>
+                  )}
                 </Formik>
               </Box>
             </SlideFade>

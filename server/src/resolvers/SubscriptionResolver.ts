@@ -1,14 +1,8 @@
-import {
-  Resolver,
-  Mutation,
-  Arg,
-  Ctx,
-  Query
-} from 'type-graphql';
-import { Subscription } from '../entity/Subscription';
-import { SubStatus } from '../enums';
-import { getConnection } from 'typeorm';
-import { MyContext } from 'src/context';
+import { Resolver, Mutation, Arg, Ctx, Query, Authorized } from "type-graphql";
+import { Subscription } from "../entity/Subscription";
+import { SubStatus } from "../enums";
+import { getConnection } from "typeorm";
+import { MyContext } from "src/context";
 
 @Resolver()
 export class SubscriptionResolver {
@@ -20,39 +14,39 @@ export class SubscriptionResolver {
   }
 
   // who is following a user
+  @Authorized()
   @Query(() => [Subscription])
-  // @UseMiddleware(isAuth)
-  async getActiveFollowers(@Arg('userId') userId: number) {
+  async getActiveFollowers(@Arg("userId") userId: number) {
     const subscriptions = await Subscription.find({
-      where: { followingId: userId, active: SubStatus.ACTIVE }
+      where: { followingId: userId, active: SubStatus.ACTIVE },
     });
 
     return subscriptions;
   }
 
   // who a user follows
+  @Authorized()
   @Query(() => [Subscription])
-  // @UseMiddleware(isAuth)
-  async getActiveFollowing(@Arg('userId') userId: number) {
+  async getActiveFollowing(@Arg("userId") userId: number): Promise<Subscription[]> {
     const subscriptions = await Subscription.find({
-      where: { userId: userId, active: SubStatus.ACTIVE }
+      where: { userId: userId, active: SubStatus.ACTIVE },
     });
 
     return subscriptions;
   }
 
+  @Authorized()
   @Query(() => Boolean)
-  // @UseMiddleware(isAuth)
   async existingSubscription(
     @Ctx() ctx: MyContext,
-    @Arg('userId') userId: number
-  ) {
+    @Arg("userId") userId: number,
+  ): Promise<Boolean> {
     const existingActive = await Subscription.findOne({
       where: {
-        userId: Number(ctx.user?.id),
+        userId: ctx.user?.id,
         followingId: userId,
-        active: SubStatus.ACTIVE
-      }
+        active: SubStatus.ACTIVE,
+      },
     });
 
     if (existingActive) {
@@ -61,11 +55,11 @@ export class SubscriptionResolver {
     return false;
   }
 
+  @Authorized()
   @Mutation(() => Subscription)
-  // @UseMiddleware(isAuth)
   async subscribe(
     @Ctx() ctx: MyContext,
-    @Arg('userIdWhoIsBeingFollowed') userIdWhoIsBeingFollowed: number
+    @Arg("userIdWhoIsBeingFollowed") userIdWhoIsBeingFollowed: number,
   ) {
     if (userIdWhoIsBeingFollowed == Number(ctx.user?.id)) {
       throw new Error(`Users can't follow themselves`);
@@ -75,8 +69,8 @@ export class SubscriptionResolver {
       where: {
         userId: Number(ctx.user?.id),
         followingId: userIdWhoIsBeingFollowed,
-        active: SubStatus.ACTIVE
-      }
+        active: SubStatus.ACTIVE,
+      },
     });
 
     if (existing) {
@@ -87,8 +81,8 @@ export class SubscriptionResolver {
       where: {
         userId: Number(ctx.user?.id),
         followingId: userIdWhoIsBeingFollowed,
-        active: SubStatus.INACTIVE
-      }
+        active: SubStatus.INACTIVE,
+      },
     });
 
     if (existingInactive) {
@@ -104,7 +98,7 @@ export class SubscriptionResolver {
       .values({
         userId: Number(ctx.user?.id),
         followingId: userIdWhoIsBeingFollowed,
-        active: SubStatus.ACTIVE
+        active: SubStatus.ACTIVE,
       })
       .execute();
 
@@ -112,19 +106,16 @@ export class SubscriptionResolver {
       where: {
         userId: Number(ctx.user?.id),
         followingId: userIdWhoIsBeingFollowed,
-        active: SubStatus.ACTIVE
-      }
+        active: SubStatus.ACTIVE,
+      },
     });
 
     return subscription;
   }
 
   @Mutation(() => Subscription)
-  // @UseMiddleware(isAuth)
-  async unSubscribe(
-    @Ctx()ctx: MyContext,
-    @Arg('userId') userId: number
-  ) {
+  @Authorized()
+  async unSubscribe(@Ctx() ctx: MyContext, @Arg("userId") userId: number) {
     if (Number(ctx.user?.id) == userId) {
       throw new Error(`Users can't unfollow themselves`);
     }
@@ -133,22 +124,20 @@ export class SubscriptionResolver {
       where: {
         userId: Number(ctx.user?.id),
         followingId: userId,
-        active: SubStatus.INACTIVE
-      }
+        active: SubStatus.INACTIVE,
+      },
     });
 
     if (existingInactive) {
-      throw new Error(
-        `Users can't unfollow someone whom they've already unfollowed`
-      );
+      throw new Error(`Users can't unfollow someone whom they've already unfollowed`);
     }
 
     const existingActive = await Subscription.findOne({
       where: {
         userId: Number(ctx.user?.id),
         followingId: userId,
-        active: SubStatus.ACTIVE
-      }
+        active: SubStatus.ACTIVE,
+      },
     });
 
     if (!existingActive) {

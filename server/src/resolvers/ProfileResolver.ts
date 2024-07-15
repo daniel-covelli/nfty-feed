@@ -1,20 +1,10 @@
-import {
-  Resolver,
-  Mutation,
-  Arg,
-  Ctx,
-  ObjectType,
-  Field,
-  Query
-} from 'type-graphql';
-import { User } from '../entity/User';
-import { Profile } from '../entity/Profile';
-import { SubStatus } from '../enums';
-import { Subscription } from '../entity/Subscription';
-import { createQueryBuilder } from 'typeorm';
-import { MyContext } from 'src/context';
-
-const cloudinary = require('cloudinary');
+import { Resolver, Mutation, Arg, Ctx, ObjectType, Field, Query, Authorized } from "type-graphql";
+import { User } from "../entity/User";
+import { Profile } from "../entity/Profile";
+import { SubStatus } from "../enums";
+import { Subscription } from "../entity/Subscription";
+import { createQueryBuilder } from "typeorm";
+import { MyContext } from "src/context";
 
 @ObjectType()
 class EditResponse {
@@ -40,28 +30,26 @@ class FollowersResponse {
 
 @Resolver()
 export class ProfileResolver {
+  @Authorized()
   @Query(() => [FollowersResponse])
   // @UseMiddleware(isAuth)
-  async getFollowersData(
-    @Ctx() ctx: MyContext,
-    @Arg('userId') userId: number
-  ) {
+  async getFollowersData(@Ctx() ctx: MyContext, @Arg("userId") userId: number) {
     const followers = await Subscription.find({
-      where: { followingId: userId, active: SubStatus.ACTIVE }
+      where: { followingId: userId, active: SubStatus.ACTIVE },
     });
 
     if (followers.length === 0) {
       return [];
     }
     const following = await Subscription.find({
-      where: { userId: ctx?.user, active: SubStatus.ACTIVE }
+      where: { userId: ctx.user?.id, active: SubStatus.ACTIVE },
     });
 
     const followerIds = followers.map((follower) => follower.userId);
 
-    const users = await createQueryBuilder(User, 'user')
-      .where('user.id IN (:...followers)', { followers: followerIds })
-      .leftJoinAndSelect('user.profile', 'profile')
+    const users = await createQueryBuilder(User, "user")
+      .where("user.id IN (:...followers)", { followers: followerIds })
+      .leftJoinAndSelect("user.profile", "profile")
       .getMany();
 
     const response = users.map((user) => {
@@ -72,8 +60,8 @@ export class ProfileResolver {
       return {
         profile: user.profile,
         following: isFollowing,
-        me: user.id === Number(ctx?.user?.id),
-        userId: user.id
+        me: user.id === ctx.user?.id,
+        userId: user.id,
       };
     });
 
@@ -82,19 +70,16 @@ export class ProfileResolver {
 
   @Query(() => [User])
   // @UseMiddleware(isAuth)
-  async getFollowingData(
-    @Ctx() _ctx: MyContext,
-    @Arg('userId') userId: number
-  ) {
+  async getFollowingData(@Ctx() _ctx: MyContext, @Arg("userId") userId: number) {
     const followers = await Subscription.find({
-      where: { userId, active: SubStatus.ACTIVE }
+      where: { userId, active: SubStatus.ACTIVE },
     });
 
     const followingIds = followers.map((follower) => follower.followingId);
 
-    const users = await createQueryBuilder(User, 'user')
-      .where('user.id IN (:...followers)', { followers: followingIds })
-      .leftJoinAndSelect('user.profile', 'profile')
+    const users = await createQueryBuilder(User, "user")
+      .where("user.id IN (:...followers)", { followers: followingIds })
+      .leftJoinAndSelect("user.profile", "profile")
       .getMany();
 
     // console.log('PAYLOAD', payload);
@@ -105,46 +90,46 @@ export class ProfileResolver {
     return users;
   }
 
+  @Authorized()
   @Mutation(() => EditResponse)
-  // @UseMiddleware(isAuth)
   async editProfile(
     @Ctx() ctx: MyContext,
-    @Arg('username') username: string,
-    @Arg('first') first: string,
-    @Arg('last') last: string,
-    @Arg('bio') bio: string,
-    @Arg('profileImage') profileImage: string,
-    @Arg('ogProfileImage') ogProfileImage: string
+    @Arg("username") username: string,
+    @Arg("first") first: string,
+    @Arg("last") last: string,
+    @Arg("bio") bio: string,
+    @Arg("profileImage") _profileImage: string,
+    @Arg("ogProfileImage") _ogProfileImage: string,
   ) {
     const existingUser = await User.findOne({
-      where: { id: ctx.user?.id }
+      where: { id: ctx.user?.id },
     });
 
     if (!existingUser) {
-      throw new Error('could not find user');
+      throw new Error("could not find user");
     }
 
     if (!username) {
       return {
         res: false,
-        message: 'Please enter a valid username...',
-        user: existingUser
+        message: "Please enter a valid username...",
+        user: existingUser,
       };
     }
 
     if (!first) {
       return {
         res: false,
-        message: 'Please enter a first name...',
-        user: existingUser
+        message: "Please enter a first name...",
+        user: existingUser,
       };
     }
 
     if (!last) {
       return {
         res: false,
-        message: 'Please enter a last name...',
-        user: existingUser
+        message: "Please enter a last name...",
+        user: existingUser,
       };
     }
 
@@ -153,8 +138,8 @@ export class ProfileResolver {
     if (usernameLength > 40) {
       return {
         res: false,
-        message: 'Username over 40 characters...',
-        user: existingUser
+        message: "Username over 40 characters...",
+        user: existingUser,
       };
     }
 
@@ -163,8 +148,8 @@ export class ProfileResolver {
     if (!noSpaces) {
       return {
         res: false,
-        message: 'Please enter a username with no spaces...',
-        user: existingUser
+        message: "Please enter a username with no spaces...",
+        user: existingUser,
       };
     }
 
@@ -173,9 +158,8 @@ export class ProfileResolver {
     if (!validCharacters) {
       return {
         res: false,
-        message:
-          'Please enter valid username. Only letters, numbers, and periods allowed...',
-        user: existingUser
+        message: "Please enter valid username. Only letters, numbers, and periods allowed...",
+        user: existingUser,
       };
     }
 
@@ -184,8 +168,8 @@ export class ProfileResolver {
     if (notJustAllNumbers) {
       return {
         res: false,
-        message: 'Please enter valid username that includes letters...',
-        user: existingUser
+        message: "Please enter valid username that includes letters...",
+        user: existingUser,
       };
     }
 
@@ -194,8 +178,8 @@ export class ProfileResolver {
     if (bioLength > 145) {
       return {
         res: false,
-        message: 'Bio over 145 characters...',
-        user: existingUser
+        message: "Bio over 145 characters...",
+        user: existingUser,
       };
     }
 
@@ -204,54 +188,50 @@ export class ProfileResolver {
       existingUser.profile.last = last;
       existingUser.profile.bio = bio;
 
-      cloudinary.config({
-        cloud_name: process.env.CLOUDINARY_NAME,
-        api_key: process.env.CLOUDINARY_API_KEY,
-        api_secret: process.env.CLOUDINARY_API_SECRET
-      });
-      if (profileImage !== existingUser.profile.profileImageId) {
-        if (profileImage === '') {
-          existingUser.profile.profileImageId = '';
-        } else {
-          try {
-            const response = await cloudinary.v2.uploader.upload(profileImage, {
-              allowed_formats: ['jpg', 'png', 'heic', 'jpeg'],
-              public_id: ''
-            });
-            existingUser.profile.profileImageId = response.url;
-          } catch (e) {
-            return {
-              res: false,
-              message: `Image could not be uploaded:${e.message}`,
-              user: null
-            };
-          }
-        }
-      }
+      // cloudinary.config({
+      //   cloud_name: process.env.CLOUDINARY_NAME,
+      //   api_key: process.env.CLOUDINARY_API_KEY,
+      //   api_secret: process.env.CLOUDINARY_API_SECRET,
+      // });
+      // if (profileImage !== existingUser.profile.profileImageId) {
+      //   if (profileImage === "") {
+      //     existingUser.profile.profileImageId = "";
+      //   } else {
+      //     try {
+      //       const response = await cloudinary.v2.uploader.upload(profileImage, {
+      //         allowed_formats: ["jpg", "png", "heic", "jpeg"],
+      //         public_id: "",
+      //       });
+      //       existingUser.profile.profileImageId = response.url;
+      //     } catch (e) {
+      //       return {
+      //         res: false,
+      //         message: `Image could not be uploaded:${e.message}`,
+      //         user: null,
+      //       };
+      //     }
+      //   }
+      // }
 
-      if (ogProfileImage !== existingUser.profile.ogProfileImageId) {
-        if (ogProfileImage === '') {
-          existingUser.profile.ogProfileImageId = '';
-        } else {
-          try {
-            const originalProfileImageResult = await cloudinary.v2.uploader.upload(
-              ogProfileImage,
-              {
-                allowed_formats: ['jpg', 'png', 'heic', 'jpeg'],
-                public_id: ''
-              }
-            );
-            existingUser.profile.ogProfileImageId =
-              originalProfileImageResult.url;
-          } catch (e) {
-            return {
-              res: false,
-              message: `Image could not be uploaded:${e.message}`,
-              user: null
-            };
-          }
-        }
-      }
+      // if (ogProfileImage !== existingUser.profile.ogProfileImageId) {
+      //   if (ogProfileImage === "") {
+      //     existingUser.profile.ogProfileImageId = "";
+      //   } else {
+      //     try {
+      //       const originalProfileImageResult = await cloudinary.v2.uploader.upload(ogProfileImage, {
+      //         allowed_formats: ["jpg", "png", "heic", "jpeg"],
+      //         public_id: "",
+      //       });
+      //       existingUser.profile.ogProfileImageId = originalProfileImageResult.url;
+      //     } catch (e) {
+      //       return {
+      //         res: false,
+      //         message: `Image could not be uploaded:${e.message}`,
+      //         user: null,
+      //       };
+      //     }
+      //   }
+      // }
 
       if (existingUser.profile.username !== username) {
         const existing = await Profile.findOne({ where: { username } });
@@ -259,14 +239,14 @@ export class ProfileResolver {
         if (existing) {
           return {
             res: false,
-            message: 'Looks like someone already has that username... ',
-            user: existingUser
+            message: "Looks like someone already has that username... ",
+            user: existingUser,
           };
         }
 
         existingUser.profile.username = username;
         await existingUser.save();
-        return { res: true, message: 'refresh', user: existingUser };
+        return { res: true, message: "refresh", user: existingUser };
       }
 
       await existingUser.save();
@@ -278,52 +258,49 @@ export class ProfileResolver {
       profile.last = last;
       profile.bio = bio;
 
-      cloudinary.config({
-        cloud_name: process.env.CLOUDINARY_NAME,
-        api_key: process.env.CLOUDINARY_API_KEY,
-        api_secret: process.env.CLOUDINARY_API_SECRET
-      });
-      if (profileImage !== '') {
-        try {
-          const response = await cloudinary.v2.uploader.upload(profileImage, {
-            allowed_formats: ['jpg', 'png', 'heic', 'jpeg'],
-            public_id: ''
-          });
-          profile.profileImageId = response.url;
-        } catch (e) {
-          return {
-            res: false,
-            message: `Image could not be uploaded:${e.message}`,
-            user: null
-          };
-        }
-      }
+      // cloudinary.config({
+      //   cloud_name: process.env.CLOUDINARY_NAME,
+      //   api_key: process.env.CLOUDINARY_API_KEY,
+      //   api_secret: process.env.CLOUDINARY_API_SECRET,
+      // });
+      // if (profileImage !== "") {
+      //   try {
+      //     const response = await cloudinary.v2.uploader.upload(profileImage, {
+      //       allowed_formats: ["jpg", "png", "heic", "jpeg"],
+      //       public_id: "",
+      //     });
+      //     profile.profileImageId = response.url;
+      //   } catch (e) {
+      //     return {
+      //       res: false,
+      //       message: `Image could not be uploaded:${e.message}`,
+      //       user: null,
+      //     };
+      //   }
+      // }
 
-      if (ogProfileImage !== 'existingUser.profile.ogProfileImageId') {
-        try {
-          const originalProfileImageResult = await cloudinary.v2.uploader.upload(
-            profileImage,
-            {
-              allowed_formats: ['jpg', 'png', 'heic', 'jpeg'],
-              public_id: ''
-            }
-          );
-          profile.ogProfileImageId = originalProfileImageResult.url;
-        } catch (e) {
-          return {
-            res: false,
-            message: `Image could not be uploaded:${e.message}`,
-            user: null
-          };
-        }
-      }
+      // if (ogProfileImage !== "existingUser.profile.ogProfileImageId") {
+      //   try {
+      //     const originalProfileImageResult = await cloudinary.v2.uploader.upload(profileImage, {
+      //       allowed_formats: ["jpg", "png", "heic", "jpeg"],
+      //       public_id: "",
+      //     });
+      //     profile.ogProfileImageId = originalProfileImageResult.url;
+      //   } catch (e) {
+      //     return {
+      //       res: false,
+      //       message: `Image could not be uploaded:${e.message}`,
+      //       user: null,
+      //     };
+      //   }
+      // }
 
       await profile.save();
       existingUser.profile = profile;
       await existingUser.save();
-      return { res: true, message: 'refresh', user: existingUser };
+      return { res: true, message: "refresh", user: existingUser };
     }
 
-    return { res: true, message: 'success', user: existingUser };
+    return { res: true, message: "success", user: existingUser };
   }
 }

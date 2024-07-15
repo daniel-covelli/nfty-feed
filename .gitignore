@@ -10,3 +10,4 @@ dist/
 .vscode
 # Local Netlify folder
 .netlify
+scratch*
