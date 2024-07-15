@@ -1,8 +1,8 @@
 {
   "private": true,
   "scripts": {
-    "build:server": "yarn --cwd ./server build",
-    "build:web": "yarn --cwd ./web build",
+    "build:server": "yarn workspace server build",
+    "build:web": "yarn workspace web build",
     "deploy:web": "sh ./deploy_web_netlify.sh",
     "deploy:server": "sh ./deploy_server_heroku.sh",
     "start": "node server/dist/index.js",
