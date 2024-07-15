@@ -23,7 +23,7 @@ import { PostDropzone } from './PostDropzone';
 import { ArrowForwardIcon, ArrowBackIcon } from '@chakra-ui/icons';
 import { DisplayButtons } from './DisplayButtons';
 import { Formik, Form, Field } from 'formik';
-import { useCreatePostMutation } from '../../generated/graphql';
+import { GetTopPostsAdminDocument, GetTopPostsAdminQuery, GetTopPostsDocument, GetTopPostsQuery, useCreatePostMutation } from '../../generated/graphql';
 
 interface PostCreateProps {
   isOpen: boolean;
@@ -166,38 +166,40 @@ export const PostCreate: React.FC<PostCreateProps> = ({
                       link,
                       type
                     },
-                    update: async (store, { data }) => {
-                      if (admin === 1) {
-                        // const old = store.readQuery<GetTopPostsAdminQuery>({
-                        //   query: GetTopPostsAdminDocument,
-                        //   variables: { page: 1 }
-                        // });
-                        // store.writeQuery<GetTopPostsAdminQuery>({
-                        //   query: GetTopPostsAdminDocument,
-                        //   variables: { page: 1 },
-                        //   data: {
-                        //     __typename: 'Query',
-                        //     getTopPostsAdmin: [
-                        //       data.createPost.post,
-                        //       ...old.getTopPostsAdmin
-                        //     ]
-                        //   }
-                        // });
-                      } else {
-                        // const old = store.readQuery<GetTopPostsQuery>({
-                        //   query: GetTopPostsDocument,
-                        //   variables: { page: 1 }
-                        // });
-                        // store.writeQuery<GetTopPostsQuery>({
-                        //   query: GetTopPostsDocument,
-                        //   data: {
-                        //     __typename: 'Query',
-                        //     getTopPosts: [data.createPost.post, ...old.getTopPosts]
-                        //   },
-                        //   variables: { page: 1 }
-                        // });
-                      }
-                    }
+                    awaitRefetchQueries: true,
+                    refetchQueries: [{query: GetTopPostsDocument, variables: {page: 1}}]
+                    // update: async (store, { data }) => {
+                    //   if (admin === 1) {
+                    //     const old = store.readQuery<GetTopPostsAdminQuery>({
+                    //       query: GetTopPostsAdminDocument,
+                    //       variables: { page: 1 }
+                    //     });
+                    //     store.writeQuery<GetTopPostsAdminQuery>({
+                    //       query: GetTopPostsAdminDocument,
+                    //       variables: { page: 1 },
+                    //       data: {
+                    //         __typename: 'Query',
+                    //         getTopPostsAdmin: [
+                    //           ...(data?.createPost?.post ? [data?.createPost?.post] : []),
+                    //           ...(old?.getTopPostsAdmin ?? [])
+                    //         ]
+                    //       }
+                    //     });
+                    //   } else {
+                    //     const old = store.readQuery<GetTopPostsQuery>({
+                    //       query: GetTopPostsDocument,
+                    //       variables: { page: 1 }
+                    //     });
+                    //     store.writeQuery<GetTopPostsQuery>({
+                    //       query: GetTopPostsDocument,
+                    //       data: {
+                    //         __typename: 'Query',
+                    //         getTopPosts: [data.createPost.post, ...old.getTopPosts]
+                    //       },
+                    //       variables: { page: 1 }
+                    //     });
+                    //   }
+                    // }
                   });
 
                   if (!data?.createPost.res) {
