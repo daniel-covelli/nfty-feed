@@ -1,6 +1,6 @@
 FROM --platform=linux/amd64 node:21
 
-WORKDIR /nfty-feed
+WORKDIR /app
 
 # COPY ./package.json .
 # COPY ./server/yarn.lock ./server/
