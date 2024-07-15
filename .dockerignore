@@ -7,3 +7,4 @@
 !./package.json
 !./server/yarn.lock
 !./yarn.lock
+!./ormconfig.json

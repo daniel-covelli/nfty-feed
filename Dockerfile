@@ -24,7 +24,7 @@ WORKDIR /app
 # CMD ["node", "dist/server/src/index.js"]
 
 # Copy root package.json and yarn.lock
-COPY package.json yarn.lock ./
+COPY package.json yarn.lock ormconfig.json ./
 
 # Copy server package.json
 COPY server/package.json ./server/
@@ -37,7 +37,7 @@ COPY server/dist ./server/dist
 
 # Copy server configuration files
 COPY server/.env.prod ./server/.env
-COPY server/ormconfig.json ./server/
+# COPY server/ormconfig.json ./server/
 
 # Set working directory to server
 WORKDIR ./server
